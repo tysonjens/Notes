@@ -5,6 +5,12 @@
 ## Math/Stats
 
 * [Galvanize Short Course for Stats](https://galvanizeopensource.github.io/stats-shortcourse/)
+* [Computer Age Statistical Inference Book](https://web.stanford.edu/~hastie/CASI_files/PDF/casi.pdf)
+
+
+
+
+
 
 #### Distributions
 
@@ -22,6 +28,38 @@
 #### GitHub
 
 * [Interactive Tool](http://ndpsoftware.com/git-cheatsheet/previous/git-cheatsheet.html)
+* [Adding a Github repo to house local project](https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/)
+
+###### Pair Workflow
+* A:
+  * needs to add B as a collaborator for that repo on his/her Github.
+  * adds a branch, e.g. `$ git checkout -b pair_morning`
+  * starts coding (B navigating and helping)
+  * Add, commit, push the branch to Github when it’s B’s turn to code.
+    * e.g. `$ git push origin pair_morning`
+* B:
+  * After A adds B as collaborator, adds A’s repo as a remote:
+    * `$ git remote add <partner-name> <partner-remote-url>`
+  * Help A!
+  * When B’s turn to code comes:
+    * `$ git fetch <partner-name>`
+    * `$ git checkout --track <partner-name>/<branch-name>`
+  * Starts coding (A navigating and helping)
+  * When A’s turn comes again:
+    * `$ git push <partner-name> <branch-name>`
+
+**Switching**
+* A:
+  * `$ git checkout <branch-name>`
+  * `$ git pull <remote-name> <branch-name>`
+  * A works on code (B collaborating). ABC!
+  *  `$ git push <remote-name> <branch-name>`
+* B:
+  * `$ git checkout <branch-name>`
+  * `$ git pull <remote-name> <branch-name>`
+  * B works on code (A collaborating). ABC!
+  * `$ git push <remote-name> <branch-name>`
+
 
 
 #### SQL
@@ -69,7 +107,8 @@ thing1 | thing 2
 #### Markdown
 
 * [Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet)
-* Thing 2
+* [Math Symbols](https://reu.dimacs.rutgers.edu/Symbols.pdf)
+
 
 #### Matplotlib
 
@@ -253,15 +292,10 @@ DAY 6 -- matplotlib
 
 
 TOPICS TO STUDY
-  get your shit in ORDER
-  readings for tomorrow
-  Get the git command workflow file
   Apply to the the UM Gupta hacks thing
-  Maximum Likelihood Estimation
   Make plans for:
-    Project - getting data
+    Project - getting data -- read Ruan's Stuff
     Networking for jobs
-    Blog
 
 
 
