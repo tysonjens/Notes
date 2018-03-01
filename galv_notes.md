@@ -1,14 +1,11 @@
 
-
+---
 ## Course
-
+___
 ## Math/Stats
 
 * [Galvanize Short Course for Stats](https://galvanizeopensource.github.io/stats-shortcourse/)
 * [Computer Age Statistical Inference Book](https://web.stanford.edu/~hastie/CASI_files/PDF/casi.pdf)
-
-
-
 
 
 
@@ -21,7 +18,37 @@
 
 * [Standard Normal Table](https://github.com/gSchool/dsi-probability/blob/master/standard_normal_table.pdf)
 
+###### Rayleigh
+
+###### Binomial
+
+#### Bootstrap
+
+* use `np.percentile(array, [2.5,97.5])`
+* bootstrap
+```python
+# INPUT - np array OUTPUT - bootstrap confidence intervals
+def bootstrap_ci(lst, bootstraps=1000, ci=95):
+    n = len(lst)
+    bootstraps_list = ([np.mean([lst[np.random.randint(n)] for i in np.arange(n)]) for i in np.arange(bootstraps)])
+    conf_int = np.percentile(bootstraps_list, [(100-ci)/2,100-((100-ci)/2)])
+    return print('The {} conf_int for the sample is {}.'.format(ci, conf_int))
+```
+
 #### Hypothesis Testing
+
+#### Math_Stats Miscellaneous
+
+* [Log Rules](http://tutorial.math.lamar.edu/Classes/CalcI/DiffExpLogFcns.aspx)
+
+$$
+\frac{d}{dx} ln(x) = \frac{1}{x}
+$$
+
+* [Maximum Liklihood Estimation](https://ocw.mit.edu/courses/mathematics/18-05-introduction-to-probability-and-statistics-spring-2014/readings/MIT18_05S14_Reading10b.pdf)
+* [Maximum Likelihood Estimation (1)](http://statweb.stanford.edu/~susan/courses/s200/lectures/lect11.pdf)
+* [Maximum A Posteriori](https://web.stanford.edu/class/archive/cs/cs109/cs109.1166/ppt/22-MAP.pdf)
+___
 
 ## Coding & Environment
 
@@ -73,6 +100,8 @@
 * [Pythonic Code](http://docs.python-guide.org/en/latest/writing/style/)
 * Create a Python 2 environment `conda create -n py2 python=2 anaconda`
 * [Classes and Objects Youtube Videos](https://www.youtube.com/watch?v=ZDa-Z5JzLYM&list=PL-osiE80TeTt2d9bfVyTiXJA-UTHn6WwU&index=37)
+* `if __name__ == '__main__':`
+
 
 ###### psycopg
 
@@ -97,11 +126,13 @@ name | link
 thing1 | thing 2
 
 ####
+___
 
 ## Machine learning
 
+___
 ## Visualization
-
+___
 ## Data Products
 
 #### Markdown
@@ -296,6 +327,9 @@ TOPICS TO STUDY
   Make plans for:
     Project - getting data -- read Ruan's Stuff
     Networking for jobs
+  Study maximum a posteriori (MAP)
+  Study exponential distribution parameter
+  Bootstrap notes
 
 
 
