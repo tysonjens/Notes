@@ -5,24 +5,47 @@ ___
 ## Math/Stats
 
 * [Galvanize Short Course for Stats](https://galvanizeopensource.github.io/stats-shortcourse/)
-* [Computer Age Statistical Inference Book](https://web.stanford.edu/~hastie/CASI_files/PDF/casi.pdf)
+* [PDF Book: Computer Age Statistical Inference Book](https://web.stanford.edu/~hastie/CASI_files/PDF/casi.pdf)
 
 
 
 #### Distributions
 
+* [Distribution Applets](https://homepage.divms.uiowa.edu/~mbognar/)
 * [Cheatsheet](https://static1.squarespace.com/static/54bf3241e4b0f0d81bf7ff36/t/55e9494fe4b011aed10e48e5/1441352015658/probability_cheatsheet.pdf)
 * [Scipy Stats Functions](https://docs.scipy.org/doc/scipy/reference/stats.html)
+* [Scipy Stats](https://stackoverflow.com/questions/37559470/what-do-all-the-distributions-available-in-scipy-stats-look-like#37559471)
 
-###### Normal
 
-* [Standard Normal Table](https://github.com/gSchool/dsi-probability/blob/master/standard_normal_table.pdf)
+thing | Discrete | Continuous | R
+------|----------|----------| ---
+x to density | pmf | pdf | d
+x -> area to left | cdf  | cdf | p
+area to left -> x | ppf | ppf | q
 
-###### Rayleigh
+###### Continuous
 
-###### Binomial
+* Normal
+  * [Standard Normal Table](https://github.com/gSchool/dsi-probability/blob/master/standard_normal_table.pdf)
+* Gamma
+* Beta
+* Chi-Squared
+* Exponential
+* F Distribution
+* Log-Normal
+* t
+
+###### Discrete
+
+* Binomial
+* Geometric
+* Hypergeometric
+* Negative Binomial
+* Poisson
 
 #### Bootstrap
+
+The bootstrap takes 200-2000 samples of length equal to sample, and calculates the statistic of interest.  This process creates a distribution for the statistic and can be used to create confidence intervals. It is computationally expensive, but is more versatile that MLE.
 
 * use `np.percentile(array, [2.5,97.5])`
 * bootstrap
@@ -35,11 +58,28 @@ def bootstrap_ci(lst, bootstraps=1000, ci=95):
     return print('The {} conf_int for the sample is {}.'.format(ci, conf_int))
 ```
 
+#### Maximum Likelihood Estimation
+
+#### Experimental Design
+
 #### Hypothesis Testing
+
+* Power - `Pr(Reject H0 | H1 is true)`
+  * [Wiki](https://en.wikipedia.org/wiki/Statistical_power#Factors_influencing_power)
+
+A/B Test of two sample proportions (e.g. sign up rate on website)
+```python
+from z_test import z_test
+z_test.z_test(mean1, mean2, n1, n2, effect_size=.01,two_tailed=False)
+```
+
+###### Categorical Hypothesis Testing
 
 #### Math_Stats Miscellaneous
 
 * [Log Rules](http://tutorial.math.lamar.edu/Classes/CalcI/DiffExpLogFcns.aspx)
+* [Logarithm and Log rules](http://web.mit.edu/kayla/tcom/tcom_handout_logs.pdf)
+*
 
 $$
 \frac{d}{dx} ln(x) = \frac{1}{x}
@@ -56,6 +96,7 @@ ___
 
 * [Interactive Tool](http://ndpsoftware.com/git-cheatsheet/previous/git-cheatsheet.html)
 * [Adding a Github repo to house local project](https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/)
+* Check origin: `git remote -v`
 
 ###### Pair Workflow
 * A:
@@ -92,6 +133,20 @@ ___
 #### SQL
 
 * [SQL for Data Scientists](http://downloads.bensresearch.com/SQL.pdf)
+* [ModeAnalytics: SQL School](http://sqlschool.modeanalytics.com/)
+* [7 Handy SQL features for Data Scientists](http://blog.yhathq.com/posts/sql-for-data-scientists.html)
+* [Postgres Docs](https://www.postgresql.org/docs/)
+* [Postgres Guide](http://postgresguide.com/)
+* [Statistics in SQL](https://github.com/tlevine/sql-statistics)
+* [Intro to SQL](http://bensresearch.com/downloads/SQL.pdf)
+
+Create a database `CREATE DATABASE readychef;`
+load data into empty database `$ psql readychef < readychef.sql`
+Navigate to a db `psql db`
+
+Order of Execution
+`SELECT FROM JOIN WHERE GROUPBY HAVING ORDERBY LIMIT`
+
 
 
 #### Python
@@ -102,10 +157,36 @@ ___
 * [Classes and Objects Youtube Videos](https://www.youtube.com/watch?v=ZDa-Z5JzLYM&list=PL-osiE80TeTt2d9bfVyTiXJA-UTHn6WwU&index=37)
 * `if __name__ == '__main__':`
 
+Categorical Var from Continuous Var
+```python
+df['new_categ_var'] = pd.cut(df['continuous_var'], [3, 6, 10], labels=['<3','4-6','7-10'])
+```
+
 
 ###### psycopg
 
 * [Browse Psycopg documentation](http://initd.org/psycopg/docs/)
+
+```python
+import psycopg2
+from datetime import datetime
+conn = psycopg2.connect(dbname='socialmedia', user='postgres', host='/tmp')
+c = conn.cursor()
+today = '2014-08-14'
+# This is not strictly necessary but demonstrates how you can convert a date
+# to another format
+ts = datetime.strptime(today, '%Y-%m-%d').strftime("%Y%m%d")
+c.execute(
+    '''CREATE TABLE logins_7d AS
+    SELECT userid, COUNT(*) AS cnt, timestamp %(ts)s AS date_7d
+    FROM logins
+    WHERE logins.tmstmp > timestamp %(ts)s - interval '7 days'
+    GROUP BY userid;''', {'ts': ts}
+)
+conn.commit()
+conn.close()
+```
+
 
 
 
@@ -115,15 +196,27 @@ ___
 
 #### Unit Testing
 
+`unittest` is a package that you use when you're doing unit testing.  You write the code, then the test code in a separate file. In the test code, one of the files that you load is the actual code that you're testing
+
+`$ python -m unittest test.unit_test_sample`
+
+```python
+import unittest
+from primes import is_prime
+
+class PrimesTestCase(unittest.TestCase):
+    """Tests for `primes.py`."""
+
+    def test_is_five_prime(self):
+        """Is five successfully determined to be prime?"""
+        self.assertTrue(is_prime(5))
+
+if __name__ == '__main__':
+```
+
 * [Tutorial](https://jeffknupp.com/blog/2013/12/09/improve-your-python-understanding-unit-testing/)
 
 
-Text goes underneath
-
-###### A Table
-name | link
------|------
-thing1 | thing 2
 
 ####
 ___
@@ -132,6 +225,11 @@ ___
 
 ___
 ## Visualization
+
+#### matplotlib
+
+* Plot in style xkcd: add  `plt.xkcd()` in header
+* Plot "fivethirtyeight: `plt.style.use('fivethirtyeight')`
 ___
 ## Data Products
 
@@ -153,80 +251,11 @@ ___
 
 
 
-DAY 1 - Command Line, Github, Unit testing.
 
-  COMMAND LINE DICTIONARY
-    grep -i string file -- takes string and returns rows from file
-    sort
-    python python_script -- runs a python python_script
-    rm -- removes a file
-    rmdir -- removes an empty directory
-  NOTE -
-    Git and github - play around and don't be afraid of breaking things - it's a version control tool, so it's meant to protect from screwing things up too bad.
-    Keep branches for a specific period of time, then merge it in to master and then delete.
-  GIT COMMANDS
-    git remote -v
-    Interactive tool
-      http://ndpsoftware.com/git-cheatsheet/previous/git-cheatsheet.html
-  NOTE
-    so far so good, keeping up with all my assignments so far.  Doing a little awk study at lunch
-  UNIT TESTING - writing code (separate from your actual application code) that invokes the code it tests to help determine if there are any errors.
-    You write a function to test the code you're writing.  This is a key concept for DS.  The code below opens python, specifies that it wants to open module, and runs unittest using test.unit_test_sample
 
-    $ python -m unittest test.unit_test_sample
 
-    EXAMPLE CODE
-      import unittest
-      from primes import is_prime
 
-      class PrimesTestCase(unittest.TestCase):
-          """Tests for `primes.py`."""
-
-          def test_is_five_prime(self):
-              """Is five successfully determined to be prime?"""
-              self.assertTrue(is_prime(5))
-
-      if __name__ == '__main__':
-          unittest.main()
-    RESOURCES
-      https://jeffknupp.com/blog/2013/12/09/improve-your-python-understanding-unit-testing/
-      See example files is ds-day-1
-    NOTE
-      unittest is a package that you use when you're doing unittest.  You write the code, then the test code in a separate file. In the test code, one of the files that you load is the actual code that you're testing
-  NOTE -
-    had a happy hour in the afternoon.  Met John, Doster, Marshall (walking back to the trains), Chris Fuller (Nik's Friend), Elliot, Damien, and few guys from the BP program (Anu)
-DAY 2 - Pair Programming, OOP
-  PRE-READING
-    GIT -
-    PAIR PROGRAMMING
-    WRITING PYTHONIC CODE
-      http://docs.python-guide.org/en/latest/writing/style/
-    PYTHON STYLE GUIDE
-      https://www.python.org/dev/peps/pep-0008/
-  PRE-CLASS NOTE
-    came in this morning and practiced some of the code for the unit test. Used the two files from yesterday to craete my own addition and exponential test, then successfully ran the unittest module in command line. Boom.
-  LECTURE
-    How to create a Python 2 environment: conda create -n py2 python=2 anaconda
-    Goal is to be able to write a script, and run from command LINE
-      $ python script.py datafile.csv
-  LECTURE PM
-    Learned about OOP, classes, objects (instances of classes), functions.  Learned that classes can have attributes and methods.  Attributes are like nouns, or data that is stored about the object, and methods are verbs that the object can do.  Spent the afternoon in a pair programming assignment updating a game of war, and tonight I'll need to start in on a game of blackjack.  I'm learning all the things!!
-  LECTURE LATE PM
-    Tried really hard to get the blackjack game to work.  I think I was fairly close but ultimately didn't finish. checking out solutions.
-  RESOURCES
-    Videos from Chris
-      https://www.youtube.com/watch?v=ZDa-Z5JzLYM&list=PL-osiE80TeTt2d9bfVyTiXJA-UTHn6WwU&index=37
-DAY 3 - SQL, PostgreSQL,  all in folder dsi-sql
-  PRE-READING
-  LECTURE AM
-    learning about HAVING.  Can be used on aggregated rows after ORDER BY
-    order of operations - SELECT FROM JOIN WHERE GROUPBY HAVING ORDERBY LIMIT;
-  NOTE -
-    felt really good about the morning.  Was working well ahead of others and learn quite a bit about SQL
-  LECTURE PM -
-    how to build a pipeline.  There's a living, breathing database and we want to create a snapshot of it each day to run programs etc.  This is called
-    jupyter-notebook
-    how to connect python to RMDBS.  For postgres, we use psycopg2
+     For postgres, we use psycopg2
     for mySQL: Connector/Python
     Connections must be established using an existing database, username, database IP/URL, and maybe passwords
     If you have no created databases, you can connect to Postgres using the dbname 'postgres' to initialize db commands
@@ -246,17 +275,7 @@ DAY 4 - Mongo DB
   resources
     Aggregation:  https://docs.mongodb.com/manual/reference/sql-aggregation-comparison/
     db.articles.aggregate([{$group:{_id:null, average: {$avg: "$word_count"}}}])
-WEEKEND STUDY PLAN
-  [15] Review Unit Testing - find a few resources and store above
-  [15] Find a pair programming workflow - store above
-  [30] finish the sqlzoo tutorial
-  [15] watch the next OOP video from
-  [30] write and practice with a class
-  45 try to write a python script that opens colo-dwrpt01 and gets data
-  [30] Mongodb thing - do the examples.md file in ds-mongo
-  30 study pandas
-  30 update blog and send out to team
-  30 make a networking plan for break WEEK
+
 DAY 5 -- pandas
   STUDY
     numpy for numbers, pandas for heterogenous data
@@ -273,7 +292,7 @@ DAY 6 -- matplotlib
     def scatterplot(x_data, y_data, x_label, y_label, title):
 
     # Create the plot object
-    _, ax = plt.subplots()
+    , ax = plt.subplots()
 
     # Plot the data, set the size (s), color and transparency (alpha)
     # of the points
@@ -289,7 +308,7 @@ DAY 6 -- matplotlib
     # Each variable will actually have its own plot object but they
     # will be displayed in just one plot
     # Create the first plot object and draw the line
-    _, ax1 = plt.subplots()
+    , ax1 = plt.subplots()
     ax1.plot(x_data, y1_data, color = y1_color)
     # Label axes
     ax1.set_ylabel(y1_label, color = y1_color)
@@ -321,26 +340,11 @@ DAY 6 -- matplotlib
 
 
 
-
-TOPICS TO STUDY
+To dos
   Apply to the the UM Gupta hacks thing
   Make plans for:
     Project - getting data -- read Ruan's Stuff
     Networking for jobs
   Study maximum a posteriori (MAP)
-  Study exponential distribution parameter
-  Bootstrap notes
-
-
-
-MATH
-  Logarithm and Log rules
-    http://web.mit.edu/kayla/tcom/tcom_handout_logs.pdf
-
-WRITING GOOD CODE
-  Unit TEST
-    http://pythontesting.net/framework/unittest/unittest-introduction/
-
-DATA VISUALIZATION
-  https://www.datascience.com/blog/learn-data-science-intro-to-data-visualization-in-matplotlib
-  https://seaborn.pydata.org/examples/index.html
+  Practice enumerate and a few list comprehension examples
+  Get a few matplotlib examples from exercises
