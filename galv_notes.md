@@ -7,7 +7,9 @@ ___
 * [Galvanize Short Course for Stats](https://galvanizeopensource.github.io/stats-shortcourse/)
 * [PDF Book: Computer Age Statistical Inference Book](https://web.stanford.edu/~hastie/CASI_files/PDF/casi.pdf)
 
+#### Calculus
 
+* [Derivative Rules for log](http://tutorial.math.lamar.edu/Classes/CalcI/DiffExpLogFcns.aspx)
 
 #### Distributions
 
@@ -25,23 +27,26 @@ area to left -> x | ppf | ppf | q
 
 ###### Continuous
 
-* Normal
-  * [Standard Normal Table](https://github.com/gSchool/dsi-probability/blob/master/standard_normal_table.pdf)
-* Gamma
-* Beta
-* Chi-Squared
-* Exponential
-* F Distribution
-* Log-Normal
-* t
+Dist | Description | Example
+-----|------|-------------|---------
+[Normal](https://github.com/gSchool/dsi-probability/blob/master/standard_normal_table.pdf) |e |e
+Gamma |
+Beta |
+Chi-Squared |
+Exponential |
+F Distribution |
+Log-Normal |
+t |
 
 ###### Discrete
 
-* Binomial
-* Geometric
-* Hypergeometric
-* Negative Binomial
-* Poisson
+Dist | Description | Example
+-----|---------|------|
+[**Binomial**]() | X is the number of “successes” that we will achieve in n independent trials, where each trial is either a success or a failure, each with the same probability p of success. | If Jeremy Lin makes 10 free throws and each one independently has a 3/4 chance of getting in, then the number of free throws he makes is distributed Bin(10, 3/4)
+[**Geometric**]() | X is the number of “failures” that we will achieve before we achieve our first success. Our successes have probability p. | If each pokeball we throw has probability 1/10 to catch Mew, the number of failed pokeballs will be distributed Geom( 1/10 ).
+[**Hypergeometric**]() | In a population of w desired objects and b undesired objects, X is the number of “successes” we will have in a draw of n objects, without replacement. | You have w white balls and b black balls, and you draw n balls without replacement. The number of white balls in your sample is HGeom(w, b, n); the number of black balls is HGeom(b, w, n).
+[**Negative Binomial**]() | X is the number of “failures” that we will have before we achieve our rth success. Our successes have probability p | Thundershock has 60% accuracy and can faint a wild Raticate in 3 hits. The number of misses before Pikachu faints Raticate with Thundershock is distributed NBin(3, 0.6).
+[**Poisson**]() | There are rare events (low probability events) that occur many different ways (high possibilities of occurences) at an average rate of λ occurrences per unit space or time. The number of events that occur in that unit of space or time is X. | A certain busy intersection has an average of 2 accidents per month. Since an accident is a low probability event that can happen many different ways, it is reasonable to model the number of accidents in a month at that intersection as Pois(2). Then the number of accidents that happen in two months at that intersection is distributed Pois(4)
 
 #### Bootstrap
 
@@ -62,10 +67,11 @@ def bootstrap_ci(lst, bootstraps=1000, ci=95):
 
 #### Experimental Design
 
-#### Hypothesis Testing
+* [Sampling](https://en.wikipedia.org/wiki/Sampling_(statistics))
 
-* Power - `Pr(Reject H0 | H1 is true)`
-  * [Wiki](https://en.wikipedia.org/wiki/Statistical_power#Factors_influencing_power)
+#### Hypothesis Tests
+
+* [Power](https://en.wikipedia.org/wiki/Statistical_power#Factors_influencing_power) - `Pr(Reject H0 | H1 is true)`
 
 A/B Test of two sample proportions (e.g. sign up rate on website)
 ```python
@@ -200,6 +206,8 @@ conn.close()
 
 `$ python -m unittest test.unit_test_sample`
 
+run a test `make test`
+
 ```python
 import unittest
 from primes import is_prime
@@ -226,10 +234,18 @@ ___
 ___
 ## Visualization
 
-#### matplotlib
+* [flowingdata](http://flowingdata.com/)
+
+#### matplotlibx
 
 * Plot in style xkcd: add  `plt.xkcd()` in header
 * Plot "fivethirtyeight: `plt.style.use('fivethirtyeight')`
+* [Gallery](https://matplotlib.org/gallery.html)
+* [Pyplot examples (scroll down)](https://matplotlib.org/gallery/index.html#pyplots-examples)
+
+#### Seaborn
+
+* [Gallery](https://seaborn.pydata.org/examples/index.html)
 ___
 ## Data Products
 
@@ -238,15 +254,6 @@ ___
 * [Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet)
 * [Math Symbols](https://reu.dimacs.rutgers.edu/Symbols.pdf)
 
-
-#### Matplotlib
-
-* [Gallery](https://matplotlib.org/gallery.html)
-* [Pyplot examples (scroll down)](https://matplotlib.org/gallery/index.html#pyplots-examples)
-
-#### Seaborn
-
-* [Gallery](https://seaborn.pydata.org/examples/index.html)
 
 
 
@@ -325,7 +332,7 @@ DAY 6 -- matplotlib
   Histogram
     # Define a function for a histogram
     def histogram(data, x_label, y_label, title):
-      _, ax = plt.subplots()
+      , ax = plt.subplots()
       ax.hist(data, color = '#539caf')
       ax.set_ylabel(y_label)
       ax.set_xlabel(x_label)
@@ -340,11 +347,20 @@ DAY 6 -- matplotlib
 
 
 
-To dos
-  Apply to the the UM Gupta hacks thing
-  Make plans for:
-    Project - getting data -- read Ruan's Stuff
-    Networking for jobs
-  Study maximum a posteriori (MAP)
-  Practice enumerate and a few list comprehension examples
-  Get a few matplotlib examples from exercises
+
+  [ ] Apply to the the UM Gupta hacks thing
+  [ ] Project - getting data -- read Ruan's Stuff
+
+   Networking for jobs
+Study maximum a posteriori (MAP)
+Practice enumerate and a few list comprehension examples
+Get a few matplotlib examples from exercises
+Steal code from Chris Feller's missing_value_imputation
+Add code & notes from pipeline exploration - Kolmogorov smirnov
+@chris.hegg (schedule time)
+make a blog post with clean galv_notes
+Do one code war
+Try to find a few data scientists working on operations
+permuations and combinations
+exp and ln rules
+derivative rules
