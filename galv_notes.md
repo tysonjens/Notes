@@ -249,6 +249,55 @@ ___
 ___
 ## Data Products
 
+#### Data Cleaning
+
+Scaling
+```python
+from sklearn.model_selection import train_test_split
+## make a train test split
+X_train, X_test, y_train, y_test = train_test_split(X, y)
+
+## scale using sklearn
+scaler = preprocessing.StandardScaler().fit(X_train)
+X_train_1 = scaler.transform(X_train)
+X_test_1 = scaler.transform(X_test)
+```
+
+Dummies
+```Python
+## in pandas
+df = pd.DataFrame({'country': ['usa', 'canada', 'australia','japan','germany']})
+pd.get_dummies(df,prefix=['country'])
+```
+
+Binarizing
+```Python
+lb = preprocessing.LabelBinarizer()
+lb.fit([1, 2, 6, 4, 2])
+print(lb.transform((1,4)))
+print(lb.classes_)
+```
+
+Imputation
+```Python
+## See number of nulls
+test_scores.isnull().sum(0)
+
+## Strategy could be 'mean', 'most_frequent'
+from sklearn.preprocessing import Imputer
+imp = Imputer(missing_values='NaN', strategy='mean', axis=0)
+imp.fit([[1, 2], [np.nan, 3], [7, 6]])
+X = [[np.nan, 1], [6, np.nan], [3, 6]]
+imp.transform(X)
+
+## outputs:
+array([[ 4.        ,  1.        ],
+       [ 6.        ,  3.66666667],
+       [ 3.        ,  6.        ]])
+```
+
+
+
 #### Markdown
 
 * [Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet)
@@ -346,21 +395,19 @@ DAY 6 -- matplotlib
 
 
 
+## TODOS
 
-
-  [ ] Apply to the the UM Gupta hacks thing
-  [ ] Project - getting data -- read Ruan's Stuff
-
-   Networking for jobs
-Study maximum a posteriori (MAP)
-Practice enumerate and a few list comprehension examples
-Get a few matplotlib examples from exercises
-Steal code from Chris Feller's missing_value_imputation
-Add code & notes from pipeline exploration - Kolmogorov smirnov
-@chris.hegg (schedule time)
-make a blog post with clean galv_notes
-Do one code war
-Try to find a few data scientists working on operations
-permuations and combinations
-exp and ln rules
-derivative rules
+* [60] make a blog post with clean galv_notes
+* Add code & notes from pipeline exploration - Kolmogorov smirnov hypothesis test
+* [30] Get a few matplotlib examples from exercises
+* [30] Practice enumerate and a few list comprehension examples
+* [15] permuations and combinations
+* [15] clean up repositories
+* Study maximum a posteriori (MAP)
+* Find a Kaggle data set to play with.
+* Try to find a few data scientists working on operations
+* Networking for jobs
+* exp and ln rules
+* derivative rules
+* Switch to sublime text
+* Get in touch with Clouse (emailed)
