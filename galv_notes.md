@@ -1,17 +1,22 @@
 
----
-## Course
-___
-## Math/Stats
+
+# <span style="color:red">Math/Stats</span>
 
 * [Galvanize Short Course for Stats](https://galvanizeopensource.github.io/stats-shortcourse/)
 * [PDF Book: Computer Age Statistical Inference Book](https://web.stanford.edu/~hastie/CASI_files/PDF/casi.pdf)
 
-#### Calculus
+## Calculus
 
-* [Derivative Rules for log](http://tutorial.math.lamar.edu/Classes/CalcI/DiffExpLogFcns.aspx)
+* [Derivative Rules](https://en.wikipedia.org/wiki/Differentiation_rules)
 
-#### Distributions
+## Linear Algebra
+
+* [Wiki](https://en.wikipedia.org/wiki/Linear_algebra)
+* [MIT Course](https://ocw.mit.edu/courses/mathematics/18-02-multivariable-calculus-fall-2007/)
+
+
+
+## Probability & Distributions
 
 * [Distribution Applets](https://homepage.divms.uiowa.edu/~mbognar/)
 * [Cheatsheet](https://static1.squarespace.com/static/54bf3241e4b0f0d81bf7ff36/t/55e9494fe4b011aed10e48e5/1441352015658/probability_cheatsheet.pdf)
@@ -25,30 +30,8 @@ x to density | pmf | pdf | d
 x -> area to left | cdf  | cdf | p
 area to left -> x | ppf | ppf | q
 
-###### Continuous
 
-Dist | Description | Example
------|------|-------------|---------
-[Normal](https://github.com/gSchool/dsi-probability/blob/master/standard_normal_table.pdf) |e |e
-Gamma |
-Beta |
-Chi-Squared |
-Exponential |
-F Distribution |
-Log-Normal |
-t |
-
-###### Discrete
-
-Dist | Description | Example
------|---------|------|
-[**Binomial**]() | X is the number of “successes” that we will achieve in n independent trials, where each trial is either a success or a failure, each with the same probability p of success. | If Jeremy Lin makes 10 free throws and each one independently has a 3/4 chance of getting in, then the number of free throws he makes is distributed Bin(10, 3/4)
-[**Geometric**]() | X is the number of “failures” that we will achieve before we achieve our first success. Our successes have probability p. | If each pokeball we throw has probability 1/10 to catch Mew, the number of failed pokeballs will be distributed Geom( 1/10 ).
-[**Hypergeometric**]() | In a population of w desired objects and b undesired objects, X is the number of “successes” we will have in a draw of n objects, without replacement. | You have w white balls and b black balls, and you draw n balls without replacement. The number of white balls in your sample is HGeom(w, b, n); the number of black balls is HGeom(b, w, n).
-[**Negative Binomial**]() | X is the number of “failures” that we will have before we achieve our rth success. Our successes have probability p | Thundershock has 60% accuracy and can faint a wild Raticate in 3 hits. The number of misses before Pikachu faints Raticate with Thundershock is distributed NBin(3, 0.6).
-[**Poisson**]() | There are rare events (low probability events) that occur many different ways (high possibilities of occurences) at an average rate of λ occurrences per unit space or time. The number of events that occur in that unit of space or time is X. | A certain busy intersection has an average of 2 accidents per month. Since an accident is a low probability event that can happen many different ways, it is reasonable to model the number of accidents in a month at that intersection as Pois(2). Then the number of accidents that happen in two months at that intersection is distributed Pois(4)
-
-#### Bootstrap
+## Bootstrap
 
 The bootstrap takes 200-2000 samples of length equal to sample, and calculates the statistic of interest.  This process creates a distribution for the statistic and can be used to create confidence intervals. It is computationally expensive, but is more versatile that MLE.
 
@@ -63,15 +46,18 @@ def bootstrap_ci(lst, bootstraps=1000, ci=95):
     return print('The {} conf_int for the sample is {}.'.format(ci, conf_int))
 ```
 
-#### Maximum Likelihood Estimation
+## Maximum Likelihood Estimation
 
-#### Experimental Design
+* [Maximum Liklihood Estimation](https://ocw.mit.edu/courses/mathematics/18-05-introduction-to-probability-and-statistics-spring-2014/readings/MIT18_05S14_Reading10b.pdf)
+* [Maximum Likelihood Estimation (1)](http://statweb.stanford.edu/~susan/courses/s200/lectures/lect11.pdf)
+
+## Experimental Design & Hypothesis Tests
 
 * [Sampling](https://en.wikipedia.org/wiki/Sampling_(statistics))
-
-#### Hypothesis Tests
-
 * [Power](https://en.wikipedia.org/wiki/Statistical_power#Factors_influencing_power) - `Pr(Reject H0 | H1 is true)`
+[Power](http://my.ilstu.edu/~wjschne/138/Psychology138Lab14.html)
+* [Quick-R Power](https://www.statmethods.net/stats/power.html)
+* [ANOVA vs T-test](https://keydifferences.com/difference-between-t-test-and-anova.html)
 
 A/B Test of two sample proportions (e.g. sign up rate on website)
 ```python
@@ -79,32 +65,116 @@ from z_test import z_test
 z_test.z_test(mean1, mean2, n1, n2, effect_size=.01,two_tailed=False)
 ```
 
-###### Categorical Hypothesis Testing
+Kolmogorov-Smirnov - Null: Two array are from same distribution
+
+```python
+import scipy.stats as st
+st.ks_2samp(randpois, count_by_month)
+```
+## Bayesian Methods
+
+[PyMC3](http://docs.pymc.io/notebooks/getting_started.html)
+```Python
+from pymc3 import Normal, Model, DensityDist, sample
+from pymc3.math import log, exp
+from pymc3 import df_summary
+
+with Model() as disaster_model:
+    switchpoint = DiscreteUniform('switchpoint', lower=0, upper=n_years)
+```
+
+See PyMC3 Distributions
+```python
+with Model() as disaster_model:
+
+    switchpoint = DiscreteUniform('switchpoint', lower=0, upper=n_years)
+```
+
+PyMC3 switchpoint
+```python
+from pymc3.math import switch
+
+with disaster_model:
+
+    rate = switch(switchpoint >= np.arange(n_years), early_mean, late_mean)
+```
+
+Changepoint, Switchpoint analysis
+```python
+import scipy.stats as st
+import numpy as np
+import pymc3 as pm
+import theano.tensor as tt
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+## Draw two random variables from Poisson
+pois1 = st.poisson.rvs(5, size=100)
+pois2 = st.poisson.rvs(6.5, size=100)
+newlist = np.append(pois1, pois2)
+n_newlist = len(newlist)
+
+## assign lambdas and tau to stochastic variables
+with pm.Model() as model:
+    alpha = 1.0/newlist.mean()  # Recall count_data is the
+                                   # variable that holds our txt counts
+    lambda_1 = pm.Exponential("lambda_1", alpha)
+    lambda_2 = pm.Exponential("lambda_2", alpha)
+    tau = pm.DiscreteUniform("tau", lower=0, upper=n_newlist)
+
+## create a combined function for lambda (it is still a RV)    
+with model:
+    idx = np.arange(n_newlist) # Index
+    lambda_ = pm.math.switch(tau >= idx, lambda_1, lambda_2)
+
+## combine the data with our proposed data generation scheme    
+with model:
+    observation = pm.Poisson("obs", lambda_, observed=newlist)
+
+## inference
+with model:
+    step = pm.Metropolis()
+    trace = pm.sample(1000, tune=5000,step=step)
+
+
+    fig = plt.figure(figsize=(12.5,5))
+    ax = fig.add_subplot(111)
+
+    N = tau_samples.shape[0]
+    expected_texts_per_day = np.zeros(n_newlist)
+    for day in range(0, n_newlist):
+        ix = day < tau_samples
+        expected_texts_per_day[day] = (lambda_1_samples[ix].sum()
+                                       + lambda_2_samples[~ix].sum()) / N
+
+    ax.plot(range(n_newlist), expected_texts_per_day, lw=4, color="#E24A33",
+             label="expected number of referrals")
+    ax.set_xlim(0, n_newlist)
+    ax.set_xlabel("Day")
+    ax.set_ylabel("Expected # referrals")
+    ax.set_title("Expected number of referrals")
+    ax.bar(np.arange(len(newlist)), newlist, color="#348ABD", alpha=0.65,label="observed referrals per day")
+    ax.legend(loc="upper left");
+```
+
+[MIT Bayesian Inference with Discrete Priors](https://ocw.mit.edu/courses/mathematics/18-05-introduction-to-probability-and-statistics-spring-2014/readings/MIT18_05S14_Reading11.pdf)
+
 
 #### Math_Stats Miscellaneous
 
-* [Log Rules](http://tutorial.math.lamar.edu/Classes/CalcI/DiffExpLogFcns.aspx)
-* [Logarithm and Log rules](http://web.mit.edu/kayla/tcom/tcom_handout_logs.pdf)
-*
-
-$$
-\frac{d}{dx} ln(x) = \frac{1}{x}
-$$
-
-* [Maximum Liklihood Estimation](https://ocw.mit.edu/courses/mathematics/18-05-introduction-to-probability-and-statistics-spring-2014/readings/MIT18_05S14_Reading10b.pdf)
-* [Maximum Likelihood Estimation (1)](http://statweb.stanford.edu/~susan/courses/s200/lectures/lect11.pdf)
+* [Book: Probabilistic Programming](http://nbviewer.jupyter.org/github/CamDavidsonPilon/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers/tree/master/)
 * [Maximum A Posteriori](https://web.stanford.edu/class/archive/cs/cs109/cs109.1166/ppt/22-MAP.pdf)
 ___
 
-## Coding & Environment
+# <span style="color:red">Coding & Environment</span>
 
-#### GitHub
+## GitHub
 
 * [Interactive Tool](http://ndpsoftware.com/git-cheatsheet/previous/git-cheatsheet.html)
 * [Adding a Github repo to house local project](https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/)
 * Check origin: `git remote -v`
 
-###### Pair Workflow
+### Pair Workflow
 * A:
   * needs to add B as a collaborator for that repo on his/her Github.
   * adds a branch, e.g. `$ git checkout -b pair_morning`
@@ -136,7 +206,7 @@ ___
 
 
 
-#### SQL
+## SQL
 
 * [SQL for Data Scientists](http://downloads.bensresearch.com/SQL.pdf)
 * [ModeAnalytics: SQL School](http://sqlschool.modeanalytics.com/)
@@ -153,9 +223,7 @@ Navigate to a db `psql db`
 Order of Execution
 `SELECT FROM JOIN WHERE GROUPBY HAVING ORDERBY LIMIT`
 
-
-
-#### Python
+## Python
 
 * [Style Guide](https://www.python.org/dev/peps/pep-0008/)
 * [Pythonic Code](http://docs.python-guide.org/en/latest/writing/style/)
@@ -168,8 +236,12 @@ Categorical Var from Continuous Var
 df['new_categ_var'] = pd.cut(df['continuous_var'], [3, 6, 10], labels=['<3','4-6','7-10'])
 ```
 
+### psycopg (Python to PostgreSQL)
 
-###### psycopg
+Cursor operations typically goes like the following:
+* execute a query
+* fetch rows from query result if it is a SELECT query because it is iterative, previously fetched rows can only be fetched again by rerunning the query
+* close cursor through .close()
 
 * [Browse Psycopg documentation](http://initd.org/psycopg/docs/)
 
@@ -193,14 +265,17 @@ conn.commit()
 conn.close()
 ```
 
+## Mongodb
+
+* [SQL to Mongodb translator](https://docs.mongodb.com/manual/reference/sql-aggregation-comparison/)
 
 
+### Pymongo
+
+* [Cheat sheet](https://gist.github.com/stevemclaugh/530979cddbc458d25e37c9d4703c13f6)
 
 
-
-#### Mongodb
-
-#### Unit Testing
+### Unit Testing
 
 `unittest` is a package that you use when you're doing unit testing.  You write the code, then the test code in a separate file. In the test code, one of the files that you load is the actual code that you're testing
 
@@ -226,30 +301,61 @@ if __name__ == '__main__':
 
 
 
-####
+### Python to R, R to Python
+
+In a python script, you can write ".R" files and then run them, all while still in Python.  Use code:
+```Python
+%%writefile getmtcars.R
+a = mtcars
+write.csv(a, 'cars.csv')
+```
+```python
+ !Rscript getmtcars.R
+ ```
+
+ RPy2
+
+
 ___
 
-## Machine learning
+# <span style="color:red">Machine learning</span>
+
+[An Introduction to Statistical Learning - ISLR](http://www-bcf.usc.edu/~gareth/ISL/ISLR%20Seventh%20Printing.pdf)
 
 ___
-## Visualization
+# <span style="color:red">Visualization</span>
 
 * [flowingdata](http://flowingdata.com/)
 
-#### matplotlibx
+## matplotlibx
 
 * Plot in style xkcd: add  `plt.xkcd()` in header
 * Plot "fivethirtyeight: `plt.style.use('fivethirtyeight')`
 * [Gallery](https://matplotlib.org/gallery.html)
 * [Pyplot examples (scroll down)](https://matplotlib.org/gallery/index.html#pyplots-examples)
 
-#### Seaborn
+Plotting Two Histograms with Alpha = 0.5
+```python
+figpois = plt.figure(figsize=(12,6))
+acax = figpois.add_subplot(111)
+acax.set_title('Histogram, Accidents in a Month')
+acax.hist(count_by_month, bins = 15, alpha = 0.5, normed=1, label='Actual')
+acax.hist(randpois, bins = 57, alpha = 0.5, color='g', normed=1, label='Poisson')
+acax.set_ylabel('Frequency')
+acax.legend();
+```
+
+## GGPlot
+
+* [Cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
+
+## Seaborn
 
 * [Gallery](https://seaborn.pydata.org/examples/index.html)
 ___
-## Data Products
+# <span style="color:red">Data Products</span>
 
-#### Data Cleaning
+## Data Cleaning
 
 Scaling
 ```python
@@ -298,7 +404,7 @@ array([[ 4.        ,  1.        ],
 
 
 
-#### Markdown
+### Markdown
 
 * [Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet)
 * [Math Symbols](https://reu.dimacs.rutgers.edu/Symbols.pdf)
@@ -306,108 +412,18 @@ array([[ 4.        ,  1.        ],
 
 
 
+### TODOS
 
-
-
-
-
-     For postgres, we use psycopg2
-    for mySQL: Connector/Python
-    Connections must be established using an existing database, username, database IP/URL, and maybe passwords
-    If you have no created databases, you can connect to Postgres using the dbname 'postgres' to initialize db commands
-    Data changes are not actually stored until you choose to commit. This can be done either through conn.commit() or setting autocommit = True. Until committed, all transactions is only temporary stored.
-    Autocommit = True is necessary to do database commands like CREATE DATABASE. This is because Postgres does not have temporary transactions at the database level.
-    If you ever need to build similar pipelines for other forms of database, there are libraries such PyODBC which operate very similarly.
-    SQL connection databases utilizes cursors for data traversal and retrieval. This is kind of like an iterator in Python.
-    Cursor operations typically goes like the following:
-    execute a query
-    fetch rows from query result if it is a SELECT query
-    because it is iterative, previously fetched rows can only be fetched again by rerunning the query
-    close cursor through .close()
-    Cursors and Connections must be closed using .close() or else Postgres will lock certain operation on the database/tables to connection is severed.
-DAY 4 - Mongo DB
-  MORNING EXERCISE
-    db.log.find({'t': {$exists: 1}}).forEach(function(entry) { entry.t = new Date(entry.t * 1000); db.log.save(entry); })
-  resources
-    Aggregation:  https://docs.mongodb.com/manual/reference/sql-aggregation-comparison/
-    db.articles.aggregate([{$group:{_id:null, average: {$avg: "$word_count"}}}])
-
-DAY 5 -- pandas
-  STUDY
-    numpy for numbers, pandas for heterogenous data
-    two workhorses of pandas - Series and dataframes
-    Wes Mckinney - Time series https://www.youtube.com/watch?v=0unf-C-pBYE
-    MORNING - did numpy and pandas practice with individual assignments
-    AFTERNOON -
-DAY 6 -- matplotlib
-  Three main types of variables
-    Quantitative
-    Categorical
-    Ordinal
-  Scatter Plot
-    def scatterplot(x_data, y_data, x_label, y_label, title):
-
-    # Create the plot object
-    , ax = plt.subplots()
-
-    # Plot the data, set the size (s), color and transparency (alpha)
-    # of the points
-    ax.scatter(x_data, y_data, s = 30, color = '#539caf', alpha = 0.75)
-
-    # Label the axes and provide a title
-    ax.set_title(title)
-    ax.set_xlabel(x_label)
-    ax.set_ylabel(y_label)
-  Line Plot with Confidence Intervals
-    # Define a function for a plot with two y axes
-    def lineplot2y(x_data, x_label, y1_data, y1_color, y1_label, y2_data, y2_color, y2_label, title):
-    # Each variable will actually have its own plot object but they
-    # will be displayed in just one plot
-    # Create the first plot object and draw the line
-    , ax1 = plt.subplots()
-    ax1.plot(x_data, y1_data, color = y1_color)
-    # Label axes
-    ax1.set_ylabel(y1_label, color = y1_color)
-    ax1.set_xlabel(x_label)
-    ax1.set_title(title)
-
-    # Create the second plot object, telling matplotlib that the two
-    # objects have the same x-axis
-    ax2 = ax1.twinx()
-    ax2.plot(x_data, y2_data, color = y2_color)
-    ax2.set_ylabel(y2_label, color = y2_color)
-    # Show right frame line
-    ax2.spines['right'].set_visible(True)
-  Histogram
-    # Define a function for a histogram
-    def histogram(data, x_label, y_label, title):
-      , ax = plt.subplots()
-      ax.hist(data, color = '#539caf')
-      ax.set_ylabel(y_label)
-      ax.set_xlabel(x_label)
-      ax.set_title(title)
-
-    # Call the function to create plot
-    histogram(data = daily_data['registered']
-             , x_label = 'Check outs'
-             , y_label = 'Frequency'
-             , title = 'Distribution of Registered Check Outs')
-
-
-
-## TODOS
-
-* [60] make a blog post with clean galv_notes
-* Add code & notes from pipeline exploration - Kolmogorov smirnov hypothesis test
-* [30] Get a few matplotlib examples from exercises
-* [30] Practice enumerate and a few list comprehension examples
-* [15] permuations and combinations
 * [15] clean up repositories
 * Study maximum a posteriori (MAP)
 * Find a Kaggle data set to play with.
 * Try to find a few data scientists working on operations
 * Networking for jobs
-* exp and ln rules
-* derivative rules
 * Switch to sublime text
 * Get in touch with Clouse (emailed)
+* try iterm2
+* look at amelia's notes
+
+### RESOURCES WE SKIMMED THAT I SHOULD COME BACK TO
+
+* [Bayesian Inference for Hackers](http://nbviewer.jupyter.org/github/CamDavidsonPilon/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers/tree/master/)
