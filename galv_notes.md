@@ -320,53 +320,22 @@ ___
 
 # <span style="color:red">Machine learning</span>
 
-[An Introduction to Statistical Learning - ISLR](http://www-bcf.usc.edu/~gareth/ISL/ISLR%20Seventh%20Printing.pdf)
-
-___
-# <span style="color:red">Visualization</span>
-
-* [flowingdata](http://flowingdata.com/)
-
-## matplotlibx
-
-* Plot in style xkcd: add  `plt.xkcd()` in header
-* Plot "fivethirtyeight: `plt.style.use('fivethirtyeight')`
-* [Gallery](https://matplotlib.org/gallery.html)
-* [Pyplot examples (scroll down)](https://matplotlib.org/gallery/index.html#pyplots-examples)
-
-Plotting Two Histograms with Alpha = 0.5
-```python
-figpois = plt.figure(figsize=(12,6))
-acax = figpois.add_subplot(111)
-acax.set_title('Histogram, Accidents in a Month')
-acax.hist(count_by_month, bins = 15, alpha = 0.5, normed=1, label='Actual')
-acax.hist(randpois, bins = 57, alpha = 0.5, color='g', normed=1, label='Poisson')
-acax.set_ylabel('Frequency')
-acax.legend();
-```
-
-## GGPlot
-
-* [Cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
-
-## Seaborn
-
-* [Gallery](https://seaborn.pydata.org/examples/index.html)
-___
-# <span style="color:red">Data Products</span>
+* [An Introduction to Statistical Learning - ISLR](http://www-bcf.usc.edu/~gareth/ISL/ISLR%20Seventh%20Printing.pdf)
+* [SK Learn](http://scikit-learn.org/stable/)
 
 ## Data Cleaning
 
-Scaling
+Split data into x, y for training and testing
 ```python
 from sklearn.model_selection import train_test_split
 ## make a train test split
 X_train, X_test, y_train, y_test = train_test_split(X, y)
+```
 
+Scaling - normalizes values of each feature, mean = 0, sd = 1
+```python
 ## scale using sklearn
-scaler = preprocessing.StandardScaler().fit(X_train)
-X_train_1 = scaler.transform(X_train)
-X_test_1 = scaler.transform(X_test)
+standardizer.fit(X_matrix)
 ```
 
 Dummies
@@ -402,6 +371,127 @@ array([[ 4.        ,  1.        ],
        [ 3.        ,  6.        ]])
 ```
 
+Pipelines
+```python
+## Create an object that pipelines three transformations
+wells_pipeline = Pipeline([
+    ('select_best_3', SelectKBest(chi2, k=3)),
+    ('standardize', StandardScaler()),
+    ('regression', LogisticRegression())
+])
+
+## Fit that object to data.
+wells_pipeline.fit(X_wells, y_wells)
+```
+
+Pipeline General Form
+```python
+pipeline_fit_object = Pipeline([
+    ('name_first_pipeline_piece', ColumnSelector(args)),
+    ('name_secon_pipeline_piece', NaturalCubicSpline(args))
+])
+
+Pipeline([('name1', Thing1(args)), ('name2', Thing2(args))]
+```
+
+Pipeline of pipelines
+```python
+feature_pipeline = FeatureUnion([
+    ('pipeline_name_fit', pipeline_name_fit),
+    ('pipeline2_name_fit', cement_fit)
+])
+```
+
+Fitting it altogher
+```python
+feature_pipeline.fit(dataframe)
+features = feature_pipeline.transform(dataframe)
+```
+
+## General Linear model_selection
+
+* [Multicollinearity](https://en.wikipedia.org/wiki/Multicollinearity)
+
+
+### Linear Regression
+
+Cost Function  
+
+Dropping Variables:
+```python
+best_3_selector = SelectKBest(chi2, k=3)
+best_3_selector.fit(X_wells, y_wells)
+```
+
+Sk learn model fitting
+```python
+model = LinearRegression(fit_intercept=False)
+model.fit(features.values, y=concrete['compressive_strength'])
+## display param coefficients
+display_coef(model, features.columns)
+```
+Bootstrap estimates of coefficients
+```python
+models = bootstrap_train(
+    LinearRegression,
+    features.values,
+    concrete['compressive_strength'],
+    fit_intercept=False
+)
+fig, axs = plot_bootstrap_coefs(models, features.columns, n_col=4)
+fig.tight_layout()
+```
+$d(\theta)$
+
+
+Hypothesis Tests
+* Breusch-Pagan - tests for Heteroscedasticity
+* Shaprio-Wilk - tests for normality of residuals
+
+
+## Logistic Regression
+
+### Regularization
+
+
+
+___
+# <span style="color:red">Visualization</span>
+
+* [flowingdata](http://flowingdata.com/)
+
+## matplotlibx
+
+* Plot in style xkcd: add  `plt.xkcd()` in header
+* Plot "fivethirtyeight: `plt.style.use('fivethirtyeight')`
+* [Gallery](https://matplotlib.org/gallery.html)
+* [Pyplot examples (scroll down)](https://matplotlib.org/gallery/index.html#pyplots-examples)
+
+Plotting Two Histograms with Alpha = 0.5
+```python
+figpois = plt.figure(figsize=(12,6))
+acax = figpois.add_subplot(111)
+acax.set_title('Histogram, Accidents in a Month')
+acax.hist(count_by_month, bins = 15, alpha = 0.5, normed=1, label='Actual')
+acax.hist(randpois, bins = 57, alpha = 0.5, color='g', normed=1, label='Poisson')
+acax.set_ylabel('Frequency')
+acax.legend();
+```
+
+
+
+## GGPlot
+
+* [Cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
+
+## Seaborn
+
+* [Gallery](https://seaborn.pydata.org/examples/index.html)
+___
+# <span style="color:red">Data Products</span>
+
+
+
 
 
 ### Markdown
@@ -422,7 +512,10 @@ array([[ 4.        ,  1.        ],
 * Switch to sublime text
 * Get in touch with Clouse (emailed)
 * try iterm2
-* look at amelia's notes
+* objects and classes practice
+* Study MCMC
+
+
 
 ### RESOURCES WE SKIMMED THAT I SHOULD COME BACK TO
 
