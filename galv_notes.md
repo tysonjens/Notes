@@ -22,6 +22,7 @@
 * [Cheatsheet](https://static1.squarespace.com/static/54bf3241e4b0f0d81bf7ff36/t/55e9494fe4b011aed10e48e5/1441352015658/probability_cheatsheet.pdf)
 * [Scipy Stats Functions](https://docs.scipy.org/doc/scipy/reference/stats.html)
 * [Scipy Stats](https://stackoverflow.com/questions/37559470/what-do-all-the-distributions-available-in-scipy-stats-look-like#37559471)
+* [Scipy Cheatsheet](https://onedrive.live.com/?authkey=%21APW6U3IpfyxCXmY&cid=233807F4EE406C1F&id=233807F4EE406C1F%215688&parId=233807F4EE406C1F%215605&o=OneUp)
 
 
 thing | Discrete | Continuous | R
@@ -229,7 +230,7 @@ Order of Execution
 * [Pythonic Code](http://docs.python-guide.org/en/latest/writing/style/)
 * Create a Python 2 environment `conda create -n py2 python=2 anaconda`
 * [Classes and Objects Youtube Videos](https://www.youtube.com/watch?v=ZDa-Z5JzLYM&list=PL-osiE80TeTt2d9bfVyTiXJA-UTHn6WwU&index=37)
-* `if __name__ == '__main__':`
+* `if __name__ == '__main__':`  [read](https://stackoverflow.com/questions/419163/what-does-if-name-main-do)
 
 Categorical Var from Continuous Var
 ```python
@@ -451,6 +452,32 @@ Hypothesis Tests
 
 ## Logistic Regression
 
+
+Two variables, plotting y's
+```Python
+fig1 = plt.figure(figsize=(12,10))
+ax1 = fig.add_subplot(111)
+ax1.scatter(X_dogs[:,0], X_dogs[:,1], color='b', label='dogs')
+ax1.scatter(X_horses[:,0], X_horses[:,1], color='r', label='horses')
+ax1.legend(shadow=True, fontsize='xx-large')
+ax1.set_xlabel('Weight (lb)',fontsize=font_size)
+ax1.set_ylabel('Height (in)',fontsize=font_size)
+ax1.set_title('Horse or dog?',fontsize=font_size)
+plt.show()
+```
+
+3D Plotting
+```python
+fig = plt.figure(figsize=(12,10))
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(X[:,0], X[:,1], y, c=y,s=35)
+ax.set_xlabel('Weight (lb)',fontsize=font_size,labelpad=25.0)
+ax.set_ylabel('Height (in)',fontsize=font_size,labelpad=25.0)
+ax.set_zlabel('Horseness',fontsize=font_size,labelpad=25.0)
+plt.tight_layout()
+plt.show()
+```
+
 ### Regularization
 
 
@@ -514,9 +541,11 @@ ___
 * try iterm2
 * objects and classes practice
 * Study MCMC
+* Study splines
 
 
 
 ### RESOURCES WE SKIMMED THAT I SHOULD COME BACK TO
 
 * [Bayesian Inference for Hackers](http://nbviewer.jupyter.org/github/CamDavidsonPilon/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers/tree/master/)
+* Model selection 4_machine_learning/glms
