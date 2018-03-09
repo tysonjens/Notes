@@ -237,6 +237,27 @@ Categorical Var from Continuous Var
 df['new_categ_var'] = pd.cut(df['continuous_var'], [3, 6, 10], labels=['<3','4-6','7-10'])
 ```
 
+python starter
+```python
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+%matplotlib inline
+```
+python starer uncommon
+```python
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.model_selection import train_test_split, KFold, cross_val_score
+from sklearn.pipeline import Pipeline
+from regression_tools.dftransformers import (
+    ColumnSelector, Identity, FeatureUnion, MapFeature, Intercept)
+from sklearn.linear_model import LogisticRegression
+```
+
+
+
 ### psycopg (Python to PostgreSQL)
 
 Cursor operations typically goes like the following:
@@ -323,6 +344,7 @@ ___
 
 * [An Introduction to Statistical Learning - ISLR](http://www-bcf.usc.edu/~gareth/ISL/ISLR%20Seventh%20Printing.pdf)
 * [SK Learn](http://scikit-learn.org/stable/)
+* [Model Smoothers](http://madrury.github.io/smoothers/)
 
 ## Data Cleaning
 
@@ -335,8 +357,8 @@ X_train, X_test, y_train, y_test = train_test_split(X, y)
 
 Scaling - normalizes values of each feature, mean = 0, sd = 1
 ```python
-## scale using sklearn
-standardizer.fit(X_matrix)
+## scale using pandas
+df['var'] = ((df['var']-(df['var'].mean())))/(df['var'].std())
 ```
 
 Dummies
@@ -345,6 +367,12 @@ Dummies
 df = pd.DataFrame({'country': ['usa', 'canada', 'australia','japan','germany']})
 pd.get_dummies(df,prefix=['country'])
 ```
+Get Dummies
+```python
+Dummies = pd.get_dummies(df['var_with_multiple_cat_levels'])
+df.drop('var_with_multiple_cat_levels', inplace=True, axis=1)
+```
+
 
 Binarizing
 ```Python
@@ -403,13 +431,13 @@ feature_pipeline = FeatureUnion([
 ])
 ```
 
-Fitting it altogher
+Fitting it altogther
 ```python
 feature_pipeline.fit(dataframe)
 features = feature_pipeline.transform(dataframe)
 ```
 
-## General Linear model_selection
+## General Linear Models
 
 * [Multicollinearity](https://en.wikipedia.org/wiki/Multicollinearity)
 
@@ -442,7 +470,6 @@ models = bootstrap_train(
 fig, axs = plot_bootstrap_coefs(models, features.columns, n_col=4)
 fig.tight_layout()
 ```
-$d(\theta)$
 
 
 Hypothesis Tests
@@ -450,7 +477,7 @@ Hypothesis Tests
 * Shaprio-Wilk - tests for normality of residuals
 
 
-## Logistic Regression
+### Logistic Regression
 
 
 Two variables, plotting y's
@@ -478,9 +505,56 @@ plt.tight_layout()
 plt.show()
 ```
 
+Assessing Fit, Model Accuracy, Cross Validation
+```python
+roc_auc = cross_val_score(ML_instance, X_pandas, y_pandas, scoring='roc_auc', cv=8)
+```
+
 ### Regularization
 
+Sampling Density, Curse of dimensionality
 
+$N^\frac{1}{D}$  
+Where:
+* N = number of data points
+* D = number of dimensions
+
+### K-folds Cross-Validation
+
+Takes a training set of data and breaks it into 5 folds.  Through 5 iterations, fits a linear model on the *other* folds, then scores how will the model fits on the fold at hand `foldrmse = rmse(y_test_f, test_f_predicted)`. Collects this scores and returns them
+```python
+def crossVal(X_train, y_train):
+    kf = KFold(n_splits=5)
+    RMSES = []
+    for train_index, test_index in kf.split(X_train):
+        X_train_f, X_test_f = X_train[train_index], X_train[test_index]
+        y_train_f, y_test_f = y_train[train_index], y_train[test_index]
+        linear = LinearRegression()
+        linear.fit(X_train_f, y_train_f)
+        test_f_predicted = linear.predict(X_test_f)
+        foldrmse = rmse(y_test_f, test_f_predicted)
+        RMSES.append(float(foldrmse))
+    print('The rsme of each fold is {}'.format(RMSES))
+    print('The average rmse of each fold is {}'.format(np.mean(RMSES)))
+```
+
+### Model selection
+
+Recursive Feature Eliminate RFE.   
+At each iteration, select one feature to remove until there are n feature left
+
+```python
+from sklearn.feature_selection import RFE
+linear_fri = LinearRegression()
+selector.fit(X_fri, y_fri)
+def gen_modselect_score(n):
+    scores = []
+    for i in np.arange(n):
+        selector = RFE(linear_fri, (21-i), step=1)
+        selector.fit(X_fri, y_fri)
+        scores.append(selector.score(X_fri, y_fri))
+    return scores
+```
 
 ___
 # <span style="color:red">Visualization</span>
@@ -493,6 +567,17 @@ ___
 * Plot "fivethirtyeight: `plt.style.use('fivethirtyeight')`
 * [Gallery](https://matplotlib.org/gallery.html)
 * [Pyplot examples (scroll down)](https://matplotlib.org/gallery/index.html#pyplots-examples)
+
+```python
+fig, axes = plt.subplots(3,3, figsize=(10,10))
+col_names = ['age', 'sex', 'bmi', 'bp', 's1', 's2', 's3', 's4', 's5', 's6']
+
+for m, ax in zip(col_names, axes.flatten()):
+    ax.scatter(Xpd[m], ypd)
+    ax.set_title(m)
+```
+
+
 
 Plotting Two Histograms with Alpha = 0.5
 ```python
@@ -541,11 +626,13 @@ ___
 * try iterm2
 * objects and classes practice
 * Study MCMC
-* Study splines
-
+* Study splines ISLR
+* Update to Adnan
+* Let Rhoda / Matt know I got into Northwestern
 
 
 ### RESOURCES WE SKIMMED THAT I SHOULD COME BACK TO
 
 * [Bayesian Inference for Hackers](http://nbviewer.jupyter.org/github/CamDavidsonPilon/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers/tree/master/)
-* Model selection 4_machine_learning/glms
+* Model selection 4_machine_learning/glms - notebook
+*
