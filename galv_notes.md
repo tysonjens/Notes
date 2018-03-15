@@ -31,7 +31,54 @@ x to density | pmf | pdf | d
 x -> area to left | cdf  | cdf | p
 area to left -> x | ppf | ppf | q
 
+Plot Continuous Distribution
+```python
+def plot_continuous(dist):
+    fig, ax = plt.subplots(2, 1, sharex=True, figsize=(4, 5))
+      # Plot hist
+    rvs = dist.rvs(size=1000)
+    ax[0].hist(rvs, normed=True, alpha=0.2, histtype='stepfilled')
+    x=np.linspace(dist.ppf(0.01), dist.ppf(0.99), 50)
+    ax[0].plot(x, dist.pdf(x), '-', lw=2)
+    ax[0].set_title( dist.dist.name.title() + ' PDF')
+    ax[0].set_ylabel('p(X=x)')
+      # Plot cdf.
+    ax[1].plot(x, dist.cdf(x), '-', lw=2)
+    ax[1].set_title( dist.dist.name.title() + ' CDF')
+    ax[1].set_ylabel('p(X<=x)')
+    ax[1].set_xlabel('x')
+    return (fig, ax)
 
+## And then call it like
+lam = 1  # lambda
+exponential = st.expon(scale=1/lam)
+plot_continuous(exponential);
+```
+
+Plot Discrete Distribution
+```python
+def plot_discrete(dist):
+    fig, ax = plt.subplots(2, 1, sharex=True, figsize=(4, 5))
+     # Plot hist
+    rvs = dist.rvs(size=1000)
+    w = np.ones_like(rvs)/ float(len(rvs))
+    ax[0].hist(rvs, weights=w, alpha=0.2, histtype='stepfilled')
+      # Plot pmf.
+    k = np.arange(dist.ppf(0.01), dist.ppf(0.99)+1)
+    ax[0].plot(k, dist.pmf(k), 'bo', lw=2);
+    ax[0].set_title( dist.dist.name.title() + ' PMF')
+    ax[0].set_ylabel('p(X=k)')
+     # Plot cdf.
+    ax[1].plot(k, dist.cdf(k), 'bo', lw=2);
+    ax[1].set_title( dist.dist.name.title() + ' CDF')
+    ax[1].set_ylabel('p(X<=k)')
+    ax[1].set_xlabel('k');
+    return (fig, ax)
+
+## And then call it with
+binomial=st.binom(n=10,p=0.6)
+plot_discrete(binomial);
+```
 ## Bootstrap
 
 The bootstrap takes 200-2000 samples of length equal to sample, and calculates the statistic of interest.  This process creates a distribution for the statistic and can be used to create confidence intervals. It is computationally expensive, but is more versatile that MLE.
@@ -246,7 +293,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 %matplotlib inline
 ```
-python starer uncommon
+python starter uncommon
 ```python
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.model_selection import train_test_split, KFold, cross_val_score
@@ -554,6 +601,26 @@ def gen_modselect_score(n):
         selector.fit(X_fri, y_fri)
         scores.append(selector.score(X_fri, y_fri))
     return scores
+```
+
+ROC Curve
+```python
+TPR, FPR, thresholds = roc_curve(y_train_val, y_train_val_proba, pos_label=None, sample_weight=None, drop_intermediate=True)
+
+def plotroc(FPR, TPR):
+    roc_auc = auc(FPR, TPR)
+    plt.figure()
+    lw = 2
+    plt.plot(FPR, TPR, color='darkorange',
+             lw=lw, label='ROC curve (area = %0.2f)' % roc_auc)
+    plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Receiver operating characteristic example')
+    plt.legend(loc="lower right")
+    plt.show()
 ```
 
 ___
