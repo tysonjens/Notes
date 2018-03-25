@@ -557,6 +557,36 @@ Assessing Fit, Model Accuracy, Cross Validation
 roc_auc = cross_val_score(ML_instance, X_pandas, y_pandas, scoring='roc_auc', cv=8)
 ```
 
+Test Logistic Lasso Params
+```python
+def try_lasso_hyperparam(X_train, y_train, X_test, y_test, params_to_try,):
+    aucs = []
+    for param in params_to_try:
+        mod = LogisticRegression(penalty='l1', C=param)
+        mod.fit(X_train, y_train)
+        y_test_preds = mod.predict_proba(X_test)[:,1]
+        aucs.append(roc_auc_score(y_test, y_test_preds))
+    return aucs
+```
+
+Bootstrap coefficients
+```python
+def bootstrap_ci_coefficients(X_train, y_train, num_bootstraps):
+    X_train = X_train.values
+    y_train = y_train.values
+    bootstrap_estimates = []
+    for i in np.arange(num_bootstraps):
+        sample_index = np.random.choice(range(0, len(y_train)), len(y_train))
+        X_samples = X_train[sample_index]
+        y_samples = y_train[sample_index]
+        lm = LogisticRegression()
+        lm.fit(X_samples, y_samples)
+        bootstrap_estimates.append(lm.coef_[0])
+    bootstrap_estimates = np.asarray(bootstrap_estimates)
+    return bootstrap_estimates
+```
+
+
 ### Regularization
 
 Sampling Density, Curse of dimensionality
@@ -644,7 +674,14 @@ for m, ax in zip(col_names, axes.flatten()):
     ax.set_title(m)
 ```
 
-
+Plot Violin Plot - see difference in continuous var across levels of categorical variable
+```python
+def violin_plot_binary(categorical_var, continuous_var, df):
+    # Draw a nested violinplot and split the violins for easier comparison
+    sns.violinplot(x=categorical_var, y=continuous_var, data=df, split=True,
+                   inner="quart")
+    sns.despine(left=True)
+```
 
 Plotting Two Histograms with Alpha = 0.5
 ```python
@@ -694,6 +731,7 @@ ___
 
 * [Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet)
 * [Math Symbols](https://reu.dimacs.rutgers.edu/Symbols.pdf)
+* [Markdown Table Generator](http://www.tablesgenerator.com/markdown_tables)
 
 
 
@@ -711,8 +749,7 @@ ___
 * objects and classes practice
 * Study MCMC
 * Study splines ISLR
-* Update to Adnan
-* Let Rhoda / Matt know I got into Northwestern
+* Bootstrap estimates for coefficients
 
 
 ### RESOURCES WE SKIMMED THAT I SHOULD COME BACK TO
