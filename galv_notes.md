@@ -801,18 +801,12 @@ ___
 
 ### TODOS
 
-* [15] clean up repositories
+* clean up repositories
 * Study maximum a posteriori (MAP)
-* Find a Kaggle data set to play with.
-* Try to find a few data scientists working on operations
 * Networking for jobs
 * Switch to sublime text
 * Get in touch with Clouse (emailed)
-* try iterm2
 * objects and classes practice
-* Study MCMC
-* Study splines ISLR
-* Bootstrap estimates for coefficients
 * finish diabetes git hub and blog
 
 
