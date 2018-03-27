@@ -277,7 +277,16 @@ Order of Execution
 * [Pythonic Code](http://docs.python-guide.org/en/latest/writing/style/)
 * Create a Python 2 environment `conda create -n py2 python=2 anaconda`
 * [Classes and Objects Youtube Videos](https://www.youtube.com/watch?v=ZDa-Z5JzLYM&list=PL-osiE80TeTt2d9bfVyTiXJA-UTHn6WwU&index=37)
-* `if __name__ == '__main__':`  [read](https://stackoverflow.com/questions/419163/what-does-if-name-main-do)
+
+```Python
+## stuff you want to run no matter what
+## whether directly or from an import
+## typically functions
+
+if __name__ == '__main__':
+  ## stuff you want to run only if running the file directly
+```
+[read](https://stackoverflow.com/questions/419163/what-does-if-name-main-do)
 
 Categorical Var from Continuous Var
 ```python
@@ -380,7 +389,7 @@ write.csv(a, 'cars.csv')
 ```
 ```python
  !Rscript getmtcars.R
- ```
+```
 
  RPy2
 
@@ -392,6 +401,10 @@ ___
 * [An Introduction to Statistical Learning - ISLR](http://www-bcf.usc.edu/~gareth/ISL/ISLR%20Seventh%20Printing.pdf)
 * [SK Learn](http://scikit-learn.org/stable/)
 * [Model Smoothers](http://madrury.github.io/smoothers/)
+
+**Parametric Model** - makes assumption about underlying form of the data (i.e. linear)
+
+**Non-parametric Models** -
 
 ## Data Cleaning
 
@@ -653,6 +666,56 @@ def plotroc(FPR, TPR):
     plt.show()
 ```
 
+### Decision Trees
+
+[Visual Explanation](http://www.r2d3.us/visual-intro-to-machine-learning-part-1/)
+
+How to graphically display
+```python
+dot_data = tree.export_graphviz(clf, out_file=None,
+                         feature_names=iris.feature_names,  
+                         class_names=iris.target_names,  
+                         filled=True, rounded=True,  
+                         special_characters=True)  
+graph = graphviz.Source(dot_data)  
+graph
+```
+
+**Bagging for Regression Trees** --
+To apply bagging to regression
+trees, we simply construct B regression trees using B bootstrapped training
+sets, and average the resulting predictions. These trees are grown deep,
+and are not pruned. Hence each individual tree has high variance, but
+low bias. Using
+B = 100 is sufficient to achieve good performance in this example.
+
+**Bagging for Classification Trees** -- For a given test
+observation, we can record the class predicted by each of the B trees, and
+take a majority vote: the overall prediction is the most commonly occurring majority
+class among the B predictions. Using
+B = 100 is sufficient to achieve good performance in this example.
+
+**Out of Bag Error Estimation (OOB)** --
+
+### Random Forest
+
+Random forests provide an improvement over bagged trees by way of a random
+small tweak that decorrelates the trees. As in bagging, we build a number forest
+of decision trees on bootstrapped training samples. But when building these
+decision trees, each time a split in a tree is considered, a random sample of
+m predictors is chosen as split candidates from the full set of p predictors.
+The split is allowed to use only one of those m predictors.
+
+
+
+### K-Nearest Neighbors (kNN)
+
+How to choose k?  Could start with sqrt(n)
+- better way - use cross validation to find the best value
+
+Point weighting - consider points closer more important to determining
+
+[Plot decision boundary](http://scikit-learn.org/stable/auto_examples/neighbors/plot_classification.html#example-neighbors-plot-classification-py)
 ___
 # <span style="color:red">Visualization</span>
 
@@ -750,6 +813,7 @@ ___
 * Study MCMC
 * Study splines ISLR
 * Bootstrap estimates for coefficients
+* finish diabetes git hub and blog
 
 
 ### RESOURCES WE SKIMMED THAT I SHOULD COME BACK TO
