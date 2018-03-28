@@ -300,6 +300,7 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
+pd.set_option("display.max_columns", 100)
 %matplotlib inline
 ```
 python starter uncommon
@@ -648,14 +649,15 @@ def gen_modselect_score(n):
 
 ROC Curve
 ```python
-TPR, FPR, thresholds = roc_curve(y_train_val, y_train_val_proba, pos_label=None, sample_weight=None, drop_intermediate=True)
+from sklearn.metrics import roc_curve, auc
+TPR, FPR, thresholds = roc_curve(y_test, y_test_preds, pos_label=None, sample_weight=None, drop_intermediate=True)
 
-def plotroc(FPR, TPR):
-    roc_auc = auc(FPR, TPR)
+def plotroc(TPR, FPR):
+    roc_auc = auc(TPR, FPR)
     plt.figure()
     lw = 2
-    plt.plot(FPR, TPR, color='darkorange',
-             lw=lw, label='ROC curve (area = %0.2f)' % roc_auc)
+    plt.plot(TPR, FPR, color='darkorange',
+             lw=lw, label="ROC curve area = {0:0.4f}".format(roc_auc))
     plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
     plt.xlim([0.0, 1.0])
     plt.ylim([0.0, 1.05])
@@ -706,7 +708,11 @@ decision trees, each time a split in a tree is considered, a random sample of
 m predictors is chosen as split candidates from the full set of p predictors.
 The split is allowed to use only one of those m predictors.
 
-
+Ways to interpret feature impact:
+* Partial Dependency Plot
+* Permute a single feature
+* Keep track of information gains due to each features
+* Keep track of traffic that passes by each value.
 
 ### K-Nearest Neighbors (kNN)
 
