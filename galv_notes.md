@@ -722,6 +722,55 @@ How to choose k?  Could start with sqrt(n)
 Point weighting - consider points closer more important to determining
 
 [Plot decision boundary](http://scikit-learn.org/stable/auto_examples/neighbors/plot_classification.html#example-neighbors-plot-classification-py)
+
+### Grid Search  
+
+Start with a coarse grid, then do a fine grid
+```Python
+from sklearn.model_selection import GridSearchCV
+random_forest_grid = {’max_depth’: [3, None],
+                      ’max_features’: [’sqrt’, ’log2’, None],
+                      ’min_samples_split’: [1, 2, 4],
+                      ’min_samples_leaf’: [1, 2, 4],
+                      ’bootstrap’: [True, False],
+                      ’n_estimators’: [20, 40, 60, 80, 100, 120],
+                      ’random_state’: [42]}
+rf_gridsearch = GridSearchCV(RandomForestClassifier(),
+                      random_forest_grid,
+                      n_jobs=-1,verbose=True,
+                      scoring=’f1_weighted’)
+rf_gridsearch.fit(X_train, y_train)
+print("best parameters:", rf_gridsearch.best_params_)
+```
+
+### Boosting
+
+[from scratch](https://www.kaggle.com/grroverpr/gradient-boosting-simplified/)
+
+```python
+predf = 0
+y_true = 5
+
+Iter1:
+predi = 3 ## from weak estimator
+predf = predf + predi = 3
+ei = y_true-predi = 2
+yi = ei = 2
+
+Iter2:
+predi = 1 ## this is the same weak estimator, now trying to get yi
+predf = predf + predi = 4
+ei = y_true - predf = 1
+yi = ei
+
+...
+Iter(n)
+```
+
+### Support Vector Machines
+
+[Patrick Winston](https://www.youtube.com/watch?v=_PwhiWxHK8o)
+
 ___
 # <span style="color:red">Visualization</span>
 
@@ -814,10 +863,16 @@ ___
 * Get in touch with Clouse (emailed)
 * objects and classes practice
 * finish diabetes git hub and blog
+* study splines
+* Model Stacking - Kaggle Guide
+* try random forest on referrals
+* [Udemy recommendation from Chris](https://www.udemy.com/machine-learning-fun-and-easy-using-python-and-keras/)
+* Patrick Winston Stanford on AdaBoost
+* Study Stacking - going through several models, each adds a new column to your observations
 
 
 ### RESOURCES WE SKIMMED THAT I SHOULD COME BACK TO
 
 * [Bayesian Inference for Hackers](http://nbviewer.jupyter.org/github/CamDavidsonPilon/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers/tree/master/)
 * Model selection 4_machine_learning/glms - notebook
-*
+* http://www.dataschool.io/15-hours-of-expert-machine-learning-videos/
