@@ -50,6 +50,7 @@ def plot_continuous(dist):
     return (fig, ax)
 
 ## And then call it like
+## import scipy.stats as st
 lam = 1  # lambda
 exponential = st.expon(scale=1/lam)
 plot_continuous(exponential);
@@ -76,12 +77,13 @@ def plot_discrete(dist):
     return (fig, ax)
 
 ## And then call it with
+## import scipy.stats as st
 binomial=st.binom(n=10,p=0.6)
 plot_discrete(binomial);
 ```
 ## Bootstrap
 
-The bootstrap takes 200-2000 samples of length equal to sample, and calculates the statistic of interest.  This process creates a distribution for the statistic and can be used to create confidence intervals. It is computationally expensive, but is more versatile that MLE.
+The bootstrap takes 200-2000 samples of length equal to sample, and calculates the statistic of interest. This process creates a distribution for the statistic and can be used to create confidence intervals. It is computationally expensive, but is more versatile that MLE.
 
 * use `np.percentile(array, [2.5,97.5])`
 * bootstrap
@@ -116,10 +118,14 @@ z_test.z_test(mean1, mean2, n1, n2, effect_size=.01,two_tailed=False)
 Kolmogorov-Smirnov - Null: Two array are from same distribution
 
 ```python
-import scipy.stats as st
-st.ks_2samp(randpois, count_by_month)
+##import scipy.stats as st
+randpois = st.poisson(6, 1).rvs(100)
+st.ks_2samp(randpois, my_dist)
+## null hypothesis is that both come from same distribution
 ```
 ## Bayesian Methods
+
+PyMC3 is a package for incorporating bayesian methods in python
 
 [PyMC3](http://docs.pymc.io/notebooks/getting_started.html)
 ```Python
@@ -128,13 +134,6 @@ from pymc3.math import log, exp
 from pymc3 import df_summary
 
 with Model() as disaster_model:
-    switchpoint = DiscreteUniform('switchpoint', lower=0, upper=n_years)
-```
-
-See PyMC3 Distributions
-```python
-with Model() as disaster_model:
-
     switchpoint = DiscreteUniform('switchpoint', lower=0, upper=n_years)
 ```
 
@@ -264,12 +263,19 @@ ___
 * [Statistics in SQL](https://github.com/tlevine/sql-statistics)
 * [Intro to SQL](http://bensresearch.com/downloads/SQL.pdf)
 
-Create a database `CREATE DATABASE readychef;`
-load data into empty database `$ psql readychef < readychef.sql`
-Navigate to a db `psql db`
+
+```shell
+#Create a database
+`CREATE DATABASE readychef;`
+#load data into empty database
+`$ psql readychef < readychef.sql`
+#Navigate to a db
+`psql db`
+```
 
 Order of Execution
 `SELECT FROM JOIN WHERE GROUPBY HAVING ORDERBY LIMIT`
+
 
 ## Python
 
@@ -303,16 +309,18 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 pd.set_option("display.max_columns", 100)
 %matplotlib inline
 ```
-python starter uncommon
+python starter cleaning
 ```python
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.model_selection import train_test_split, KFold, cross_val_score
 from sklearn.pipeline import Pipeline
 from regression_tools.dftransformers import (
     ColumnSelector, Identity, FeatureUnion, MapFeature, Intercept)
-from sklearn.linear_model import LogisticRegression
 ```
 
+python starter fitting
+```python
+from sklearn.model_selection import train_test_split, KFold, cross_val_score
+```
 
 
 ### psycopg (Python to PostgreSQL)
@@ -349,7 +357,7 @@ conn.close()
 * [SQL to Mongodb translator](https://docs.mongodb.com/manual/reference/sql-aggregation-comparison/)
 
 
-### Pymongo
+### Pymongo (Python to Mongodb)
 
 * [Cheat sheet](https://gist.github.com/stevemclaugh/530979cddbc458d25e37c9d4703c13f6)
 
@@ -358,7 +366,9 @@ conn.close()
 
 `unittest` is a package that you use when you're doing unit testing.  You write the code, then the test code in a separate file. In the test code, one of the files that you load is the actual code that you're testing
 
-`$ python -m unittest test.unit_test_sample`
+
+`python -m unittest test.unit_test_sample`
+
 
 run a test `make test`
 
@@ -393,7 +403,6 @@ write.csv(a, 'cars.csv')
 ```
 
  RPy2
-
 
 ___
 
@@ -492,7 +501,7 @@ feature_pipeline = FeatureUnion([
 ])
 ```
 
-Fitting it altogther
+Fitting it all togther
 ```python
 feature_pipeline.fit(dataframe)
 features = feature_pipeline.transform(dataframe)
@@ -841,20 +850,14 @@ sns_plot = sns.heatmap(corr, mask=mask, cmap=cmap, vmax=.3, center=0,
 ___
 # <span style="color:red">Data Products</span>
 
-
-
-
-
 ### Markdown
 
 * [Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet)
 * [Math Symbols](https://reu.dimacs.rutgers.edu/Symbols.pdf)
 * [Markdown Table Generator](http://www.tablesgenerator.com/markdown_tables)
 
-
-
-
-### TODOS
+---
+# TODOS
 
 * clean up repositories
 * Study maximum a posteriori (MAP)
@@ -869,6 +872,8 @@ ___
 * [Udemy recommendation from Chris](https://www.udemy.com/machine-learning-fun-and-easy-using-python-and-keras/)
 * Patrick Winston Stanford on AdaBoost
 * Study Stacking - going through several models, each adds a new column to your observations
+* SQL Study
+* apply new methods to referrals classifier
 
 
 ### RESOURCES WE SKIMMED THAT I SHOULD COME BACK TO
@@ -876,3 +881,12 @@ ___
 * [Bayesian Inference for Hackers](http://nbviewer.jupyter.org/github/CamDavidsonPilon/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers/tree/master/)
 * Model selection 4_machine_learning/glms - notebook
 * http://www.dataschool.io/15-hours-of-expert-machine-learning-videos/
+
+### PROJECTS IN PROGRESS
+* Referrals classifier
+* Diabetes among Pima women
+
+### Project list
+* Referrals changepoint analysis
+* Admissions forecasting
+* Medical Expense forecast
