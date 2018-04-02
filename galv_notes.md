@@ -211,6 +211,7 @@ with model:
 
 * [Book: Probabilistic Programming](http://nbviewer.jupyter.org/github/CamDavidsonPilon/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers/tree/master/)
 * [Maximum A Posteriori](https://web.stanford.edu/class/archive/cs/cs109/cs109.1166/ppt/22-MAP.pdf)
+* Correlation is just scaled Covariance - scaled by the product of standard variations of each variable.
 ___
 
 # <span style="color:red">Coding & Environment</span>
@@ -470,6 +471,13 @@ array([[ 4.        ,  1.        ],
        [ 3.        ,  6.        ]])
 ```
 
+Standard Scaler best practice
+```Python
+scaler = StandardScaler().fit(X_train)
+X_train_1 = scaler.transform(X_train)
+X_test_1 = scaler.transform(X_test)
+```
+
 Pipelines
 ```python
 ## Create an object that pipelines three transformations
@@ -501,11 +509,41 @@ feature_pipeline = FeatureUnion([
 ])
 ```
 
-Fitting it all togther
+Fitting it all together
 ```python
 feature_pipeline.fit(dataframe)
 features = feature_pipeline.transform(dataframe)
 ```
+
+
+Pickle
+```python
+results = {'a':1,'b':range(10)}
+results_pickle = 'foo.pickle'
+
+if not os.path.exists(results_pickle):
+
+    ## save it
+    print("...saving pickle")
+    tmp = open(results_pickle,'wb')
+    pickle.dump(results,tmp)
+    tmp.close()
+else:
+    ## load it
+    print("...loading pickle")
+    tmp = open(results_pickle,'rb')
+    loadedResults = pickle.load(tmp)
+    tmp.close()
+
+## clean up
+#print(loadedResults)
+#os.system("rm %s"%results_pickle)
+print("done")
+```
+
+### Outlier Detection
+
+
 
 ## General Linear Models
 
@@ -578,6 +616,7 @@ plt.show()
 Assessing Fit, Model Accuracy, Cross Validation
 ```python
 roc_auc = cross_val_score(ML_instance, X_pandas, y_pandas, scoring='roc_auc', cv=8)
+### returns 8 measures of roc-auc, one for each fold
 ```
 
 Test Logistic Lasso Params
@@ -679,10 +718,18 @@ def plotroc(TPR, FPR):
 
 ### Decision Trees
 
+A decision tree looks for variable/value combinations that can split observations in a way that decreases entropy (increases order). As the model fits, it recursively looks for the variable/value combination that most effectively maximizes *information gain*, typically defined as gini or Shannon entropy.
+
+Information Gain at any split
+```
+IG(P,C) = H(P) - weightedsums(H(C))
+```
+
 [Visual Explanation](http://www.r2d3.us/visual-intro-to-machine-learning-part-1/)
 
 How to graphically display
 ```python
+import graphviz
 dot_data = tree.export_graphviz(clf, out_file=None,
                          feature_names=iris.feature_names,  
                          class_names=iris.target_names,  
@@ -754,6 +801,8 @@ print("best parameters:", rf_gridsearch.best_params_)
 
 ### Boosting
 
+Boosting is a sequential algorithm in which many weak learners (high bias, low variance) are fit. In each successive iteration, a tree of depth 1 or 2 is fit to the *residuals* of the prior tree, such that the algorithm looks for features to weakly explain the errors. After many trees the model can fit many difficult decision boundaries.  The result is model that keeps its low variance, but the layering of trees results in low bias.
+
 [from scratch](https://www.kaggle.com/grroverpr/gradient-boosting-simplified/)
 
 ```python
@@ -776,10 +825,155 @@ yi = ei
 Iter(n)
 ```
 
+Plot feature importance
+```python
+feature_importances = 100*model.feature_importances_ / np.sum(model.feature_importances_)
+feature_importances, feature_names, feature_idxs = zip(*sorted(zip(feature_importances, names, range(len(names)))))
+
+width = 0.8
+
+idx = np.arange(len(names))
+plt.barh(idx, feature_importances, align='center')
+plt.yticks(idx, feature_names)
+
+plt.title("Feature Importances in Gradient Booster")
+plt.xlabel('Relative Importance of Feature', fontsize=14)
+plt.ylabel('Feature Name', fontsize=14)
+
+plt.savefig('plots/feature-importances.png', bbox_inches='tight')
+```
+
+Plot Partial Dependency Plots
+```python
+N_COLS = 3
+fimportances = list(reversed(feature_importances))
+fnames = list(reversed(feature_names))
+
+pd_plots = [partial_dependence(model, target_feature, X=X_train, grid_resolution=50)
+            for target_feature in feature_idxs]
+pd_plots = list(reversed(zip([pdp[0][0] for pdp in pd_plots], [pdp[1][0] for pdp in pd_plots])))
+
+fig, axes = plt.subplots(nrows=3, ncols=N_COLS, sharey=True,
+                         figsize=(12.0, 8.0))
+
+for i, (y_axis, x_axis) in enumerate(pd_plots[0:(3*N_COLS)]):
+    ax = axes[i/N_COLS, i%N_COLS]
+    ax.plot(x_axis, y_axis, color="purple")
+    ax.set_xlim([np.min(x_axis), np.max(x_axis)])
+    text_x_pos = np.min(x_axis) + 0.05*(np.max(x_axis) - np.min(x_axis))
+    ax.text(text_x_pos, 8,
+            "Feature Importance " + str(round(fimportances[i], )),
+            fontsize=12, alpha=0.5)
+    ax.set_xlabel(fnames[i])
+
+plt.suptitle("Partial Dependence Plots (Ordered by Feature Importance)", fontsize=16)
+plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+
+plt.savefig('plots/patial-dependence-plots.png', bbox_inches='tight')
+```
+
+Plot two partial dependence vars at once
+```python
+# Two varaibles at once
+fidxs = list(reversed(feature_idxs))
+pdp, (x_axis, y_axis) = partial_dependence(model, (fidxs[0], fidxs[1]),
+                                           X=X_train, grid_resolution=50)
+
+fig = plt.figure()
+plt.style.use('bmh')
+
+XX, YY = np.meshgrid(x_axis, y_axis)
+Z = pdp.T.reshape(XX.shape)
+ax = Axes3D(fig)
+ax.plot_surface(XX, YY, Z, rstride=1, cstride=1, cmap=plt.cm.BuPu)
+ax.view_init(elev=30, azim=300)
+ax.set_xlabel(fnames[0])
+ax.set_ylabel(fnames[1])
+ax.set_zlabel('Partial dependence')
+ax.set_title("A Partial Dependence Plot with Two Features")
+plt.savefig('plots/patial-dependence-plot-two-features.png', bbox_inches='tight')
+```
+
 ### Support Vector Machines
 
 [Patrick Winston](https://www.youtube.com/watch?v=_PwhiWxHK8o)
 
+
+### PCA and t-SNE
+
+Principle Components Analysis projects many dimensions to fewer dimensions that still explain most of the variation from the many dimensions.
+
+
+Scree Plot
+```Python
+def scree_plot(pca, title=None):
+    num_components = pca.n_components_
+    ind = np.arange(num_components)
+    vals = pca.explained_variance_ratio_
+    plt.figure(figsize=(10, 6), dpi=250)
+    ax = plt.subplot(111)
+    ax.bar(ind, vals, 0.35,
+           color=[(0.949, 0.718, 0.004),
+                  (0.898, 0.49, 0.016),
+                  (0.863, 0, 0.188),
+                  (0.694, 0, 0.345),
+                  (0.486, 0.216, 0.541),
+                  (0.204, 0.396, 0.667),
+                  (0.035, 0.635, 0.459),
+                  (0.486, 0.722, 0.329),
+                 ])
+
+    for i in range(num_components):
+        ax.annotate(r"%s%%" % ((str(vals[i]*100)[:4])), (ind[i]+0.2, vals[i]), va="bottom", ha="center", fontsize=12)
+
+    ax.set_xticklabels(ind, fontsize=12)
+
+    ax.set_ylim(0, max(vals)+0.05)
+    ax.set_xlim(0-0.45, 8+0.45)
+
+    ax.xaxis.set_tick_params(width=0)
+    ax.yaxis.set_tick_params(width=2, length=12)
+
+    ax.set_xlabel("Principal Component", fontsize=12)
+    ax.set_ylabel("Variance Explained (%)", fontsize=12)
+
+    if title is not None:
+        plt.title(title, fontsize=16)
+```
+
+
+Represent PCA in 2 dimensions
+```python
+def plot_embedding(X, y, title=None):
+    '''
+    INPUT:
+    X - decomposed feature matrix
+    y - target labels (digits)
+
+    Creates a pyplot object showing digits projected onto 2-dimensional
+    feature space. PCA should be performed on the feature matrix before
+    passing it to plot_embedding.
+
+    '''
+    x_min, x_max = np.min(X, 0), np.max(X, 0)
+    X = (X - x_min) / (x_max - x_min)
+
+    plt.figure(figsize=(10, 6), dpi=250)
+    ax = plt.subplot(111)
+    ax.axis('off')
+    ax.patch.set_visible(False)
+    for i in range(X.shape[0]):
+        plt.text(X[i, 0], X[i, 1], str(y[i]),
+                 color=plt.cm.Set1(y[i] / 10.),
+                 fontdict={'weight': 'bold', 'size': 12})
+
+    plt.xticks([]), plt.yticks([])
+    plt.ylim([-0.1,1.1])
+    plt.xlim([-0.1,1.1])
+
+    if title is not None:
+        plt.title(title, fontsize=16)
+```
 ___
 # <span style="color:red">Visualization</span>
 
@@ -868,13 +1062,17 @@ ___
 * finish diabetes git hub and blog
 * study splines
 * Model Stacking - Kaggle Guide
-* try random forest on referrals
 * [Udemy recommendation from Chris](https://www.udemy.com/machine-learning-fun-and-easy-using-python-and-keras/)
 * Patrick Winston Stanford on AdaBoost
 * Study Stacking - going through several models, each adds a new column to your observations
 * SQL Study
 * apply new methods to referrals classifier
-
+* add images and examples to notes, will really make them sing
+* https://github.com/ajcr/100-pandas-puzzles
+* Study AIC/BIC
+* Study Pipelines
+* Study Feature Selection VarianceThreshold, SelectKBest
+* Adam mentioned very specific ways to identify outliers - find that sklnear module
 
 ### RESOURCES WE SKIMMED THAT I SHOULD COME BACK TO
 
