@@ -896,15 +896,27 @@ plt.savefig('plots/patial-dependence-plot-two-features.png', bbox_inches='tight'
 
 ### Support Vector Machines
 
+Support Vector Machines or "tricks" allow us to project data in n dimensions into higher dimension without having to compute variables in those dimensions. Simple decision boundaries in higher dimensions translate to complicated decision boundaries when translated to lower dimensions.
+
 [Patrick Winston](https://www.youtube.com/watch?v=_PwhiWxHK8o)
 
 
-### PCA and t-SNE
+### Dimensionality Reduction
+
+#### PCA
 
 Principle Components Analysis projects many dimensions to fewer dimensions that still explain most of the variation from the many dimensions.
 
+**Why reduce dimensions?**
+* Remove multicollinearity
+* Deal with the curse of dimensionality
+* Remove redundant features
+* Interpretation & Visualization
+* Make computations easier
+  
 
-Scree Plot
+
+Scree Plot Code
 ```Python
 def scree_plot(pca, title=None):
     num_components = pca.n_components_
