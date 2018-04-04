@@ -1,22 +1,20 @@
 
 
-# <span style="color:red">Math/Stats</span>
+# <span style="color:grey">Math/Stats</span>
 
 * [Galvanize Short Course for Stats](https://galvanizeopensource.github.io/stats-shortcourse/)
 * [PDF Book: Computer Age Statistical Inference Book](https://web.stanford.edu/~hastie/CASI_files/PDF/casi.pdf)
 
-## Calculus
+#### Calculus
 
 * [Derivative Rules](https://en.wikipedia.org/wiki/Differentiation_rules)
 
-## Linear Algebra
+#### Linear Algebra
 
 * [Wiki](https://en.wikipedia.org/wiki/Linear_algebra)
 * [MIT Course](https://ocw.mit.edu/courses/mathematics/18-02-multivariable-calculus-fall-2007/)
 
-
-
-## Probability & Distributions
+#### Probability & Distributions
 
 * [Distribution Applets](https://homepage.divms.uiowa.edu/~mbognar/)
 * [Cheatsheet](https://static1.squarespace.com/static/54bf3241e4b0f0d81bf7ff36/t/55e9494fe4b011aed10e48e5/1441352015658/probability_cheatsheet.pdf)
@@ -31,8 +29,9 @@ x to density | pmf | pdf | d
 x -> area to left | cdf  | cdf | p
 area to left -> x | ppf | ppf | q
 
-Plot Continuous Distribution
+
 ```python
+## Plot Continuous Distribution
 def plot_continuous(dist):
     fig, ax = plt.subplots(2, 1, sharex=True, figsize=(4, 5))
       # Plot hist
@@ -56,8 +55,9 @@ exponential = st.expon(scale=1/lam)
 plot_continuous(exponential);
 ```
 
-Plot Discrete Distribution
+
 ```python
+# Plot Discrete Distribution
 def plot_discrete(dist):
     fig, ax = plt.subplots(2, 1, sharex=True, figsize=(4, 5))
      # Plot hist
@@ -81,14 +81,15 @@ def plot_discrete(dist):
 binomial=st.binom(n=10,p=0.6)
 plot_discrete(binomial);
 ```
-## Bootstrap
+#### Bootstrap
 
 The bootstrap takes 200-2000 samples of length equal to sample, and calculates the statistic of interest. This process creates a distribution for the statistic and can be used to create confidence intervals. It is computationally expensive, but is more versatile that MLE.
 
 * use `np.percentile(array, [2.5,97.5])`
 * bootstrap
 ```python
-# INPUT - np array OUTPUT - bootstrap confidence intervals
+## INPUT: np array
+## OUTPUT - bootstrap confidence intervals
 def bootstrap_ci(lst, bootstraps=1000, ci=95):
     n = len(lst)
     bootstraps_list = ([np.mean([lst[np.random.randint(n)] for i in np.arange(n)]) for i in np.arange(bootstraps)])
@@ -96,12 +97,12 @@ def bootstrap_ci(lst, bootstraps=1000, ci=95):
     return print('The {} conf_int for the sample is {}.'.format(ci, conf_int))
 ```
 
-## Maximum Likelihood Estimation
+#### Maximum Likelihood Estimation
 
-* [Maximum Liklihood Estimation](https://ocw.mit.edu/courses/mathematics/18-05-introduction-to-probability-and-statistics-spring-2014/readings/MIT18_05S14_Reading10b.pdf)
-* [Maximum Likelihood Estimation (1)](http://statweb.stanford.edu/~susan/courses/s200/lectures/lect11.pdf)
+* [Maximum Liklihood Estimation MIT](https://ocw.mit.edu/courses/mathematics/18-05-introduction-to-probability-and-statistics-spring-2014/readings/MIT18_05S14_Reading10b.pdf)
+* [Maximum Likelihood Estimation Stanford](http://statweb.stanford.edu/~susan/courses/s200/lectures/lect11.pdf)
 
-## Experimental Design & Hypothesis Tests
+#### Experimental Design & Hypothesis Tests
 
 * [Sampling](https://en.wikipedia.org/wiki/Sampling_(statistics))
 * [Power](https://en.wikipedia.org/wiki/Statistical_power#Factors_influencing_power) - `Pr(Reject H0 | H1 is true)`
@@ -109,21 +110,25 @@ def bootstrap_ci(lst, bootstraps=1000, ci=95):
 * [Quick-R Power](https://www.statmethods.net/stats/power.html)
 * [ANOVA vs T-test](https://keydifferences.com/difference-between-t-test-and-anova.html)
 
-A/B Test of two sample proportions (e.g. sign up rate on website)
 ```python
+# A/B Test of two sample proportions (e.g. sign up rate on website)
 from z_test import z_test
 z_test.z_test(mean1, mean2, n1, n2, effect_size=.01,two_tailed=False)
 ```
 
-Kolmogorov-Smirnov - Null: Two array are from same distribution
-
 ```python
-##import scipy.stats as st
+## Kolmogorov-Smirnov
+## null hypothesis is that both come from same distribution
+import scipy.stats as st
 randpois = st.poisson(6, 1).rvs(100)
 st.ks_2samp(randpois, my_dist)
-## null hypothesis is that both come from same distribution
+
+Hypothesis Tests
+* Breusch-Pagan - tests for Heteroscedasticity
+* Shaprio-Wilk - tests for normality of residuals
+
 ```
-## Bayesian Methods
+#### Bayesian Methods
 
 PyMC3 is a package for incorporating bayesian methods in python
 
@@ -214,15 +219,16 @@ with model:
 * Correlation is just scaled Covariance - scaled by the product of standard variations of each variable.
 ___
 
-# <span style="color:red">Coding & Environment</span>
+# <span style="color:grey">Coding & Environment</span>
 
-## GitHub
+#### GitHub
 
 * [Interactive Tool](http://ndpsoftware.com/git-cheatsheet/previous/git-cheatsheet.html)
 * [Adding a Github repo to house local project](https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/)
 * Check origin: `git remote -v`
 
-### Pair Workflow
+#### Pair Workflow
+```
 * A:
   * needs to add B as a collaborator for that repo on his/her Github.
   * adds a branch, e.g. `$ git checkout -b pair_morning`
@@ -251,10 +257,10 @@ ___
   * `$ git pull <remote-name> <branch-name>`
   * B works on code (A collaborating). ABC!
   * `$ git push <remote-name> <branch-name>`
+```
 
 
-
-## SQL
+#### SQL
 
 * [SQL for Data Scientists](http://downloads.bensresearch.com/SQL.pdf)
 * [ModeAnalytics: SQL School](http://sqlschool.modeanalytics.com/)
@@ -278,7 +284,7 @@ Order of Execution
 `SELECT FROM JOIN WHERE GROUPBY HAVING ORDERBY LIMIT`
 
 
-## Python
+#### Python
 
 * [Style Guide](https://www.python.org/dev/peps/pep-0008/)
 * [Pythonic Code](http://docs.python-guide.org/en/latest/writing/style/)
@@ -295,13 +301,14 @@ if __name__ == '__main__':
 ```
 [read](https://stackoverflow.com/questions/419163/what-does-if-name-main-do)
 
-Categorical Var from Continuous Var
 ```python
+## create Categorical Var from Continuous Var
 df['new_categ_var'] = pd.cut(df['continuous_var'], [3, 6, 10], labels=['<3','4-6','7-10'])
 ```
 
-python starter
+
 ```python
+## Python Starter
 import pandas as pd
 import numpy as np
 import seaborn as sns
@@ -310,28 +317,29 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 pd.set_option("display.max_columns", 100)
 %matplotlib inline
 ```
-python starter cleaning
+
 ```python
+## Python Starter Cleaning
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.pipeline import Pipeline
 from regression_tools.dftransformers import (
     ColumnSelector, Identity, FeatureUnion, MapFeature, Intercept)
 ```
 
-python starter fitting
 ```python
+## Python Starter Fitting
 from sklearn.model_selection import train_test_split, KFold, cross_val_score
 ```
 
 
-### psycopg (Python to PostgreSQL)
+#### psycopg (Python to PostgreSQL)
 
 Cursor operations typically goes like the following:
 * execute a query
 * fetch rows from query result if it is a SELECT query because it is iterative, previously fetched rows can only be fetched again by rerunning the query
 * close cursor through .close()
 
-* [Browse Psycopg documentation](http://initd.org/psycopg/docs/)
+[Browse Psycopg documentation](http://initd.org/psycopg/docs/)
 
 ```python
 import psycopg2
@@ -353,23 +361,19 @@ conn.commit()
 conn.close()
 ```
 
-## Mongodb
+#### Mongodb
 
 * [SQL to Mongodb translator](https://docs.mongodb.com/manual/reference/sql-aggregation-comparison/)
 
-
-### Pymongo (Python to Mongodb)
+#### Pymongo (Python to Mongodb)
 
 * [Cheat sheet](https://gist.github.com/stevemclaugh/530979cddbc458d25e37c9d4703c13f6)
 
-
-### Unit Testing
+#### Unit Testing
 
 `unittest` is a package that you use when you're doing unit testing.  You write the code, then the test code in a separate file. In the test code, one of the files that you load is the actual code that you're testing
 
-
 `python -m unittest test.unit_test_sample`
-
 
 run a test `make test`
 
@@ -391,7 +395,7 @@ if __name__ == '__main__':
 
 
 
-### Python to R, R to Python
+#### Python to R, R to Python
 
 In a python script, you can write ".R" files and then run them, all while still in Python.  Use code:
 ```Python
@@ -407,17 +411,16 @@ write.csv(a, 'cars.csv')
 
 ___
 
-# <span style="color:red">Machine learning</span>
+# <span style="color:green">Machine learning</span>
 
 * [An Introduction to Statistical Learning - ISLR](http://www-bcf.usc.edu/~gareth/ISL/ISLR%20Seventh%20Printing.pdf)
 * [SK Learn](http://scikit-learn.org/stable/)
 * [Model Smoothers](http://madrury.github.io/smoothers/)
 
 **Parametric Model** - makes assumption about underlying form of the data (i.e. linear)
+**Non-parametric Models** - Makes no assumptions about form of underlying data
 
-**Non-parametric Models** -
-
-## Data Cleaning
+#### Data Cleaning
 
 Split data into x, y for training and testing
 ```python
@@ -432,29 +435,28 @@ Scaling - normalizes values of each feature, mean = 0, sd = 1
 df['var'] = ((df['var']-(df['var'].mean())))/(df['var'].std())
 ```
 
-Dummies
 ```Python
-## in pandas
+## Dummies in pandas
 df = pd.DataFrame({'country': ['usa', 'canada', 'australia','japan','germany']})
 pd.get_dummies(df,prefix=['country'])
 ```
-Get Dummies
+
 ```python
+## Get Dummies
 Dummies = pd.get_dummies(df['var_with_multiple_cat_levels'])
 df.drop('var_with_multiple_cat_levels', inplace=True, axis=1)
 ```
 
-
-Binarizing
 ```Python
+# Binarizing
 lb = preprocessing.LabelBinarizer()
 lb.fit([1, 2, 6, 4, 2])
 print(lb.transform((1,4)))
 print(lb.classes_)
 ```
 
-Imputation
 ```Python
+## Imputation
 ## See number of nulls
 test_scores.isnull().sum(0)
 
@@ -471,15 +473,17 @@ array([[ 4.        ,  1.        ],
        [ 3.        ,  6.        ]])
 ```
 
-Standard Scaler best practice
+
 ```Python
+## Standard Scaler
 scaler = StandardScaler().fit(X_train)
 X_train_1 = scaler.transform(X_train)
 X_test_1 = scaler.transform(X_test)
 ```
 
-Pipelines
+
 ```python
+## Pipelines
 ## Create an object that pipelines three transformations
 wells_pipeline = Pipeline([
     ('select_best_3', SelectKBest(chi2, k=3)),
@@ -491,8 +495,8 @@ wells_pipeline = Pipeline([
 wells_pipeline.fit(X_wells, y_wells)
 ```
 
-Pipeline General Form
 ```python
+## Pipeline General Form
 pipeline_fit_object = Pipeline([
     ('name_first_pipeline_piece', ColumnSelector(args)),
     ('name_secon_pipeline_piece', NaturalCubicSpline(args))
@@ -501,23 +505,24 @@ pipeline_fit_object = Pipeline([
 Pipeline([('name1', Thing1(args)), ('name2', Thing2(args))]
 ```
 
-Pipeline of pipelines
+
 ```python
+## Pipeline of pipelines
 feature_pipeline = FeatureUnion([
     ('pipeline_name_fit', pipeline_name_fit),
     ('pipeline2_name_fit', cement_fit)
 ])
 ```
 
-Fitting it all together
+
 ```python
+## Using Pipelines
 feature_pipeline.fit(dataframe)
 features = feature_pipeline.transform(dataframe)
 ```
 
-
-Pickle
 ```python
+## Pickle
 results = {'a':1,'b':range(10)}
 results_pickle = 'foo.pickle'
 
@@ -541,34 +546,36 @@ else:
 print("done")
 ```
 
-### Outlier Detection
+#### Outlier Detection
 
+#### Supervised Learning
 
+#### General Linear Models
 
-## General Linear Models
+#### Unsupervised Learning
 
 * [Multicollinearity](https://en.wikipedia.org/wiki/Multicollinearity)
 
-
-### Linear Regression
+#### Linear Regression
 
 Cost Function  
 
-Dropping Variables:
 ```python
+## Dropping Variables
 best_3_selector = SelectKBest(chi2, k=3)
 best_3_selector.fit(X_wells, y_wells)
 ```
 
-Sk learn model fitting
 ```python
+## Sklearn Model Fitting
 model = LinearRegression(fit_intercept=False)
 model.fit(features.values, y=concrete['compressive_strength'])
 ## display param coefficients
 display_coef(model, features.columns)
 ```
-Bootstrap estimates of coefficients
+
 ```python
+## Bootstrap estimates of coefficients
 models = bootstrap_train(
     LinearRegression,
     features.values,
@@ -580,47 +587,16 @@ fig.tight_layout()
 ```
 
 
-Hypothesis Tests
-* Breusch-Pagan - tests for Heteroscedasticity
-* Shaprio-Wilk - tests for normality of residuals
+#### Logistic Regression
 
-
-### Logistic Regression
-
-
-Two variables, plotting y's
-```Python
-fig1 = plt.figure(figsize=(12,10))
-ax1 = fig.add_subplot(111)
-ax1.scatter(X_dogs[:,0], X_dogs[:,1], color='b', label='dogs')
-ax1.scatter(X_horses[:,0], X_horses[:,1], color='r', label='horses')
-ax1.legend(shadow=True, fontsize='xx-large')
-ax1.set_xlabel('Weight (lb)',fontsize=font_size)
-ax1.set_ylabel('Height (in)',fontsize=font_size)
-ax1.set_title('Horse or dog?',fontsize=font_size)
-plt.show()
-```
-
-3D Plotting
 ```python
-fig = plt.figure(figsize=(12,10))
-ax = fig.add_subplot(111, projection='3d')
-ax.scatter(X[:,0], X[:,1], y, c=y,s=35)
-ax.set_xlabel('Weight (lb)',fontsize=font_size,labelpad=25.0)
-ax.set_ylabel('Height (in)',fontsize=font_size,labelpad=25.0)
-ax.set_zlabel('Horseness',fontsize=font_size,labelpad=25.0)
-plt.tight_layout()
-plt.show()
-```
-
-Assessing Fit, Model Accuracy, Cross Validation
-```python
+## Assessing Fit, Model Accuracy, Cross Validation
 roc_auc = cross_val_score(ML_instance, X_pandas, y_pandas, scoring='roc_auc', cv=8)
 ### returns 8 measures of roc-auc, one for each fold
 ```
 
-Test Logistic Lasso Params
 ```python
+## Test Logistic Lasso Params
 def try_lasso_hyperparam(X_train, y_train, X_test, y_test, params_to_try,):
     aucs = []
     for param in params_to_try:
@@ -631,8 +607,8 @@ def try_lasso_hyperparam(X_train, y_train, X_test, y_test, params_to_try,):
     return aucs
 ```
 
-Bootstrap coefficients
 ```python
+## Bootstrap coefficients
 def bootstrap_ci_coefficients(X_train, y_train, num_bootstraps):
     X_train = X_train.values
     y_train = y_train.values
@@ -649,7 +625,7 @@ def bootstrap_ci_coefficients(X_train, y_train, num_bootstraps):
 ```
 
 
-### Regularization
+#### Regularization
 
 Sampling Density, Curse of dimensionality
 
@@ -658,9 +634,10 @@ Where:
 * N = number of data points
 * D = number of dimensions
 
-### K-folds Cross-Validation
+#### K-folds Cross-Validation
 
-Takes a training set of data and breaks it into 5 folds.  Through 5 iterations, fits a linear model on the *other* folds, then scores how will the model fits on the fold at hand `foldrmse = rmse(y_test_f, test_f_predicted)`. Collects this scores and returns them
+*Takes a training set of data and breaks it into 5 folds.  Through 5 iterations, fits a linear model on the *other* folds, then scores how will the model fits on the fold at hand `foldrmse = rmse(y_test_f, test_f_predicted)`. Collects this scores and returns them.*
+
 ```python
 def crossVal(X_train, y_train):
     kf = KFold(n_splits=5)
@@ -677,12 +654,13 @@ def crossVal(X_train, y_train):
     print('The average rmse of each fold is {}'.format(np.mean(RMSES)))
 ```
 
-### Model selection
+#### Model selection
 
-Recursive Feature Eliminate RFE.   
-At each iteration, select one feature to remove until there are n feature left
+#### Recursive Feature Elimination (RFE)   
+*At each iteration, select one feature to remove until there are n feature left*
 
 ```python
+## Recursive Feature Elimination
 from sklearn.feature_selection import RFE
 linear_fri = LinearRegression()
 selector.fit(X_fri, y_fri)
@@ -695,8 +673,13 @@ def gen_modselect_score(n):
     return scores
 ```
 
-ROC Curve
+#### ROC Curve
+*Plots False Negative Rate (x-axis) vs. True Positive Rate (y-axis) for various thresholds we set for predicted probabilities.*
+
+Insert Image
+
 ```python
+## ROC Curve
 from sklearn.metrics import roc_curve, auc
 TPR, FPR, thresholds = roc_curve(y_test, y_test_preds, pos_label=None, sample_weight=None, drop_intermediate=True)
 
@@ -716,19 +699,20 @@ def plotroc(TPR, FPR):
     plt.show()
 ```
 
-### Decision Trees
+#### Decision Trees
 
-A decision tree looks for variable/value combinations that can split observations in a way that decreases entropy (increases order). As the model fits, it recursively looks for the variable/value combination that most effectively maximizes *information gain*, typically defined as gini or Shannon entropy.
+*A decision tree looks for variable/value combinations that can split observations in a way that decreases entropy (increases order). As the model fits, it recursively looks for the variable/value combination that most effectively maximizes **information gain**, typically defined as gini or Shannon entropy.*
 
-Information Gain at any split
+
 ```
+## Information gain at any split
 IG(P,C) = H(P) - weightedsums(H(C))
 ```
 
 [Visual Explanation](http://www.r2d3.us/visual-intro-to-machine-learning-part-1/)
 
-How to graphically display
 ```python
+## Decision Tree Visualization
 import graphviz
 dot_data = tree.export_graphviz(clf, out_file=None,
                          feature_names=iris.feature_names,  
@@ -739,7 +723,9 @@ graph = graphviz.Source(dot_data)
 graph
 ```
 
-**Bagging for Regression Trees** --
+#### Bagging
+
+* **for Regression Trees** --
 To apply bagging to regression
 trees, we simply construct B regression trees using B bootstrapped training
 sets, and average the resulting predictions. These trees are grown deep,
@@ -747,15 +733,14 @@ and are not pruned. Hence each individual tree has high variance, but
 low bias. Using
 B = 100 is sufficient to achieve good performance in this example.
 
-**Bagging for Classification Trees** -- For a given test
+* **for Classification Trees** -- For a given test
 observation, we can record the class predicted by each of the B trees, and
-take a majority vote: the overall prediction is the most commonly occurring majority
-class among the B predictions. Using
+take a majority vote: the overall prediction is the most commonly occurring majority class among the B predictions. Using
 B = 100 is sufficient to achieve good performance in this example.
 
-**Out of Bag Error Estimation (OOB)** --
+*Out of Bag Error Estimation (OOB)* -- it can be shown that in any bootstrap, an individual observation has ~ 66% chance of being chosen. This leaves approximately 1/3 of the observations "out of bag" and these can be used to cross validate.
 
-### Random Forest
+#### Random Forest
 
 Random forests provide an improvement over bagged trees by way of a random
 small tweak that decorrelates the trees. As in bagging, we build a number forest
@@ -770,7 +755,7 @@ Ways to interpret feature impact:
 * Keep track of information gains due to each features
 * Keep track of traffic that passes by each value.
 
-### K-Nearest Neighbors (kNN)
+#### K-Nearest Neighbors (kNN)
 
 How to choose k?  Could start with sqrt(n)
 - better way - use cross validation to find the best value
@@ -779,10 +764,12 @@ Point weighting - consider points closer more important to determining
 
 [Plot decision boundary](http://scikit-learn.org/stable/auto_examples/neighbors/plot_classification.html#example-neighbors-plot-classification-py)
 
-### Grid Search  
+#### Grid Search
+*Models typically have hyperparameters and arguments that can be searched over to find the optimal model.  Grid Search takes a model a looks over a grid of many parameters to to find the optimal model.*
 
-Start with a coarse grid, then do a fine grid
+*Pro tip* - Start with a coarse grid, then do a fine grid
 ```Python
+## Grid Search Code
 from sklearn.model_selection import GridSearchCV
 random_forest_grid = {’max_depth’: [3, None],
                       ’max_features’: [’sqrt’, ’log2’, None],
@@ -799,13 +786,14 @@ rf_gridsearch.fit(X_train, y_train)
 print("best parameters:", rf_gridsearch.best_params_)
 ```
 
-### Boosting
+#### Boosting
 
-Boosting is a sequential algorithm in which many weak learners (high bias, low variance) are fit. In each successive iteration, a tree of depth 1 or 2 is fit to the *residuals* of the prior tree, such that the algorithm looks for features to weakly explain the errors. After many trees the model can fit many difficult decision boundaries.  The result is model that keeps its low variance, but the layering of trees results in low bias.
+*Boosting is a sequential algorithm in which many weak learners (high bias, low variance) are fit. In each successive iteration, a tree of depth 1 or 2 is fit to the *residuals* of the prior tree, such that the algorithm looks for features to weakly explain the errors. After many trees the model can fit many difficult decision boundaries.  The result is model that keeps its low variance, but the layering of trees results in low bias.*
 
 [from scratch](https://www.kaggle.com/grroverpr/gradient-boosting-simplified/)
 
 ```python
+## Boosting from the point of view of a single data point.
 predf = 0
 y_true = 5
 
@@ -825,8 +813,8 @@ yi = ei
 Iter(n)
 ```
 
-Plot feature importance
 ```python
+## Plot feature importance
 feature_importances = 100*model.feature_importances_ / np.sum(model.feature_importances_)
 feature_importances, feature_names, feature_idxs = zip(*sorted(zip(feature_importances, names, range(len(names)))))
 
@@ -843,8 +831,13 @@ plt.ylabel('Feature Name', fontsize=14)
 plt.savefig('plots/feature-importances.png', bbox_inches='tight')
 ```
 
-Plot Partial Dependency Plots
+#### Partial Dependency Plots
+*A graph that shows how the response variable changes as a feature changes, for all values of that feature, while holding other variables fixed*
+
+insert image here
+
 ```python
+## Plot Partial Dependency Plots
 N_COLS = 3
 fimportances = list(reversed(feature_importances))
 fnames = list(reversed(feature_names))
@@ -913,7 +906,7 @@ Principle Components Analysis projects many dimensions to fewer dimensions that 
 * Remove redundant features
 * Interpretation & Visualization
 * Make computations easier
-  
+
 
 
 Scree Plot Code
@@ -986,6 +979,217 @@ def plot_embedding(X, y, title=None):
     if title is not None:
         plt.title(title, fontsize=16)
 ```
+
+### Clustering
+
+*K-means*
+
+Partition all observations into one of K clusters such that the total within-cluster variation, summed across all clusters, is as small as possible.
+
+Within-cluster variation is typically defined by euclidean distance.
+
+Hyperparameters:
+* **K** - number of clusters
+
+Steps:
+1. Randomly initialize K clusters centroids
+2. Repeat:
+    * assign each observation to closest centroid
+    * move the centroids to center of observations assigned to them
+
+```python
+class KMeans(object):
+    '''
+    K-Means clustering
+    ----------
+    n_clusters : int, optional, default: 3
+        The number of clusters to form as well as the number of
+        centroids to generate.
+    init : {'random', 'random_initialization', 'k-means++'}
+        Method for initialization, defaults to 'k-means++':
+        'k-means++' : selects initial cluster centers for k-mean
+        clustering in a smart way to speed up convergence. See section
+        Notes in k_init for more details.
+        'random': choose k observations (rows) at random from data for
+        the initial centroids.
+        If an ndarray is passed, it should be of shape (n_clusters, n_features)
+        and gives the initial centers.
+    n_init : int, default: 10
+        Number of time the k-means algorithm will be run with different
+        centroid seeds. The final results will be the best output of
+        n_init consecutive runs in terms of inertia.
+    max_iter : int, default: 1000
+        Maximum number of iterations of the k-means algorithm for a
+        single run.
+    tolerance : int, default : .00001
+    Attributes
+    ----------
+    cluster_centers_ : array, [n_clusters, n_features]
+        Coordinates of cluster centers
+    labels_ :
+        Labels of each point
+    '''
+
+    def __init__(self, n_clusters=3, init='random', n_init=10,
+                 max_iter=300, tolerance = 1e-4):
+
+        self.n_clusters = n_clusters
+        self.init = init
+        self.max_iter = max_iter
+        self.tolerance = tolerance
+        self.n_init = n_init
+        self.centroids_ = None
+        self.labels_ = None
+
+    def _initialize_centroids(self, X):
+        '''
+        Parameters
+        ----------
+        X : array-like or sparse matrix, shape=(n_samples, n_features)
+            Data points to take random selection from for initial centroids
+        You should code the simplest case of random selection of k centroids from data
+        OPTIONAL: code up random_initialization and/or k-means++ initialization here also
+        '''
+        self.centroids_ = X[sample(range(len(X)),self.n_clusters)]
+
+    def _assign_clusters(self, X):
+        '''
+        computes euclidean distance from each point to each centroid and
+        assigns point to closest centroid)
+        assigns self.labels_
+        Parameters
+        ----------
+        X : array-like or sparse matrix, shape=(n_samples, n_features)
+            Data points to assign to clusters based on distance metric
+        '''
+        self.labels_ = np.zeros(len(X))
+        for idx_o, obs in enumerate(X):
+            for idx_c, cent in enumerate(self.centroids_):
+                if np.linalg.norm(obs-self.centroids_[int(self.labels_[idx_o])]) <= np.linalg.norm(obs-cent):
+                    pass
+                else:
+                    self.labels_[idx_o] = idx_c
+
+    def _compute_centroids(self, X):
+        '''
+        compute the centroids for the datapoints in X from the current values
+        of self.labels_
+        assigns self.centroids_
+        Parameters
+        ----------
+        X : array-like or sparse matrix, shape=(n_samples, n_features)
+            Data points to assign to clusters based on distance metric
+        '''
+        for idx_c, cent in enumerate(self.centroids_):
+            mask = np.equal(idx_c, self.labels_)
+            self.centroids_[idx_c] = np.mean(X[mask==1], axis=0)
+
+    def fit(self, X):
+        ''''
+        Compute k-means clustering.
+        Parameters
+        ----------
+        X : array-like or sparse matrix, shape=(n_samples, n_features)
+            Training instances to cluster.
+        '''
+        self._initialize_centroids(X)
+        self._assign_clusters(X)
+        for i in np.arange(self.max_iter):
+            self._compute_centroids(X)
+            self._assign_clusters(X)
+
+
+
+    def predict(self, X_test):
+        '''
+        Optional method: predict the closest cluster each sample in X belongs to.
+        Parameters
+        ----------
+        X : {array-like, sparse matrix}, shape = [n_samples, n_features]
+            New data to predict.
+        Returns
+        -------
+        labels : array, shape [n_samples,]
+            Index of the cluster each sample belongs to.
+        '''
+        labels = np.zeros(len(X_test))
+        for idx_o, obs in enumerate(X_test):
+            for idx_c, cent in enumerate(self.centroids_):
+                if np.linalg.norm(obs-self.centroids_[int(labels[idx_o])]) <= np.linalg.norm(obs-cent):
+                    pass
+                else:
+                    labels[idx_o] = idx_c
+        return labels
+
+    def score(self, X):
+        '''
+        return the total residual sum of squares
+        Parameters
+        ----------
+        X : {array-like, sparse matrix}, shape = [n_samples, n_features]
+            New data.
+        Returns
+        -------
+        score : float
+            The SSE
+        '''
+        RSS = 0
+        for idx_o, obs in enumerate(X):
+            RSS += (np.linalg.norm(obs-self.centroids_[int(labels[idx_o])]))**2
+        return RSS
+```
+
+Methods to determine best k:
+* Elbow Method
+* Gap Method - like elbow method, but comparing with uniform
+* Silhouette Score - (b-a) / max(a,b) where:
+    * a is inter cluster distance,
+    * b is next-nearest cluster centroid
+
+Watchouts:
+* if data are not spherical
+* if a feature is noisy has more importance - may need to weight
+
+*K-metoids* - Like K-means, but constrained to choose a specific observations for a centroid
+
+*DBScan*
+Hyperparameter:
+* epsilon - max distance between points in cluster
+
+*Hierarchical Clustering*
+
+
+
+### SVD - Singular Value Decomposition
+
+From an array of ratings:
+
+Table | Book 1 | Book 2 | Book 3 | Book 4
+------|----------|----------| ---| -----
+Person 1| 4 | 2 | 1 | 4
+Person 2 | n/a | 4 | 5 | n/a
+Person 3 | 0 | 4 | 4 | 2
+Person 4 | 5 | 2 | 2 | 4
+
+"Decompose" the matrix into 3 constituent components:
+
+[Users to topics] * [topics to topics] * [topics to books]
+
+OR
+
+[U] * [sigma] * [V] , where:
+* U = how much each user cares about a topic
+* sigma tells how important each topic is for reconstructing the original matrix, and
+* V = how topics are related to books
+
+Compared with the original matrix (the one to be decomposed), U has the same order of rows, and V keeps the same order of columns. This is useful if you're trying to keep track of which books or which users correspond to different topics.
+
+With U * sigma, you can use cosine similarity to learn how similar users are with each other.  Similarly, with sigma * V, you can see how similar books are each otherself.
+
+```python
+U,Sigma,VT = np.linalg.svd(pv.as_matrix())
+```
+
 ___
 # <span style="color:red">Visualization</span>
 
@@ -1027,6 +1231,31 @@ acax.set_ylabel('Frequency')
 acax.legend();
 ```
 
+Two variables, plotting y's
+```Python
+fig1 = plt.figure(figsize=(12,10))
+ax1 = fig.add_subplot(111)
+ax1.scatter(X_dogs[:,0], X_dogs[:,1], color='b', label='dogs')
+ax1.scatter(X_horses[:,0], X_horses[:,1], color='r', label='horses')
+ax1.legend(shadow=True, fontsize='xx-large')
+ax1.set_xlabel('Weight (lb)',fontsize=font_size)
+ax1.set_ylabel('Height (in)',fontsize=font_size)
+ax1.set_title('Horse or dog?',fontsize=font_size)
+plt.show()
+```
+
+3D Plotting
+```python
+from mpl_toolkits.mplot3d import Axes3D
+fig = plt.figure(figsize=(12,10))
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(df[:,1], df[:,3], df[:,0], c=y,s=35)
+ax.set_xlabel('Dim1',fontsize=20,labelpad=25.0)
+ax.set_ylabel('Dim0',fontsize=20,labelpad=25.0)
+ax.set_zlabel('Dim3',fontsize=20,labelpad=25.0)
+plt.tight_layout()
+plt.show()
+```
 
 Plot Corr heat map
 ```python
@@ -1046,24 +1275,24 @@ sns_plot = sns.heatmap(corr, mask=mask, cmap=cmap, vmax=.3, center=0,
 ```
 
 
-## GGPlot
+#### GGPlot
 
 * [Cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
 
-## Seaborn
+#### Seaborn
 
 * [Gallery](https://seaborn.pydata.org/examples/index.html)
 ___
 # <span style="color:red">Data Products</span>
 
-### Markdown
+#### Markdown
 
 * [Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet)
 * [Math Symbols](https://reu.dimacs.rutgers.edu/Symbols.pdf)
 * [Markdown Table Generator](http://www.tablesgenerator.com/markdown_tables)
 
 ---
-# TODOS
+#### TODOS
 
 * clean up repositories
 * Study maximum a posteriori (MAP)
@@ -1086,17 +1315,31 @@ ___
 * Study Feature Selection VarianceThreshold, SelectKBest
 * Adam mentioned very specific ways to identify outliers - find that sklnear module
 
-### RESOURCES WE SKIMMED THAT I SHOULD COME BACK TO
+#### Resources Not Covered In Depth
 
 * [Bayesian Inference for Hackers](http://nbviewer.jupyter.org/github/CamDavidsonPilon/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers/tree/master/)
 * Model selection 4_machine_learning/glms - notebook
 * http://www.dataschool.io/15-hours-of-expert-machine-learning-videos/
 
-### PROJECTS IN PROGRESS
+#### Projects in Progress
 * Referrals classifier
 * Diabetes among Pima women
 
-### Project list
+#### Project list
 * Referrals changepoint analysis
 * Admissions forecasting
 * Medical Expense forecast
+* Predict Member Churn
+
+___
+#### Style Guide
+
+
+# <span style="color:grey">Major Header</span>
+#### Any other header
+*Explanation of what that header is in your own words*
+
+```python
+## Title of code snippet
+-- CODE HERE --
+```
