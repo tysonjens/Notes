@@ -414,6 +414,7 @@ ___
 # <span style="color:green">Machine learning</span>
 
 * [An Introduction to Statistical Learning - ISLR](http://www-bcf.usc.edu/~gareth/ISL/ISLR%20Seventh%20Printing.pdf)
+* [Elements of Statistical Learning](https://web.stanford.edu/~hastie/Papers/ESLII.pdf)
 * [SK Learn](http://scikit-learn.org/stable/)
 * [Model Smoothers](http://madrury.github.io/smoothers/)
 
@@ -551,8 +552,6 @@ print("done")
 #### Supervised Learning
 
 #### General Linear Models
-
-#### Unsupervised Learning
 
 * [Multicollinearity](https://en.wikipedia.org/wiki/Multicollinearity)
 
@@ -893,8 +892,9 @@ Support Vector Machines or "tricks" allow us to project data in n dimensions int
 
 [Patrick Winston](https://www.youtube.com/watch?v=_PwhiWxHK8o)
 
+#### Unsupervised Learning
 
-### Dimensionality Reduction
+#### Dimensionality Reduction
 
 #### PCA
 
@@ -907,10 +907,8 @@ Principle Components Analysis projects many dimensions to fewer dimensions that 
 * Interpretation & Visualization
 * Make computations easier
 
-
-
-Scree Plot Code
 ```Python
+## Scree Plot Code
 def scree_plot(pca, title=None):
     num_components = pca.n_components_
     ind = np.arange(num_components)
@@ -946,9 +944,8 @@ def scree_plot(pca, title=None):
         plt.title(title, fontsize=16)
 ```
 
-
-Represent PCA in 2 dimensions
 ```python
+## Represent PCA in 2 dimensions
 def plot_embedding(X, y, title=None):
     '''
     INPUT:
@@ -980,7 +977,7 @@ def plot_embedding(X, y, title=None):
         plt.title(title, fontsize=16)
 ```
 
-### Clustering
+#### Clustering
 
 *K-means*
 
@@ -1190,12 +1187,25 @@ With U * sigma, you can use cosine similarity to learn how similar users are wit
 U,Sigma,VT = np.linalg.svd(pv.as_matrix())
 ```
 
+#### Natural Language Processing (NLP)
+
+*In class we used Naive Bayes to determine whether a document belonged to one of many classes. P(type|words) = P(words|type) x P(type)/P(words).  All of the values on the right hand side of the equation can be trained using historical data.*
+
+[Natural Language Toolkit NLTK](http://www.nltk.org/)
+
+#### Latent Dirichlet Allocation LDA
+
+#### Expectation-Maximization Algorithm (EM)
+
+*You have data that does not appear to come from any one distribution, but think it may be a mixture of distributions, but you don't know the parameters. You can guess the parameters, and then use maximum likelihood to converge toward what the actual parameters are.*
+
+
 ___
 # <span style="color:red">Visualization</span>
 
 * [flowingdata](http://flowingdata.com/)
 
-## matplotlibx
+#### matplotlibx
 
 * Plot in style xkcd: add  `plt.xkcd()` in header
 * Plot "fivethirtyeight: `plt.style.use('fivethirtyeight')`
