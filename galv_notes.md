@@ -83,7 +83,7 @@ plot_discrete(binomial);
 ```
 #### Bootstrap
 
-The bootstrap takes 200-2000 samples of length equal to sample, and calculates the statistic of interest. This process creates a distribution for the statistic and can be used to create confidence intervals. It is computationally expensive, but is more versatile that MLE.
+*The bootstrap takes 200-2000 samples of length equal to sample, and calculates the statistic of interest. This process creates a distribution for the statistic and can be used to create confidence intervals for many statistics including means, standard deviations, and beta coefficients. It is computationally expensive, but is more versatile that MLE.*
 
 * use `np.percentile(array, [2.5,97.5])`
 * bootstrap
@@ -106,7 +106,7 @@ def bootstrap_ci(lst, bootstraps=1000, ci=95):
 
 * [Sampling](https://en.wikipedia.org/wiki/Sampling_(statistics))
 * [Power](https://en.wikipedia.org/wiki/Statistical_power#Factors_influencing_power) - `Pr(Reject H0 | H1 is true)`
-[Power](http://my.ilstu.edu/~wjschne/138/Psychology138Lab14.html)
+* [Power](http://my.ilstu.edu/~wjschne/138/Psychology138Lab14.html)
 * [Quick-R Power](https://www.statmethods.net/stats/power.html)
 * [ANOVA vs T-test](https://keydifferences.com/difference-between-t-test-and-anova.html)
 
@@ -423,15 +423,14 @@ write.csv(a, 'cars.csv')
 
 ___
 
-# <span style="color:green">Machine learning</span>
+# <span style="color:green">Machine Learning</span>
 
 * [An Introduction to Statistical Learning - ISLR](http://www-bcf.usc.edu/~gareth/ISL/ISLR%20Seventh%20Printing.pdf)
 * [Elements of Statistical Learning](https://web.stanford.edu/~hastie/Papers/ESLII.pdf)
 * [SK Learn](http://scikit-learn.org/stable/)
 * [Model Smoothers](http://madrury.github.io/smoothers/)
 
-**Parametric Model** - makes assumption about underlying form of the data (i.e. linear)
-**Non-parametric Models** - Makes no assumptions about form of underlying data
+
 
 #### Data Cleaning
 
@@ -636,7 +635,9 @@ def bootstrap_ci_coefficients(X_train, y_train, num_bootstraps):
 ```
 
 
-#### Regularization
+#### Regularization - Lasso and Ridge
+
+*Regularization is a way to decrease the variance of a model. The Lasso and Ridge techniques introduce a penalty to the cost function the restricts the size any coefficient can attain. Linear models with many features (esp. if polynomials are present) can easily overfit data because of their flexibility. The Ridge tends to keep all variable while pushing them toward zero.  The Lasso will push some variables' coefficients all the way to zero.*
 
 Sampling Density, Curse of dimensionality
 
@@ -1173,7 +1174,7 @@ Watchouts:
 * if a feature is noisy has more importance - may need to weight
 
 #### K-metoids Clustering
-*Like K-means, but constrained to choose a specific observations for a centroid*
+*Like K-means, but constrained to choose a specific observation for a centroid at each step*
 
 *DBScan*
 Hyperparameter:
@@ -1181,7 +1182,17 @@ Hyperparameter:
 
 #### Hierachical Clustering
 
+*Bottoms of clustering. Choose one of many distance parameters, and one-by-one, begin combining clusters into like groups until there is one group. A dendrogram allows us to choose the number of clusters we wish to keep.*
 
+{
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## $$P(y|\\vec{x}) = \\frac{P(\\vec{x}|y)P(y)}{P(\\vec{x})}$$"
+   ]
+  }
+
+Insert image dendrogram
 
 #### SVD - Singular Value Decomposition
 
@@ -1228,6 +1239,178 @@ Taught through Gaussian Mixture Models (GMM).
 ![pipes](images/gmm.png)
 
 *You have data that does not appear to come from any one distribution, but think it may be a mixture of distributions, but you don't know the parameters. You can guess the parameters, and then use maximum likelihood to converge toward what the actual parameters are.*
+
+```python
+"""
+This is an implementation of two-component Gaussian Mixture Model from
+Elements of Statistical Learning (pp 272)
+"""
+
+## make imports
+from __future__ import division
+import sys
+import numpy as np
+import matplotlib.mlab as mlab
+import matplotlib.pyplot as plt
+import scipy.stats as stats
+
+class TwoComponentGaussian():
+
+    def __init__(self, y, num_iters=25, num_runs=20, verbose=False):
+        """
+        constructor
+        """
+        self.y = y
+        self.verbose = verbose
+        self.num_runs = num_runs
+        self.num_iters = num_iters
+        self.params = self._guess_initial_parameters()
+        self.gaussian1 = None
+        self.gaussian2 = None
+        self.log_likelihood = None
+        self.gamma_hat = np.zeros((self.params['n']), 'float') ## allocate memory for the responsibilities
+
+    def _guess_initial_parameters(self):
+        """
+        make intial random guesses for the parameters
+        """
+        n    = len(self.y)
+        mu1  = self.y[np.random.randint(0,n)]
+        mu2  = self.y[np.random.randint(0,n)]
+        var1 = np.random.uniform(0.5,1.5)
+        var2 = np.random.uniform(0.5,1.5)
+        pi   = 0.5
+        return {'n':n, 'mu1':mu1, 'mu2':mu2, 'var1':var1, 'var2':var2, 'pi':pi}
+
+    def _update_gaussian_distributions(self):
+        self.gaussian1 = stats.norm(
+            loc=self.params['mu1'],
+            scale=np.sqrt(self.params['var1'])
+            )
+        self.gaussian2 = stats.norm(
+            loc=self.params['mu2'],
+            scale=np.sqrt(self.params['var2'])
+            )
+
+    def _update_expectation(self):
+        """
+        expectation step
+        ARGS
+        self.y: expectation is performed with respect to these data
+        self.params: the most recent dictionary of parameters
+        OUTPUT
+        self.gamma_hat: the responsibilities
+        """
+        ## use the normal pdf to calculate the responsibilities
+        self._update_gaussian_distributions()
+        gamma_hat = (
+        (self.params['pi'] * self.gaussian2.pdf(self.y)) / (
+            ((1 - self.params['pi']) * self.gaussian1.pdf(self.y)) +
+            (self.params['pi'] * self.gaussian2.pdf(self.y))
+            )
+        )
+        self.gamma_hat = gamma_hat
+
+    def _update_parameters(self):
+        """
+        maximization step
+        ARGS
+        params: the dictionary of parameters
+        self.y: the data we are looking to maximize over
+        self.gamma_hat: the most recently estimated responsibilities
+        OUTPUT
+        params: an updated dictionary of the parameters
+        """
+        mu_hat1 = np.sum((1-self.gamma_hat) * self.y) / np.sum(1-self.gamma_hat)
+        mu_hat2 = np.sum(self.gamma_hat * self.y) / np.sum(self.gamma_hat)
+        var_hat1 = np.sum((1 - self.gamma_hat) * (self.y - mu_hat1)**2) / np.sum(1 - self.gamma_hat)
+        var_hat2 = np.sum(self.gamma_hat * (self.y - mu_hat2)**2) / np.sum(self.gamma_hat)
+        pi_hat = np.sum(self.gamma_hat) / len(self.gamma_hat)
+        self.params.update(
+        {'mu1': mu_hat1, 'mu2':mu_hat2, 'var1': var_hat1, 'var2': var_hat2, 'pi': pi_hat}
+        )
+
+    def _update_log_likelihood(self):
+        """
+        likelihood
+        returns a single value
+        the likelihood function has two parts and the output is a sum of the two parts
+        """
+        ## using the normal pdf calculate the responsibilities
+        self._update_gaussian_distributions()
+        part1 = np.sum(
+        (1 - self.gamma_hat) * np.log(self.gaussian1.pdf(self.y)) +
+        (self.gamma_hat * np.log(self.gaussian2.pdf(self.y)))
+        )
+        part2 = np.sum(
+        (1 - self.gamma_hat) * np.log(1 - self.params['pi']) +
+        (self.gamma_hat * np.log(self.params['pi']))
+        )
+        self.log_likelihood = part1 + part2
+
+    def run_em_algorithm(self, verbose=True):
+        """
+        main algorithm
+        """
+
+        maximum_likelihood = -np.inf
+        best_estimates = None
+
+        ## loop through the total number of runs
+        for j in range(self.num_runs):
+            iter_count = 0
+
+            ## iterate between E-step and M-step
+            while iter_count < self.num_iters:
+                iter_count += 1
+
+                ## ensure we have reasonable estimates
+                if (self.params['var1'] < 0.0) or (self.params['var2'] < 0.0):
+                    iter_count = 1
+                    self._guess_initial_parameters()
+
+                ## E-step
+                self._update_expectation()
+                self._update_log_likelihood()
+
+                ## M-step
+                self._update_parameters()
+
+            if self.log_likelihood > maximum_likelihood:
+                maximum_likelihood = self.log_likelihood.copy()
+                best_estimates = self.params.copy()
+
+            if self.verbose == True:
+                print('run: {run} iteration {iter} --- mu1: {mu1} --- mu2: {mu2} \
+                --- observed data likelihood: {likelihood}'.format(
+                    run=j+1,
+                    iter=iter_count,
+                    mu1=round(self.params['mu1'],2),
+                    mu2=round(self.params['mu2'],2),
+                    likelihood=round(self.log_likelihood,4)
+                    )
+                )
+
+        print("{n} runs with {m} iterations each, complete".format(
+        n=self.num_runs, m=self.num_iters)
+        )
+        print('maximum likelihood: {}'.format(maximum_likelihood))
+        print('best parameter estimates: {}'.format(best_estimates))
+        self.plot_mixture_model(iteration=iter_count)
+        return maximum_likelihood, best_estimates
+
+    def plot_mixture_model(self, iteration):
+        fig = plt.figure(figsize=(8,6))
+        ax = fig.add_subplot(111)
+        x = self.y.copy()
+        ax.hist(x, bins=25, density=True, alpha=0.6, fc='lightblue', histtype='stepfilled')
+        xmin, xmax = ax.get_xlim()
+        pdf_range = np.linspace(xmin, xmax, x.size)
+        ax.plot(pdf_range, self.gaussian1.pdf(pdf_range),'darkblue', alpha=iteration/self.num_iters, label='pdf')
+        ax.plot(pdf_range, self.gaussian2.pdf(pdf_range),'darkblue', alpha=iteration/self.num_iters, label='pdf')
+        ax.set_xlabel("wait times (minutes)")
+        plt.show()
+```
 
 [Andrew Ng's Paper](http://cs229.stanford.edu/notes/cs229-notes8.pdf)
 
