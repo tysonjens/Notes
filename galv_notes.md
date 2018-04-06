@@ -284,6 +284,14 @@ Order of Execution
 `SELECT FROM JOIN WHERE GROUPBY HAVING ORDERBY LIMIT`
 
 
+#### Anaconda and Jupyter notebooks
+
+```shell
+## Do this each week to stay up-to-date
+conda update conda
+conda update --all
+```
+
 #### Python
 
 * [Style Guide](https://www.python.org/dev/peps/pep-0008/)
@@ -305,7 +313,11 @@ if __name__ == '__main__':
 ## create Categorical Var from Continuous Var
 df['new_categ_var'] = pd.cut(df['continuous_var'], [3, 6, 10], labels=['<3','4-6','7-10'])
 ```
-
+```python
+## Use for understanding coding errors
+import pdb
+pdb.set_trace()
+```
 
 ```python
 ## Python Starter
@@ -444,8 +456,8 @@ pd.get_dummies(df,prefix=['country'])
 
 ```python
 ## Get Dummies
-Dummies = pd.get_dummies(df['var_with_multiple_cat_levels'])
-df.drop('var_with_multiple_cat_levels', inplace=True, axis=1)
+df = pd.get_dummies(df)
+df.drop('one_dummy', axis=1, inplace=True)
 ```
 
 ```Python
@@ -702,7 +714,6 @@ def plotroc(TPR, FPR):
 
 *A decision tree looks for variable/value combinations that can split observations in a way that decreases entropy (increases order). As the model fits, it recursively looks for the variable/value combination that most effectively maximizes **information gain**, typically defined as gini or Shannon entropy.*
 
-
 ```
 ## Information gain at any split
 IG(P,C) = H(P) - weightedsums(H(C))
@@ -741,12 +752,8 @@ B = 100 is sufficient to achieve good performance in this example.
 
 #### Random Forest
 
-Random forests provide an improvement over bagged trees by way of a random
-small tweak that decorrelates the trees. As in bagging, we build a number forest
-of decision trees on bootstrapped training samples. But when building these
-decision trees, each time a split in a tree is considered, a random sample of
-m predictors is chosen as split candidates from the full set of p predictors.
-The split is allowed to use only one of those m predictors.
+*Random forests provide an improvement over bagged trees by way of a random
+small tweak that decorrelates the trees. As in bagging, we build a number forest of decision trees on bootstrapped training samples. But when building these decision trees, each time a split in a tree is considered, a random sample of m predictors is chosen as split candidates from the full set of p predictors. The split is allowed to use only one of those m predictors.*
 
 Ways to interpret feature impact:
 * Partial Dependency Plot
@@ -814,21 +821,38 @@ Iter(n)
 
 ```python
 ## Plot feature importance
-feature_importances = 100*model.feature_importances_ / np.sum(model.feature_importances_)
-feature_importances, feature_names, feature_idxs = zip(*sorted(zip(feature_importances, names, range(len(names)))))
+def feat_importance_plot(model,names,filename,color='g',alpha=0.5,fig_size=(10,10),dpi=250):
+    '''
+    horizontal bar plot of feature importances
+    works for sklearn models that have a .feature_importances_ method (e.g. RandomForestRegressor)
 
-width = 0.8
+    imputs
+    ------
+    model:    class:     a fitted sklearn model
+    names:    list:      list of names for all features
+    filename: string:    name of file to write, with appropriate path and extension (e.g. '../figs/feat_imp.png')
 
-idx = np.arange(len(names))
-plt.barh(idx, feature_importances, align='center')
-plt.yticks(idx, feature_names)
+    optional imputs to control plot
+    ---------------
+    color(default='g'), alpha(default=0.8), fig_size(default=(10,10)), dpi(default=250)
 
-plt.title("Feature Importances in Gradient Booster")
-plt.xlabel('Relative Importance of Feature', fontsize=14)
-plt.ylabel('Feature Name', fontsize=14)
+    '''
+    ft_imp = 100*model.feature_importances_ / np.sum(model.feature_importances_) # funny cause they sum to 1
+    ft_imp_srt, ft_names, ft_idxs = zip(*sorted(zip(ft_imp, names, range(len(names)))))
 
-plt.savefig('plots/feature-importances.png', bbox_inches='tight')
+    idx = np.arange(len(names))
+    plt.figure(figsize=(10,10))
+    plt.barh(idx, ft_imp_srt, align='center', color=color,alpha=alpha)
+    plt.yticks(idx, ft_names)
+
+    plt.title("Feature Importances in {}".format(model.__class__.__name__))
+    plt.xlabel('Relative Importance of Feature', fontsize=14)
+    plt.ylabel('Feature Name', fontsize=14)
+    plt.savefig(filename,dpi=dpi)
+    plt.show()
 ```
+
+![Feature Importance](images/featureimportance.png)
 
 #### Partial Dependency Plots
 *A graph that shows how the response variable changes as a feature changes, for all values of that feature, while holding other variables fixed*
@@ -864,8 +888,9 @@ plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 plt.savefig('plots/patial-dependence-plots.png', bbox_inches='tight')
 ```
 
-Plot two partial dependence vars at once
+
 ```python
+## Plot Partial dependence - 2 vars
 # Two varaibles at once
 fidxs = list(reversed(feature_idxs))
 pdp, (x_axis, y_axis) = partial_dependence(model, (fidxs[0], fidxs[1]),
@@ -888,9 +913,10 @@ plt.savefig('plots/patial-dependence-plot-two-features.png', bbox_inches='tight'
 
 ### Support Vector Machines
 
-Support Vector Machines or "tricks" allow us to project data in n dimensions into higher dimension without having to compute variables in those dimensions. Simple decision boundaries in higher dimensions translate to complicated decision boundaries when translated to lower dimensions.
+*Support Vector Machines or "tricks" allow us to project data in n dimensions into higher dimension without having to compute variables in those dimensions. Simple decision boundaries in higher dimensions translate to complicated decision boundaries when translated to lower dimensions.*
 
-[Patrick Winston](https://www.youtube.com/watch?v=_PwhiWxHK8o)
+
+* [Patrick Winston Youtube lecture](https://www.youtube.com/watch?v=_PwhiWxHK8o)
 
 #### Unsupervised Learning
 
@@ -977,9 +1003,7 @@ def plot_embedding(X, y, title=None):
         plt.title(title, fontsize=16)
 ```
 
-#### Clustering
-
-*K-means*
+#### K-means Clustering
 
 Partition all observations into one of K clusters such that the total within-cluster variation, summed across all clusters, is as small as possible.
 
@@ -995,6 +1019,7 @@ Steps:
     * move the centroids to center of observations assigned to them
 
 ```python
+## K-means class
 class KMeans(object):
     '''
     K-Means clustering
@@ -1147,17 +1172,18 @@ Watchouts:
 * if data are not spherical
 * if a feature is noisy has more importance - may need to weight
 
-*K-metoids* - Like K-means, but constrained to choose a specific observations for a centroid
+#### K-metoids Clustering
+*Like K-means, but constrained to choose a specific observations for a centroid*
 
 *DBScan*
 Hyperparameter:
 * epsilon - max distance between points in cluster
 
-*Hierarchical Clustering*
+#### Hierachical Clustering
 
 
 
-### SVD - Singular Value Decomposition
+#### SVD - Singular Value Decomposition
 
 From an array of ratings:
 
@@ -1195,13 +1221,18 @@ U,Sigma,VT = np.linalg.svd(pv.as_matrix())
 
 #### Latent Dirichlet Allocation LDA
 
-#### Expectation-Maximization Algorithm (EM)
+#### Expectation-Maximization Algorithm (EM algorithm)
+
+Taught through Gaussian Mixture Models (GMM).
+
+![pipes](images/gmm.png)
 
 *You have data that does not appear to come from any one distribution, but think it may be a mixture of distributions, but you don't know the parameters. You can guess the parameters, and then use maximum likelihood to converge toward what the actual parameters are.*
 
+[Andrew Ng's Paper](http://cs229.stanford.edu/notes/cs229-notes8.pdf)
 
 ___
-# <span style="color:red">Visualization</span>
+# <span style="color:grey">Visualization</span>
 
 * [flowingdata](http://flowingdata.com/)
 
@@ -1221,8 +1252,10 @@ for m, ax in zip(col_names, axes.flatten()):
     ax.set_title(m)
 ```
 
-Plot Violin Plot - see difference in continuous var across levels of categorical variable
+
 ```python
+## Violin Plot -
+## see difference in continous var across levels of categorical variable
 def violin_plot_binary(categorical_var, continuous_var, df):
     # Draw a nested violinplot and split the violins for easier comparison
     sns.violinplot(x=categorical_var, y=continuous_var, data=df, split=True,
@@ -1230,8 +1263,8 @@ def violin_plot_binary(categorical_var, continuous_var, df):
     sns.despine(left=True)
 ```
 
-Plotting Two Histograms with Alpha = 0.5
 ```python
+## Plotting Two Histograms with Alpha = 0.5
 figpois = plt.figure(figsize=(12,6))
 acax = figpois.add_subplot(111)
 acax.set_title('Histogram, Accidents in a Month')
@@ -1241,8 +1274,9 @@ acax.set_ylabel('Frequency')
 acax.legend();
 ```
 
-Two variables, plotting y's
+
 ```Python
+## Two variables, plotting y's
 fig1 = plt.figure(figsize=(12,10))
 ax1 = fig.add_subplot(111)
 ax1.scatter(X_dogs[:,0], X_dogs[:,1], color='b', label='dogs')
@@ -1254,8 +1288,8 @@ ax1.set_title('Horse or dog?',fontsize=font_size)
 plt.show()
 ```
 
-3D Plotting
 ```python
+## 3D Plotting
 from mpl_toolkits.mplot3d import Axes3D
 fig = plt.figure(figsize=(12,10))
 ax = fig.add_subplot(111, projection='3d')
@@ -1267,8 +1301,8 @@ plt.tight_layout()
 plt.show()
 ```
 
-Plot Corr heat map
 ```python
+## Plot Corr heat map
 sns.set(style="white")
 # Compute the correlation matrix
 corr = train_train.corr()
@@ -1311,7 +1345,6 @@ ___
 * Get in touch with Clouse (emailed)
 * objects and classes practice
 * finish diabetes git hub and blog
-* study splines
 * Model Stacking - Kaggle Guide
 * [Udemy recommendation from Chris](https://www.udemy.com/machine-learning-fun-and-easy-using-python-and-keras/)
 * Patrick Winston Stanford on AdaBoost
@@ -1324,12 +1357,15 @@ ___
 * Study Pipelines
 * Study Feature Selection VarianceThreshold, SelectKBest
 * Adam mentioned very specific ways to identify outliers - find that sklnear module
+* Add project to galvanize talent
+* Study AIC and BIC
 
 #### Resources Not Covered In Depth
 
 * [Bayesian Inference for Hackers](http://nbviewer.jupyter.org/github/CamDavidsonPilon/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers/tree/master/)
 * Model selection 4_machine_learning/glms - notebook
 * http://www.dataschool.io/15-hours-of-expert-machine-learning-videos/
+* Andrew Ng - Machine Learning Yearning
 
 #### Projects in Progress
 * Referrals classifier
@@ -1348,6 +1384,11 @@ ___
 # <span style="color:grey">Major Header</span>
 #### Any other header
 *Explanation of what that header is in your own words*
+
+![pipes](images/my_pic.jpg)
+
+* Resource 1
+* Resource 2
 
 ```python
 ## Title of code snippet
