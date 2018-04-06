@@ -635,13 +635,16 @@ def bootstrap_ci_coefficients(X_train, y_train, num_bootstraps):
 ```
 
 
-#### Regularization - Lasso and Ridge
+#### Regularization - Lasso, Ridge & ElastiNet
 
-*Regularization is a way to decrease the variance of a model. The Lasso and Ridge techniques introduce a penalty to the cost function the restricts the size any coefficient can attain. Linear models with many features (esp. if polynomials are present) can easily overfit data because of their flexibility. The Ridge tends to keep all variable while pushing them toward zero.  The Lasso will push some variables' coefficients all the way to zero.*
+*Regularization is a way to decrease the variance of a model. The Lasso and Ridge techniques introduce a penalty to the cost function the restricts the size any coefficient can attain. Linear models with many features (esp. if polynomials are present) can easily overfit data because of their flexibility. The Ridge tends to keep all variable while pushing them toward zero.  The Lasso will push some variables' coefficients all the way to zero. ElastiNet is a blend between ridge and lasso.*
+
+
 
 Sampling Density, Curse of dimensionality
 
-$N^\frac{1}{D}$  
+
+
 Where:
 * N = number of data points
 * D = number of dimensions
@@ -1184,13 +1187,7 @@ Hyperparameter:
 
 *Bottoms of clustering. Choose one of many distance parameters, and one-by-one, begin combining clusters into like groups until there is one group. A dendrogram allows us to choose the number of clusters we wish to keep.*
 
-{
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "## $$P(y|\\vec{x}) = \\frac{P(\\vec{x}|y)P(y)}{P(\\vec{x})}$$"
-   ]
-  }
+$P(y|\\vec{x}) = \\frac{P(\\vec{x}|y)P(y)}{P(\\vec{x})}$
 
 Insert image dendrogram
 
@@ -1514,6 +1511,9 @@ ___
 
 #### Markdown
 
+![pipes](images/Sigmoid.gif)
+
+
 * [Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet)
 * [Math Symbols](https://reu.dimacs.rutgers.edu/Symbols.pdf)
 * [Markdown Table Generator](http://www.tablesgenerator.com/markdown_tables)
@@ -1521,27 +1521,32 @@ ___
 ---
 #### TODOS
 
-* clean up repositories
-* Study maximum a posteriori (MAP)
-* Networking for jobs
-* Switch to sublime text
-* Get in touch with Clouse (emailed)
-* objects and classes practice
 * finish diabetes git hub and blog
-* Model Stacking - Kaggle Guide
-* [Udemy recommendation from Chris](https://www.udemy.com/machine-learning-fun-and-easy-using-python-and-keras/)
-* Patrick Winston Stanford on AdaBoost
+* polish churn prevention
 * Study Stacking - going through several models, each adds a new column to your observations
-* SQL Study
-* apply new methods to referrals classifier
-* add images and examples to notes, will really make them sing
-* https://github.com/ajcr/100-pandas-puzzles
-* Study AIC/BIC
 * Study Pipelines
 * Study Feature Selection VarianceThreshold, SelectKBest
+* apply new methods to referrals classifier
+* Watch Andrew Ng Neural Nets
+* Finish cleaning notes , add pictures
+* Patrick Winston Stanford on AdaBoost
+* Add project to resume
+* SQL Study
+* Configure math for markdown and github
+* Networking for jobs
+  * Jeffrey
+  * Ruan & optum
+* Study AIC and BIC
+* add images and examples to notes, will really make them sing
+* Model Stacking - Kaggle Guide
+* Study maximum a posteriori (MAP)
+* https://github.com/ajcr/100-pandas-puzzles
+* objects and classes practice
+* [Udemy recommendation from Chris](https://www.udemy.com/machine-learning-fun-and-easy-using-python-and-keras/)
+* Switch to sublime text
 * Adam mentioned very specific ways to identify outliers - find that sklnear module
 * Add project to galvanize talent
-* Study AIC and BIC
+* Add Elastinet
 
 #### Resources Not Covered In Depth
 
@@ -1552,13 +1557,29 @@ ___
 
 #### Projects in Progress
 * Referrals classifier
+  - random forest, gradient boost
+  - Pros - commercial, actionable, have the data
 * Diabetes among Pima women
 
-#### Project list
-* Referrals changepoint analysis
+#### Future Project list
+* Referrals Utilization - changepoint analysis
+  - can we detect when a doctor begins referring more or less?
+  - compare PCPs vs PCPs, specialists vs specialists
+  - Pros - different from bayes
+  - Cons - need to age sex adjust Referrals
 * Admissions forecasting
-* Medical Expense forecast
+  - somewhat boring, I'm sure I can do this, but not sure what we'll changes
+  - could "prove" efficacy of incumbent model
+* Medical Expense forecaster
+  - Pros - high profile
+  - Cons - Finance and actuaries already working on this
 * Predict Member Churn
+  - Pros - largely untouched, would be useful
+  - Cons - not sure if data will be predictive
+* NLP - classify notes in electronic health record - "read notes and classify one of several. lacking a diagnosis. completeness of note."
+* Clustering algorithm - types of patients based on referrals data
+* Outlier detection -
+
 
 ___
 #### Style Guide
