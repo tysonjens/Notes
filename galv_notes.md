@@ -595,7 +595,11 @@ models = bootstrap_train(
 fig, axs = plot_bootstrap_coefs(models, features.columns, n_col=4)
 fig.tight_layout()
 ```
+#### Cross validation
 
+*A way to ensure that a model generalizes to new data, cross validations attempts to fit data a model to "new" data, prior to seeing how well it performs on test data.  Typically, a dataset will be split into a test set and a training set, and the training set will then be divided further into training and validation sets. A popular way to validate is with "k-folds", splitting the training set into k folds, then computing how a model fits on the kth fold with training on the !k (not kth) folds.*
+
+![pipes](images/kfoldscv.png)
 
 #### Logistic Regression
 
@@ -639,19 +643,33 @@ def bootstrap_ci_coefficients(X_train, y_train, num_bootstraps):
 
 *Regularization is a way to decrease the variance of a model. The Lasso and Ridge techniques introduce a penalty to the cost function the restricts the size any coefficient can attain. Linear models with many features (esp. if polynomials are present) can easily overfit data because of their flexibility. The Ridge tends to keep all variable while pushing them toward zero.  The Lasso will push some variables' coefficients all the way to zero. ElastiNet is a blend between ridge and lasso.*
 
+Ridge Cost Function:
 
+![pipes](images/ridge.png)
 
-Sampling Density, Curse of dimensionality
+Lasso Cost Function:
 
+![pipes](images/lasso.png)
 
+Elastic Net Cost Function:
+
+![pipes](images/elasticnet.png)
+
+In Logistic Regression, 'l1' = lasso, 'l2' = ridge
+
+#### Sampling Density, Curse of dimensionality
+
+*As features are added to a model "density" decreases. Low density data sets create problems for many algorithms, so it is desirable to get more data to keep data density high.*
+
+![pipes](images/datadensity.png)
 
 Where:
 * N = number of data points
-* D = number of dimensions
+* D = number of dimensions/features
 
 #### K-folds Cross-Validation
 
-*Takes a training set of data and breaks it into 5 folds.  Through 5 iterations, fits a linear model on the *other* folds, then scores how will the model fits on the fold at hand `foldrmse = rmse(y_test_f, test_f_predicted)`. Collects this scores and returns them.*
+*Takes a training set of data and breaks it into 5 folds.  Through 5 iterations, fits a linear model on the *other* folds, then scores how will the model fits on the fold at hand `foldrmse = rmse(y_test_f, test_f_predicted)`. Collects these scores and returns them.*
 
 ```python
 def crossVal(X_train, y_train):
@@ -671,6 +689,20 @@ def crossVal(X_train, y_train):
 
 #### Model selection
 
+*We need ways to compare candidate models to determine which, under varying circumstances, is the best.*
+
+**Total Sum of Squares (TSS):** the total possible variation in y - this is what we're trying to explain.
+
+
+**Residual Sum of Squares (RSS):** take each error term and square it, add them up. Boom.
+
+**R-squared:** is a measure of the linear relationship between X and Y.
+
+**Residual Standard Error:** An estimate of the standard deviation of errors, or the average aount aount that the resonse will deviate from the true regression line.
+
+**F-statistic:** Hypothesis that at least one coefficient is non-zero.
+
+
 #### Recursive Feature Elimination (RFE)   
 *At each iteration, select one feature to remove until there are n feature left*
 
@@ -689,9 +721,9 @@ def gen_modselect_score(n):
 ```
 
 #### ROC Curve
-*Plots False Negative Rate (x-axis) vs. True Positive Rate (y-axis) for various thresholds we set for predicted probabilities.*
+*Plots False Negative Rate (x-axis) vs. True Positive Rate (y-axis) for various thresholds we set for predicted probabilities. It helps us choose the appropriate threshold for achieving the best precision or recall - use accuracy or precision to determine how good the model actually is.*
 
-Insert Image
+![pipes](images/ROC.png)
 
 ```python
 ## ROC Curve
@@ -713,6 +745,14 @@ def plotroc(TPR, FPR):
     plt.legend(loc="lower right")
     plt.show()
 ```
+
+#### AIC & BIC
+
+*If two models have similar predictive power, we tend to prefer the one with fewer features. The simpler model focuses our attention to features that matter, is easier to replicate, is easier to put into production, and so on. Therefore, it would be nice to have model evaluators that account for the number of feature included.  This is the Akaike information criterion (AIC).*
+
+![pipes](images/AIC.png)
+
+
 
 #### Decision Trees
 
@@ -1511,42 +1551,39 @@ ___
 
 #### Markdown
 
+Adding a math equations:
+* [Go to CodeCogs](http://latex.codecogs.com/eqneditor/editor.php)
+* Make mathematics
+* download as gif and save to images folder
+* use pipe code to reference in markdown.
+
 ![pipes](images/Sigmoid.gif)
 
 
-* [Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet)
+* [Markdown Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet)
 * [Math Symbols](https://reu.dimacs.rutgers.edu/Symbols.pdf)
 * [Markdown Table Generator](http://www.tablesgenerator.com/markdown_tables)
 
 ---
 #### TODOS
 
-* finish diabetes git hub and blog
-* polish churn prevention
-* Study Stacking - going through several models, each adds a new column to your observations
-* Study Pipelines
 * Study Feature Selection VarianceThreshold, SelectKBest
 * apply new methods to referrals classifier
 * Watch Andrew Ng Neural Nets
-* Finish cleaning notes , add pictures
 * Patrick Winston Stanford on AdaBoost
 * Add project to resume
 * SQL Study
-* Configure math for markdown and github
 * Networking for jobs
   * Jeffrey
   * Ruan & optum
-* Study AIC and BIC
-* add images and examples to notes, will really make them sing
 * Model Stacking - Kaggle Guide
 * Study maximum a posteriori (MAP)
 * https://github.com/ajcr/100-pandas-puzzles
 * objects and classes practice
+* Study Pipelines
 * [Udemy recommendation from Chris](https://www.udemy.com/machine-learning-fun-and-easy-using-python-and-keras/)
-* Switch to sublime text
 * Adam mentioned very specific ways to identify outliers - find that sklnear module
 * Add project to galvanize talent
-* Add Elastinet
 
 #### Resources Not Covered In Depth
 
@@ -1590,6 +1627,8 @@ ___
 *Explanation of what that header is in your own words*
 
 ![pipes](images/my_pic.jpg)
+
+![pipes](images/Sigmoid.gif)
 
 * Resource 1
 * Resource 2
