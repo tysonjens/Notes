@@ -645,11 +645,11 @@ def bootstrap_ci_coefficients(X_train, y_train, num_bootstraps):
 
 Ridge Cost Function:
 
-![pipes](images/ridge.png)
+![pipes](images/Ridge.png)
 
 Lasso Cost Function:
 
-![pipes](images/lasso.png)
+![pipes](images/Lasso.png)
 
 Elastic Net Cost Function:
 
