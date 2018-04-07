@@ -327,6 +327,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 pd.set_option("display.max_columns", 100)
+pd.set_option('display.max_rows', 500)
 %matplotlib inline
 ```
 
@@ -423,7 +424,7 @@ write.csv(a, 'cars.csv')
 
 ___
 
-# <span style="color:green">Machine Learning</span>
+# <span style="color:grey">Machine Learning</span>
 
 * [An Introduction to Statistical Learning - ISLR](http://www-bcf.usc.edu/~gareth/ISL/ISLR%20Seventh%20Printing.pdf)
 * [Elements of Statistical Learning](https://web.stanford.edu/~hastie/Papers/ESLII.pdf)
@@ -432,7 +433,7 @@ ___
 
 
 
-#### Data Cleaning
+#### Data Cleaning & Feature Engineering
 
 Split data into x, y for training and testing
 ```python
@@ -534,7 +535,19 @@ features = feature_pipeline.transform(dataframe)
 ```
 
 ```python
-## Pickle
+#!/usr/bin/python
+"""
+cPickle works well and it is very flexible, but if array only data are available
+numpy's save features can provide better read speed
+"""
+
+import pickle,os
+import numpy as np
+
+#######################################
+## Basic pickle example
+#######################################
+
 results = {'a':1,'b':range(10)}
 results_pickle = 'foo.pickle'
 
@@ -556,6 +569,36 @@ else:
 #print(loadedResults)
 #os.system("rm %s"%results_pickle)
 print("done")
+
+
+#######################################
+## Saving multiple arrays NumPy
+#######################################
+
+a = np.arange(10)
+b = np.arange(12)
+
+## save it
+file_name = 'foo.npz'
+args = {'a':a,'b':b}
+np.savez_compressed(file_name,**args)
+
+## load it
+npz = np.load(file_name)
+print(npz)
+print(npz.keys())
+
+a = npz['a']
+b = npz['b']
+
+print(type(a))
+print(type(b))
+
+## clean up
+os.system("rm %s"%file_name)
+
+## see also pandas to_pickle
+## see also numpy save
 ```
 
 #### Outlier Detection
@@ -595,11 +638,7 @@ models = bootstrap_train(
 fig, axs = plot_bootstrap_coefs(models, features.columns, n_col=4)
 fig.tight_layout()
 ```
-#### Cross validation
 
-*A way to ensure that a model generalizes to new data, cross validations attempts to fit data a model to "new" data, prior to seeing how well it performs on test data.  Typically, a dataset will be split into a test set and a training set, and the training set will then be divided further into training and validation sets. A popular way to validate is with "k-folds", splitting the training set into k folds, then computing how a model fits on the kth fold with training on the !k (not kth) folds.*
-
-![pipes](images/kfoldscv.png)
 
 #### Logistic Regression
 
@@ -637,8 +676,6 @@ def bootstrap_ci_coefficients(X_train, y_train, num_bootstraps):
     bootstrap_estimates = np.asarray(bootstrap_estimates)
     return bootstrap_estimates
 ```
-
-
 #### Regularization - Lasso, Ridge & ElastiNet
 
 *Regularization is a way to decrease the variance of a model. The Lasso and Ridge techniques introduce a penalty to the cost function the restricts the size any coefficient can attain. Linear models with many features (esp. if polynomials are present) can easily overfit data because of their flexibility. The Ridge tends to keep all variable while pushing them toward zero.  The Lasso will push some variables' coefficients all the way to zero. ElastiNet is a blend between ridge and lasso.*
@@ -656,103 +693,6 @@ Elastic Net Cost Function:
 ![pipes](images/elasticnet.png)
 
 In Logistic Regression, 'l1' = lasso, 'l2' = ridge
-
-#### Sampling Density, Curse of dimensionality
-
-*As features are added to a model "density" decreases. Low density data sets create problems for many algorithms, so it is desirable to get more data to keep data density high.*
-
-![pipes](images/datadensity.png)
-
-Where:
-* N = number of data points
-* D = number of dimensions/features
-
-#### K-folds Cross-Validation
-
-*Takes a training set of data and breaks it into 5 folds.  Through 5 iterations, fits a linear model on the *other* folds, then scores how will the model fits on the fold at hand `foldrmse = rmse(y_test_f, test_f_predicted)`. Collects these scores and returns them.*
-
-```python
-def crossVal(X_train, y_train):
-    kf = KFold(n_splits=5)
-    RMSES = []
-    for train_index, test_index in kf.split(X_train):
-        X_train_f, X_test_f = X_train[train_index], X_train[test_index]
-        y_train_f, y_test_f = y_train[train_index], y_train[test_index]
-        linear = LinearRegression()
-        linear.fit(X_train_f, y_train_f)
-        test_f_predicted = linear.predict(X_test_f)
-        foldrmse = rmse(y_test_f, test_f_predicted)
-        RMSES.append(float(foldrmse))
-    print('The rsme of each fold is {}'.format(RMSES))
-    print('The average rmse of each fold is {}'.format(np.mean(RMSES)))
-```
-
-#### Model selection
-
-*We need ways to compare candidate models to determine which, under varying circumstances, is the best.*
-
-**Total Sum of Squares (TSS):** the total possible variation in y - this is what we're trying to explain.
-
-
-**Residual Sum of Squares (RSS):** take each error term and square it, add them up. Boom.
-
-**R-squared:** is a measure of the linear relationship between X and Y.
-
-**Residual Standard Error:** An estimate of the standard deviation of errors, or the average aount aount that the resonse will deviate from the true regression line.
-
-**F-statistic:** Hypothesis that at least one coefficient is non-zero.
-
-
-#### Recursive Feature Elimination (RFE)   
-*At each iteration, select one feature to remove until there are n feature left*
-
-```python
-## Recursive Feature Elimination
-from sklearn.feature_selection import RFE
-linear_fri = LinearRegression()
-selector.fit(X_fri, y_fri)
-def gen_modselect_score(n):
-    scores = []
-    for i in np.arange(n):
-        selector = RFE(linear_fri, (21-i), step=1)
-        selector.fit(X_fri, y_fri)
-        scores.append(selector.score(X_fri, y_fri))
-    return scores
-```
-
-#### ROC Curve
-*Plots False Negative Rate (x-axis) vs. True Positive Rate (y-axis) for various thresholds we set for predicted probabilities. It helps us choose the appropriate threshold for achieving the best precision or recall - use accuracy or precision to determine how good the model actually is.*
-
-![pipes](images/ROC.png)
-
-```python
-## ROC Curve
-from sklearn.metrics import roc_curve, auc
-TPR, FPR, thresholds = roc_curve(y_test, y_test_preds, pos_label=None, sample_weight=None, drop_intermediate=True)
-
-def plotroc(TPR, FPR):
-    roc_auc = auc(TPR, FPR)
-    plt.figure()
-    lw = 2
-    plt.plot(TPR, FPR, color='darkorange',
-             lw=lw, label="ROC curve area = {0:0.4f}".format(roc_auc))
-    plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
-    plt.xlim([0.0, 1.0])
-    plt.ylim([0.0, 1.05])
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title('Receiver operating characteristic example')
-    plt.legend(loc="lower right")
-    plt.show()
-```
-
-#### AIC & BIC
-
-*If two models have similar predictive power, we tend to prefer the one with fewer features. The simpler model focuses our attention to features that matter, is easier to replicate, is easier to put into production, and so on. Therefore, it would be nice to have model evaluators that account for the number of feature included.  This is the Akaike information criterion (AIC).*
-
-![pipes](images/AIC.png)
-
-
 
 #### Decision Trees
 
@@ -814,148 +754,7 @@ Point weighting - consider points closer more important to determining
 
 [Plot decision boundary](http://scikit-learn.org/stable/auto_examples/neighbors/plot_classification.html#example-neighbors-plot-classification-py)
 
-#### Grid Search
-*Models typically have hyperparameters and arguments that can be searched over to find the optimal model.  Grid Search takes a model a looks over a grid of many parameters to to find the optimal model.*
-
-*Pro tip* - Start with a coarse grid, then do a fine grid
-```Python
-## Grid Search Code
-from sklearn.model_selection import GridSearchCV
-random_forest_grid = {’max_depth’: [3, None],
-                      ’max_features’: [’sqrt’, ’log2’, None],
-                      ’min_samples_split’: [1, 2, 4],
-                      ’min_samples_leaf’: [1, 2, 4],
-                      ’bootstrap’: [True, False],
-                      ’n_estimators’: [20, 40, 60, 80, 100, 120],
-                      ’random_state’: [42]}
-rf_gridsearch = GridSearchCV(RandomForestClassifier(),
-                      random_forest_grid,
-                      n_jobs=-1,verbose=True,
-                      scoring=’f1_weighted’)
-rf_gridsearch.fit(X_train, y_train)
-print("best parameters:", rf_gridsearch.best_params_)
-```
-
-#### Boosting
-
-*Boosting is a sequential algorithm in which many weak learners (high bias, low variance) are fit. In each successive iteration, a tree of depth 1 or 2 is fit to the *residuals* of the prior tree, such that the algorithm looks for features to weakly explain the errors. After many trees the model can fit many difficult decision boundaries.  The result is model that keeps its low variance, but the layering of trees results in low bias.*
-
-[from scratch](https://www.kaggle.com/grroverpr/gradient-boosting-simplified/)
-
-```python
-## Boosting from the point of view of a single data point.
-predf = 0
-y_true = 5
-
-Iter1:
-predi = 3 ## from weak estimator
-predf = predf + predi = 3
-ei = y_true-predi = 2
-yi = ei = 2
-
-Iter2:
-predi = 1 ## this is the same weak estimator, now trying to get yi
-predf = predf + predi = 4
-ei = y_true - predf = 1
-yi = ei
-
-...
-Iter(n)
-```
-
-```python
-## Plot feature importance
-def feat_importance_plot(model,names,filename,color='g',alpha=0.5,fig_size=(10,10),dpi=250):
-    '''
-    horizontal bar plot of feature importances
-    works for sklearn models that have a .feature_importances_ method (e.g. RandomForestRegressor)
-
-    imputs
-    ------
-    model:    class:     a fitted sklearn model
-    names:    list:      list of names for all features
-    filename: string:    name of file to write, with appropriate path and extension (e.g. '../figs/feat_imp.png')
-
-    optional imputs to control plot
-    ---------------
-    color(default='g'), alpha(default=0.8), fig_size(default=(10,10)), dpi(default=250)
-
-    '''
-    ft_imp = 100*model.feature_importances_ / np.sum(model.feature_importances_) # funny cause they sum to 1
-    ft_imp_srt, ft_names, ft_idxs = zip(*sorted(zip(ft_imp, names, range(len(names)))))
-
-    idx = np.arange(len(names))
-    plt.figure(figsize=(10,10))
-    plt.barh(idx, ft_imp_srt, align='center', color=color,alpha=alpha)
-    plt.yticks(idx, ft_names)
-
-    plt.title("Feature Importances in {}".format(model.__class__.__name__))
-    plt.xlabel('Relative Importance of Feature', fontsize=14)
-    plt.ylabel('Feature Name', fontsize=14)
-    plt.savefig(filename,dpi=dpi)
-    plt.show()
-```
-
-![Feature Importance](images/featureimportance.png)
-
-#### Partial Dependency Plots
-*A graph that shows how the response variable changes as a feature changes, for all values of that feature, while holding other variables fixed*
-
-insert image here
-
-```python
-## Plot Partial Dependency Plots
-N_COLS = 3
-fimportances = list(reversed(feature_importances))
-fnames = list(reversed(feature_names))
-
-pd_plots = [partial_dependence(model, target_feature, X=X_train, grid_resolution=50)
-            for target_feature in feature_idxs]
-pd_plots = list(reversed(zip([pdp[0][0] for pdp in pd_plots], [pdp[1][0] for pdp in pd_plots])))
-
-fig, axes = plt.subplots(nrows=3, ncols=N_COLS, sharey=True,
-                         figsize=(12.0, 8.0))
-
-for i, (y_axis, x_axis) in enumerate(pd_plots[0:(3*N_COLS)]):
-    ax = axes[i/N_COLS, i%N_COLS]
-    ax.plot(x_axis, y_axis, color="purple")
-    ax.set_xlim([np.min(x_axis), np.max(x_axis)])
-    text_x_pos = np.min(x_axis) + 0.05*(np.max(x_axis) - np.min(x_axis))
-    ax.text(text_x_pos, 8,
-            "Feature Importance " + str(round(fimportances[i], )),
-            fontsize=12, alpha=0.5)
-    ax.set_xlabel(fnames[i])
-
-plt.suptitle("Partial Dependence Plots (Ordered by Feature Importance)", fontsize=16)
-plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-
-plt.savefig('plots/patial-dependence-plots.png', bbox_inches='tight')
-```
-
-
-```python
-## Plot Partial dependence - 2 vars
-# Two varaibles at once
-fidxs = list(reversed(feature_idxs))
-pdp, (x_axis, y_axis) = partial_dependence(model, (fidxs[0], fidxs[1]),
-                                           X=X_train, grid_resolution=50)
-
-fig = plt.figure()
-plt.style.use('bmh')
-
-XX, YY = np.meshgrid(x_axis, y_axis)
-Z = pdp.T.reshape(XX.shape)
-ax = Axes3D(fig)
-ax.plot_surface(XX, YY, Z, rstride=1, cstride=1, cmap=plt.cm.BuPu)
-ax.view_init(elev=30, azim=300)
-ax.set_xlabel(fnames[0])
-ax.set_ylabel(fnames[1])
-ax.set_zlabel('Partial dependence')
-ax.set_title("A Partial Dependence Plot with Two Features")
-plt.savefig('plots/patial-dependence-plot-two-features.png', bbox_inches='tight')
-```
-
-### Support Vector Machines
+#### Support Vector Machines
 
 *Support Vector Machines or "tricks" allow us to project data in n dimensions into higher dimension without having to compute variables in those dimensions. Simple decision boundaries in higher dimensions translate to complicated decision boundaries when translated to lower dimensions.*
 
@@ -1231,6 +1030,126 @@ $P(y|\\vec{x}) = \\frac{P(\\vec{x}|y)P(y)}{P(\\vec{x})}$
 
 Insert image dendrogram
 
+
+#### Boosting
+
+*Boosting is a sequential algorithm in which many weak learners (high bias, low variance) are fit. In each successive iteration, a tree of depth 1 or 2 is fit to the *residuals* of the prior tree, such that the algorithm looks for features to weakly explain the errors. After many trees the model can fit many difficult decision boundaries.  The result is model that keeps its low variance, but the layering of trees results in low bias.*
+
+[from scratch](https://www.kaggle.com/grroverpr/gradient-boosting-simplified/)
+
+```python
+## Boosting from the point of view of a single data point.
+predf = 0
+y_true = 5
+
+Iter1:
+predi = 3 ## from weak estimator
+predf = predf + predi = 3
+ei = y_true-predi = 2
+yi = ei = 2
+
+Iter2:
+predi = 1 ## this is the same weak estimator, now trying to get yi
+predf = predf + predi = 4
+ei = y_true - predf = 1
+yi = ei
+
+...
+Iter(n)
+```
+
+```python
+## Plot feature importance
+def feat_importance_plot(model,names,filename,color='g',alpha=0.5,fig_size=(10,10),dpi=250):
+    '''
+    horizontal bar plot of feature importances
+    works for sklearn models that have a .feature_importances_ method (e.g. RandomForestRegressor)
+
+    imputs
+    ------
+    model:    class:     a fitted sklearn model
+    names:    list:      list of names for all features
+    filename: string:    name of file to write, with appropriate path and extension (e.g. '../figs/feat_imp.png')
+
+    optional imputs to control plot
+    ---------------
+    color(default='g'), alpha(default=0.8), fig_size(default=(10,10)), dpi(default=250)
+
+    '''
+    ft_imp = 100*model.feature_importances_ / np.sum(model.feature_importances_) # funny cause they sum to 1
+    ft_imp_srt, ft_names, ft_idxs = zip(*sorted(zip(ft_imp, names, range(len(names)))))
+
+    idx = np.arange(len(names))
+    plt.figure(figsize=(10,10))
+    plt.barh(idx, ft_imp_srt, align='center', color=color,alpha=alpha)
+    plt.yticks(idx, ft_names)
+
+    plt.title("Feature Importances in {}".format(model.__class__.__name__))
+    plt.xlabel('Relative Importance of Feature', fontsize=14)
+    plt.ylabel('Feature Name', fontsize=14)
+    plt.savefig(filename,dpi=dpi)
+    plt.show()
+```
+
+![Feature Importance](images/featureimportance.png)
+
+#### Partial Dependency Plots
+*A graph that shows how the response variable changes as a feature changes, for all values of that feature, while holding other variables fixed*
+
+insert image here
+
+```python
+## Plot Partial Dependency Plots
+N_COLS = 3
+fimportances = list(reversed(feature_importances))
+fnames = list(reversed(feature_names))
+
+pd_plots = [partial_dependence(model, target_feature, X=X_train, grid_resolution=50)
+            for target_feature in feature_idxs]
+pd_plots = list(reversed(zip([pdp[0][0] for pdp in pd_plots], [pdp[1][0] for pdp in pd_plots])))
+
+fig, axes = plt.subplots(nrows=3, ncols=N_COLS, sharey=True,
+                         figsize=(12.0, 8.0))
+
+for i, (y_axis, x_axis) in enumerate(pd_plots[0:(3*N_COLS)]):
+    ax = axes[i/N_COLS, i%N_COLS]
+    ax.plot(x_axis, y_axis, color="purple")
+    ax.set_xlim([np.min(x_axis), np.max(x_axis)])
+    text_x_pos = np.min(x_axis) + 0.05*(np.max(x_axis) - np.min(x_axis))
+    ax.text(text_x_pos, 8,
+            "Feature Importance " + str(round(fimportances[i], )),
+            fontsize=12, alpha=0.5)
+    ax.set_xlabel(fnames[i])
+
+plt.suptitle("Partial Dependence Plots (Ordered by Feature Importance)", fontsize=16)
+plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+
+plt.savefig('plots/patial-dependence-plots.png', bbox_inches='tight')
+```
+
+
+```python
+## Plot Partial dependence - 2 vars
+# Two varaibles at once
+fidxs = list(reversed(feature_idxs))
+pdp, (x_axis, y_axis) = partial_dependence(model, (fidxs[0], fidxs[1]),
+                                           X=X_train, grid_resolution=50)
+
+fig = plt.figure()
+plt.style.use('bmh')
+
+XX, YY = np.meshgrid(x_axis, y_axis)
+Z = pdp.T.reshape(XX.shape)
+ax = Axes3D(fig)
+ax.plot_surface(XX, YY, Z, rstride=1, cstride=1, cmap=plt.cm.BuPu)
+ax.view_init(elev=30, azim=300)
+ax.set_xlabel(fnames[0])
+ax.set_ylabel(fnames[1])
+ax.set_zlabel('Partial dependence')
+ax.set_title("A Partial Dependence Plot with Two Features")
+plt.savefig('plots/patial-dependence-plot-two-features.png', bbox_inches='tight')
+```
+
 #### SVD - Singular Value Decomposition
 
 From an array of ratings:
@@ -1451,6 +1370,134 @@ class TwoComponentGaussian():
 
 [Andrew Ng's Paper](http://cs229.stanford.edu/notes/cs229-notes8.pdf)
 
+
+#### Sampling Density, Curse of dimensionality
+
+*As features are added to a model "density" decreases. Low density data sets create problems for many algorithms, so it is desirable to get more data to keep data density high.*
+
+![pipes](images/datadensity.png)
+
+Where:
+* N = number of data points
+* D = number of dimensions/features
+
+___
+
+# <span style="color:grey">Model Selection and Evaluation</span>
+
+*We need ways to compare candidate models to determine which, under varying circumstances, is the best.*
+
+**Total Sum of Squares (TSS):** the total possible variation in y - this is what we're trying to explain.
+
+
+**Residual Sum of Squares (RSS):** take each error term and square it, add them up. Boom.
+
+**R-squared:** is a measure of the linear relationship between X and Y.
+
+**Residual Standard Error:** An estimate of the standard deviation of errors, or the average aount aount that the resonse will deviate from the true regression line.
+
+**F-statistic:** Hypothesis that at least one coefficient is non-zero.
+
+#### Cross validation
+
+*A way to ensure that a model generalizes to new data, cross validations attempts to fit data a model to "new" data, prior to seeing how well it performs on test data.  Typically, a dataset will be split into a test set and a training set, and the training set will then be divided further into training and validation sets. A popular way to validate is with "k-folds", splitting the training set into k folds, then computing how a model fits on the kth fold with training on the !k (not kth) folds.*
+
+![pipes](images/kfoldscv.png)
+
+#### K-folds Cross-Validation
+
+*Takes a training set of data and breaks it into 5 folds.  Through 5 iterations, fits a linear model on the *other* folds, then scores how will the model fits on the fold at hand `foldrmse = rmse(y_test_f, test_f_predicted)`. Collects these scores and returns them.*
+
+```python
+def crossVal(X_train, y_train):
+    kf = KFold(n_splits=5)
+    RMSES = []
+    for train_index, test_index in kf.split(X_train):
+        X_train_f, X_test_f = X_train[train_index], X_train[test_index]
+        y_train_f, y_test_f = y_train[train_index], y_train[test_index]
+        linear = LinearRegression()
+        linear.fit(X_train_f, y_train_f)
+        test_f_predicted = linear.predict(X_test_f)
+        foldrmse = rmse(y_test_f, test_f_predicted)
+        RMSES.append(float(foldrmse))
+    print('The rsme of each fold is {}'.format(RMSES))
+    print('The average rmse of each fold is {}'.format(np.mean(RMSES)))
+```
+
+
+#### Recursive Feature Elimination (RFE)   
+*At each iteration, select one feature to remove until there are n feature left*
+
+```python
+## Recursive Feature Elimination
+from sklearn.feature_selection import RFE
+linear_fri = LinearRegression()
+selector.fit(X_fri, y_fri)
+def gen_modselect_score(n):
+    scores = []
+    for i in np.arange(n):
+        selector = RFE(linear_fri, (21-i), step=1)
+        selector.fit(X_fri, y_fri)
+        scores.append(selector.score(X_fri, y_fri))
+    return scores
+```
+
+#### ROC Curve
+*Plots False Negative Rate (x-axis) vs. True Positive Rate (y-axis) for various thresholds we set for predicted probabilities. It helps us choose the appropriate threshold for achieving the best precision or recall - use accuracy or precision to determine how good the model actually is.*
+
+![pipes](images/ROC.png)
+
+```python
+## ROC Curve
+from sklearn.metrics import roc_curve, auc
+TPR, FPR, thresholds = roc_curve(y_test, y_test_preds, pos_label=None, sample_weight=None, drop_intermediate=True)
+
+def plotroc(TPR, FPR):
+    roc_auc = auc(TPR, FPR)
+    plt.figure()
+    lw = 2
+    plt.plot(TPR, FPR, color='darkorange',
+             lw=lw, label="ROC curve area = {0:0.4f}".format(roc_auc))
+    plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Receiver operating characteristic example')
+    plt.legend(loc="lower right")
+    plt.show()
+```
+
+#### AIC & BIC
+
+*If two models have similar predictive power, we tend to prefer the one with fewer features. The simpler model focuses our attention to features that matter, is easier to replicate, is easier to put into production, and so on. Therefore, it would be nice to have model evaluators that account for the number of feature included.  This is the Akaike information criterion (AIC).*
+
+![pipes](images/AIC.png)
+
+
+#### Grid Search
+*Models typically have hyperparameters and arguments that can be searched over to find the optimal model.  Grid Search takes a model a looks over a grid of many parameters to to find the optimal model.*
+
+*Pro tip* - Start with a coarse grid, then do a fine grid
+```Python
+## Grid Search Code
+from sklearn.model_selection import GridSearchCV
+random_forest_grid = {’max_depth’: [3, None],
+                      ’max_features’: [’sqrt’, ’log2’, None],
+                      ’min_samples_split’: [1, 2, 4],
+                      ’min_samples_leaf’: [1, 2, 4],
+                      ’bootstrap’: [True, False],
+                      ’n_estimators’: [20, 40, 60, 80, 100, 120],
+                      ’random_state’: [42]}
+rf_gridsearch = GridSearchCV(RandomForestClassifier(),
+                      random_forest_grid,
+                      n_jobs=-1,verbose=True,
+                      scoring=’f1_weighted’)
+rf_gridsearch.fit(X_train, y_train)
+print("best parameters:", rf_gridsearch.best_params_)
+```
+
+
 ___
 # <span style="color:grey">Visualization</span>
 
@@ -1567,10 +1614,11 @@ Adding a math equations:
 ---
 #### TODOS
 
-* Study Feature Selection VarianceThreshold, SelectKBest
 * apply new methods to referrals classifier
+* Study Feature Selection VarianceThreshold, SelectKBest
 * Watch Andrew Ng Neural Nets
 * Patrick Winston Stanford on AdaBoost
+* Study Pipelines
 * Add project to resume
 * SQL Study
 * Networking for jobs
@@ -1580,7 +1628,6 @@ Adding a math equations:
 * Study maximum a posteriori (MAP)
 * https://github.com/ajcr/100-pandas-puzzles
 * objects and classes practice
-* Study Pipelines
 * [Udemy recommendation from Chris](https://www.udemy.com/machine-learning-fun-and-easy-using-python-and-keras/)
 * Adam mentioned very specific ways to identify outliers - find that sklnear module
 * Add project to galvanize talent
