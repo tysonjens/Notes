@@ -1,6 +1,13 @@
 
+#### Table of Contents
+1. [Math/Stats](#math/stats)
+2. [Coding & Environment](#coding-&-environment)
+3. [Machine Learning](#machine-learning)
+4. [Summary of Results](#summary-of-results)
+5. [Next Steps](#next-steps)
 
-# <span style="color:grey">Math/Stats</span>
+---
+# Math/Stats
 
 * [Galvanize Short Course for Stats](https://galvanizeopensource.github.io/stats-shortcourse/)
 * [PDF Book: Computer Age Statistical Inference Book](https://web.stanford.edu/~hastie/CASI_files/PDF/casi.pdf)
@@ -424,7 +431,7 @@ write.csv(a, 'cars.csv')
 
 ___
 
-# <span style="color:grey">Machine Learning</span>
+# Machine Learning
 
 * [An Introduction to Statistical Learning - ISLR](http://www-bcf.usc.edu/~gareth/ISL/ISLR%20Seventh%20Printing.pdf)
 * [Elements of Statistical Learning](https://web.stanford.edu/~hastie/Papers/ESLII.pdf)
