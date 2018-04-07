@@ -3,8 +3,8 @@
 1. [Math/Stats](#math/stats)
 2. [Coding & Environment](#coding-&-environment)
 3. [Machine Learning](#machine-learning)
-4. [Summary of Results](#summary-of-results)
-5. [Next Steps](#next-steps)
+4. [Model Selection and Evaluation](#model-selection-and-evaluation)
+5. [Data Products](#data-products)
 
 ---
 # Math/Stats
@@ -226,7 +226,7 @@ with model:
 * Correlation is just scaled Covariance - scaled by the product of standard variations of each variable.
 ___
 
-# <span style="color:grey">Coding & Environment</span>
+# Coding & Environment
 
 #### GitHub
 
@@ -1390,7 +1390,7 @@ Where:
 
 ___
 
-# <span style="color:grey">Model Selection and Evaluation</span>
+# Model Selection and Evaluation
 
 *We need ways to compare candidate models to determine which, under varying circumstances, is the best.*
 
@@ -1506,7 +1506,7 @@ print("best parameters:", rf_gridsearch.best_params_)
 
 
 ___
-# <span style="color:grey">Visualization</span>
+# Visualization
 
 * [flowingdata](http://flowingdata.com/)
 
@@ -1601,7 +1601,7 @@ sns_plot = sns.heatmap(corr, mask=mask, cmap=cmap, vmax=.3, center=0,
 
 * [Gallery](https://seaborn.pydata.org/examples/index.html)
 ___
-# <span style="color:red">Data Products</span>
+# Data Products
 
 #### Markdown
 
