@@ -429,6 +429,13 @@ write.csv(a, 'cars.csv')
 
  RPy2
 
+
+ #### Keras [.](https://keras.io/)
+
+ #### Theano [.](https://github.com/Theano/Theano)
+
+ *Theano is a Python library that allows you to define, optimize, and evaluate mathematical expressions involving multi-dimensional arrays efficiently. It can use GPUs and perform efficient symbolic differentiation.*
+
 ___
 
 # Machine Learning
@@ -504,15 +511,19 @@ X_test_1 = scaler.transform(X_test)
 
 ```python
 ## Pipelines
-## Create an object that pipelines three transformations
-wells_pipeline = Pipeline([
-    ('select_best_3', SelectKBest(chi2, k=3)),
-    ('standardize', StandardScaler()),
-    ('regression', LogisticRegression())
-])
+from sklear.pipeline import Pipeline
 
-## Fit that object to data.
-wells_pipeline.fit(X_wells, y_wells)
+scale = sklearn.preprocessing.StandardScaler()
+clf = RandomForestClassifier()
+
+steps = [('feature_scaling', scale),
+        ('random_forest', clf)]
+
+pipeline = Pipeline(steps)
+
+pipeline.fit( X_train, y_train)
+
+y_preds = pipeline.predict(X_test)
 ```
 
 ```python
@@ -582,30 +593,17 @@ print("done")
 ## Saving multiple arrays NumPy
 #######################################
 
-a = np.arange(10)
-b = np.arange(12)
-
 ## save it
-file_name = 'foo.npz'
-args = {'a':a,'b':b}
+file_name = 'irisx.npz'
+args = {'a':X}
 np.savez_compressed(file_name,**args)
 
-## load it
-npz = np.load(file_name)
-print(npz)
-print(npz.keys())
+# ## load it
+new = np.load(file_name)
+newirisx = new['a']
 
-a = npz['a']
-b = npz['b']
-
-print(type(a))
-print(type(b))
-
-## clean up
-os.system("rm %s"%file_name)
-
-## see also pandas to_pickle
-## see also numpy save
+# ## clean up
+# os.system("rm %s"%file_name)
 ```
 
 #### Outlier Detection
@@ -619,12 +617,6 @@ os.system("rm %s"%file_name)
 #### Linear Regression
 
 Cost Function  
-
-```python
-## Dropping Variables
-best_3_selector = SelectKBest(chi2, k=3)
-best_3_selector.fit(X_wells, y_wells)
-```
 
 ```python
 ## Sklearn Model Fitting
@@ -774,7 +766,7 @@ Point weighting - consider points closer more important to determining
 
 #### PCA
 
-Principle Components Analysis projects many dimensions to fewer dimensions that still explain most of the variation from the many dimensions.
+*Principle Components Analysis projects many dimensions to fewer dimensions that still explain most of the variation from the many dimensions.*
 
 **Why reduce dimensions?**
 * Remove multicollinearity
@@ -1197,7 +1189,10 @@ U,Sigma,VT = np.linalg.svd(pv.as_matrix())
 
 #### Expectation-Maximization Algorithm (EM algorithm)
 
-Taught through Gaussian Mixture Models (GMM).
+Taught through Gaussian Mixture Models (GMM)
+
+[Andrew Ng's Paper on EM](http://cs229.stanford.edu/notes/cs229-notes8.pdf)
+
 
 ![pipes](images/gmm.png)
 
@@ -1375,7 +1370,22 @@ class TwoComponentGaussian():
         plt.show()
 ```
 
-[Andrew Ng's Paper](http://cs229.stanford.edu/notes/cs229-notes8.pdf)
+#### Neural Networks
+
+*A neural net has 2 or more layers, with the number of features in the first layer, and the number of classes to predict in the last layer.  A network is fit by randomly initializing weights that connect each neuron in one layer to each neuron in the next.  One by one, observations are passed through these weights, make a prediction, find an error, and then tune each weight (through back prop).  After doing this for each observations, we've completed one epoch.*
+
+*[tensorflow playground](https://playground.tensorflow.org)
+
+#### Autoencoders
+
+*Use a NN to map info to fewer dimensions*
+
+* Common uses:
+    * Reduction in dimensionality of data before sending to another algorithm
+    * Denoising (noise added to input, output is input without noise) & * Recently, generative (learns parameters of distributions)
+
+Word2Vec maps
+
 
 
 #### Sampling Density, Curse of dimensionality
@@ -1448,6 +1458,28 @@ def gen_modselect_score(n):
         scores.append(selector.score(X_fri, y_fri))
     return scores
 ```
+
+#### SelectKBest [.](http://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.SelectKBest.html)
+
+*The SelectKBest class just scores the features using a function and then removes all but the k highest scoring features.*
+
+```python
+## Dropping Variables
+from sklearn.feature_selection import SelectKBest
+best_3_selector = SelectKBest(chi2, k=3)
+best_3_selector.fit(X_wells, y_wells)
+```
+
+#### Variance Threshold [.](http://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.VarianceThreshold.html)
+
+*Drop all features that don't meet a variance threshold*
+
+```python
+from sklearn.feature_selection import VarianceThreshold
+X = [[0, 2, 0, 3], [0, 1, 4, 3], [0, 1, 1, 3]]
+selector = VarianceThreshold()
+selector.fit_transform(X)
+
 
 #### ROC Curve
 *Plots False Negative Rate (x-axis) vs. True Positive Rate (y-axis) for various thresholds we set for predicted probabilities. It helps us choose the appropriate threshold for achieving the best precision or recall - use accuracy or precision to determine how good the model actually is.*
@@ -1621,14 +1653,12 @@ Adding a math equations:
 ---
 #### TODOS
 
-* apply new methods to referrals classifier
-* Study Feature Selection VarianceThreshold, SelectKBest
 * Watch Andrew Ng Neural Nets
 * Patrick Winston Stanford on AdaBoost
-* Study Pipelines
 * Add project to resume
 * SQL Study
 * Networking for jobs
+* apply new methods to referrals classifier
   * Jeffrey
   * Ruan & optum
 * Model Stacking - Kaggle Guide
@@ -1638,6 +1668,7 @@ Adding a math equations:
 * [Udemy recommendation from Chris](https://www.udemy.com/machine-learning-fun-and-easy-using-python-and-keras/)
 * Adam mentioned very specific ways to identify outliers - find that sklnear module
 * Add project to galvanize talent
+* Add tf-idf
 
 #### Resources Not Covered In Depth
 
