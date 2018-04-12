@@ -1,7 +1,7 @@
 
 #### Table of Contents
 1. [Math/Stats](#math/stats)
-2. [Coding & Environment](#coding-&-environment)
+2. [Coding and Environment](#coding-and-environment)
 3. [Machine Learning](#machine-learning)
 4. [Model Selection and Evaluation](#model-selection-and-evaluation)
 5. [Data Products](#data-products)
@@ -226,7 +226,7 @@ with model:
 * Correlation is just scaled Covariance - scaled by the product of standard variations of each variable.
 ___
 
-# Coding & Environment
+# Coding and Environment
 
 #### GitHub
 
@@ -469,9 +469,8 @@ pd.get_dummies(df,prefix=['country'])
 ```
 
 ```python
-## Get Dummies
-df = pd.get_dummies(df)
-df.drop('one_dummy', axis=1, inplace=True)
+## Get Dummies, drop one
+df = pd.get_dummies(df, drop_first=True)
 ```
 
 ```Python
@@ -500,6 +499,20 @@ array([[ 4.        ,  1.        ],
        [ 3.        ,  6.        ]])
 ```
 
+```Python
+def strfeat_to_intfeat(strfeat):
+    ## input: list of features as strings
+    ## output = list of same features now as integers as unique IDs
+    valdict = {}
+    intfeat = []
+    for idx, i in enumerate(strfeat):
+        if i in valdict:
+            intfeat.append(valdict[i])
+        else:
+            valdict[i] = idx
+            intfeat.append(idx)
+    return intfeat
+```
 
 ```Python
 ## Standard Scaler
@@ -1395,10 +1408,31 @@ has an rgb to gray method
 
 Different kinds of colors - RGB, HSV (hue saturation )
 
-
 #### Convolutional Networks
 
 *A way to process images, leaving the original image intact (not raveling into a vector). In general, the pattern is to do a convolutional layer, then an activation layer, then a pooling (or subsampling) filter.*
+
+#### Recurrent Neural Networkds (RNN)
+
+Good for time series, useful for carrying information forward through time.
+
+Watchout - exploding gradient
+
+[Karpathy Blog](http://karpathy.github.io/2015/05/21/rnn-effectiveness/)
+[Time Series Blog](http://www.jakob-aungiers.com/articles/a/LSTM-Neural-Network-for-Time-Series-Prediction)
+
+#### Long Short Term Memory Networks (LSTM)
+
+*Special kind of RNN. Improves upon RNN deficiency of not remembering information from very far back (in time).*
+
+[Colahs Blog comparing LSTM to RNN](http://colah.github.io/posts/2015-08-Understanding-LSTMs/)
+
+The **cell state** is an important concept.  It transfers information from prior time period through to future time periods.  In each time period it picks up new information that is relevant for the future, but in a carefully regulated way (by a sigmoid layer)
+
+
+#### Seq to Seq
+
+github.com/google/seq2seq
 
 #### Sampling Density, Curse of dimensionality
 
@@ -1484,7 +1518,7 @@ best_3_selector.fit(X_wells, y_wells)
 
 #### Variance Threshold [.](http://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.VarianceThreshold.html)
 
-*Drop all features that don't meet a variance threshold*
+*Drop all features that dont meet a variance threshold*
 
 ```python
 from sklearn.feature_selection import VarianceThreshold
@@ -1663,25 +1697,30 @@ Adding a math equations:
 * [Markdown Table Generator](http://www.tablesgenerator.com/markdown_tables)
 
 ---
-#### TODOS
+#### TODOS Project Week
 
-* Watch Andrew Ng Neural Nets
 * Patrick Winston Stanford on AdaBoost
-* Add project to resume
+* Add project to resume, add skills to resume - see Chris
 * SQL Study
 * Networking for jobs
 * apply new methods to referrals classifier
-  * Jeffrey
-  * Ruan & optum
+* Jeffrey contact
+* Ruan & optum
 * Model Stacking - Kaggle Guide
 * Study maximum a posteriori (MAP)
+* Watch Andrew Ng Neural Nets
 * https://github.com/ajcr/100-pandas-puzzles
 * objects and classes practice
 * [Udemy recommendation from Chris](https://www.udemy.com/machine-learning-fun-and-easy-using-python-and-keras/)
 * Adam mentioned very specific ways to identify outliers - find that sklnear module
 * Add project to galvanize talent
+* update resume on galvanize talent
 * Add tf-idf
-* undersatnd softmax activation
+* Understand softmax activation
+
+#### Todos Free Week
+
+
 
 #### Resources Not Covered In Depth
 
@@ -1689,6 +1728,7 @@ Adding a math equations:
 * Model selection 4_machine_learning/glms - notebook
 * http://www.dataschool.io/15-hours-of-expert-machine-learning-videos/
 * Andrew Ng - Machine Learning Yearning
+* Book Deep Learning
 
 #### Projects in Progress
 * Referrals classifier
@@ -1715,6 +1755,21 @@ Adding a math equations:
 * Clustering algorithm - types of patients based on referrals data
 * Outlier detection -
 
+#### Interviews & Job Search
+
+Informational Interview:
+* Email Introduction
+* In person intro
+* Professional Story (SAR)
+* Questions to Ask
+* Follow up email
+
+Agenda for interview:
+* Trends
+* Insights
+* Advice
+* Resources
+* Assignments
 
 ___
 #### Style Guide
