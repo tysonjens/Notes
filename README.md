@@ -332,7 +332,7 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
+# import warnings; warnings.simplefilter('ignore')
 pd.set_option("display.max_columns", 100)
 pd.set_option('display.max_rows', 500)
 %matplotlib inline
@@ -1386,7 +1386,19 @@ class TwoComponentGaussian():
 
 Word2Vec maps
 
+#### Image Processing
 
+*Can classify images like cats and dogs, tumors or not, and so on.*
+
+use scikit-image (Skimage)
+has an rgb to gray method
+
+Different kinds of colors - RGB, HSV (hue saturation )
+
+
+#### Convolutional Networks
+
+*A way to process images, leaving the original image intact (not raveling into a vector). In general, the pattern is to do a convolutional layer, then an activation layer, then a pooling (or subsampling) filter.*
 
 #### Sampling Density, Curse of dimensionality
 
@@ -1669,6 +1681,7 @@ Adding a math equations:
 * Adam mentioned very specific ways to identify outliers - find that sklnear module
 * Add project to galvanize talent
 * Add tf-idf
+* undersatnd softmax activation
 
 #### Resources Not Covered In Depth
 
