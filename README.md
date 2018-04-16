@@ -521,6 +521,22 @@ X_train_1 = scaler.transform(X_train)
 X_test_1 = scaler.transform(X_test)
 ```
 
+```python
+## change string feature with multiple levels into numerical
+def strfeat_to_intfeat(strfeat):
+    ## input: list of features as strings
+    ## output = list of same features now as integers as unique IDs
+    valdict = {}
+    intfeat = []
+    for idx, i in enumerate(strfeat):
+        if i in valdict:
+            intfeat.append(valdict[i])
+        else:
+            valdict[i] = idx
+            intfeat.append(idx)
+    return intfeat
+```
+
 
 ```python
 ## Pipelines
@@ -1161,6 +1177,14 @@ ax.set_zlabel('Partial dependence')
 ax.set_title("A Partial Dependence Plot with Two Features")
 plt.savefig('plots/patial-dependence-plot-two-features.png', bbox_inches='tight')
 ```
+#### Categorical Boosting
+
+*Like Gradient Boost, but able to handle categoricals without get_dummies or one hot encoder*
+
+```python
+
+```
+
 
 #### SVD - Singular Value Decomposition
 
