@@ -537,6 +537,11 @@ def strfeat_to_intfeat(strfeat):
     return intfeat
 ```
 
+#### Pipeline
+
+*A way to organize and package several pre-processing and prediction steps into one object to keep code tidy, readable, and useful.*
+
+[Chris Feller's Tutorial](https://github.com/chrisfeller/Scikit_Learn_Pipeline_Presentation/blob/master/Jupyter_Notebook/An_Introduction_to_Pipelines_in_Scikit_Learn.ipynb)
 
 ```python
 ## Pipelines
@@ -1181,6 +1186,8 @@ plt.savefig('plots/patial-dependence-plot-two-features.png', bbox_inches='tight'
 
 *Like Gradient Boost, but able to handle categoricals without get_dummies or one hot encoder*
 
+[Effective ML Grid Search Tutorial](https://effectiveml.com/using-grid-search-to-optimise-catboost-parameters.html)
+
 ```python
 
 ```
@@ -1577,6 +1584,45 @@ def plotroc(TPR, FPR):
     plt.show()
 ```
 
+#### Profit Curve
+
+*Assigns costs to tp, fp, etc., and calculates profits for various thresholds to help a business choose the best model.*
+
+```python
+def profit_curve(cost_benefit_mat, y_pred_proba, y_true):
+    """Function to calculate list of profits based on supplied cost-benefit
+    matrix and prediced probabilities of data points and thier true labels.
+
+    Parameters
+    ----------
+    cost_benefit    : ndarray - 2D, with profit values corresponding to:
+                                          -----------
+                                          | TP | FP |
+                                          -----------
+                                          | FN | TN |
+                                          -----------
+    predicted_probs : ndarray - 1D, predicted probability for each datapoint
+                                    in labels, in range [0, 1]
+    labels          : ndarray - 1D, true label of datapoints, 0 or 1
+
+    Returns
+    -------
+    profits    : ndarray - 1D
+    thresholds : ndarray - 1D
+    """
+    n_obs = float(len(y_true))
+    # Make sure that 1 is going to be one of our thresholds
+    maybe_one = [] if 1 in y_pred_proba else [1]
+    thresholds = maybe_one + sorted(y_pred_proba, reverse=True)
+    profits = []
+    for threshold in thresholds:
+        y_predict = y_pred_proba >= threshold
+        confusion_matrix = standard_confusion_matrix(y_true, y_predict)
+        threshold_profit = np.sum(confusion_matrix * cost_benefit) / n_obs
+        profits.append(threshold_profit)
+    return np.array(profits), np.array(thresholds)
+```
+
 #### AIC & BIC
 
 *If two models have similar predictive power, we tend to prefer the one with fewer features. The simpler model focuses our attention to features that matter, is easier to replicate, is easier to put into production, and so on. Therefore, it would be nice to have model evaluators that account for the number of feature included.  This is the Akaike information criterion (AIC).*
@@ -1710,7 +1756,8 @@ ___
 Adding a math equations:
 * [Go to CodeCogs](http://latex.codecogs.com/eqneditor/editor.php)
 * Make mathematics
-* download as gif and save to images folder
+* Change dpi to 300 and set background to white 
+* download as png and save to images folder
 * use pipe code to reference in markdown.
 
 ![pipes](images/Sigmoid.gif)
