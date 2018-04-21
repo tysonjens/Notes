@@ -1231,6 +1231,8 @@ U,Sigma,VT = np.linalg.svd(pv.as_matrix())
 
 #### Latent Dirichlet Allocation LDA
 
+#### Term Frequency - Inverse Document Frequency (TD_IDF)
+
 #### Expectation-Maximization Algorithm (EM algorithm)
 
 Taught through Gaussian Mixture Models (GMM)
@@ -1755,8 +1757,8 @@ ___
 
 Adding a math equations:
 * [Go to CodeCogs](http://latex.codecogs.com/eqneditor/editor.php)
-* Make mathematics
-* Change dpi to 300 and set background to white 
+* Write your math equation
+* Change dpi to 300 and set background to white
 * download as png and save to images folder
 * use pipe code to reference in markdown.
 
@@ -1786,11 +1788,15 @@ Adding a math equations:
 * Adam mentioned very specific ways to identify outliers - find that sklnear module
 * Add project to galvanize talent
 * update resume on galvanize talent
-* Add tf-idf
+* Add td-idf
 * Understand softmax activation
+* Dynamice Time Warp (Alex)
+* Study SMOTEENN & undersampling
+* PCA for medical referrals.
 
 #### Todos Free Week
 
+* Study DBSCAN
 
 
 #### Resources Not Covered In Depth
