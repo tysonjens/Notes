@@ -1666,6 +1666,7 @@ ___
 * Plot "fivethirtyeight: `plt.style.use('fivethirtyeight')`
 * [Gallery](https://matplotlib.org/gallery.html)
 * [Pyplot examples (scroll down)](https://matplotlib.org/gallery/index.html#pyplots-examples)
+* restore defaults `plt.rcdefaults()`
 
 ```python
 fig, axes = plt.subplots(3,3, figsize=(10,10))
@@ -1776,13 +1777,11 @@ Adding a math equations:
 * Add project to resume, add skills to resume - see Chris
 * SQL Study
 * Networking for jobs
-* apply new methods to referrals classifier
 * Jeffrey contact
 * Ruan & optum
 * Model Stacking - Kaggle Guide
 * Study maximum a posteriori (MAP)
 * Watch Andrew Ng Neural Nets
-* https://github.com/ajcr/100-pandas-puzzles
 * objects and classes practice
 * [Udemy recommendation from Chris](https://www.udemy.com/machine-learning-fun-and-easy-using-python-and-keras/)
 * Adam mentioned very specific ways to identify outliers - find that sklnear module
@@ -1797,7 +1796,7 @@ Adding a math equations:
 #### Todos Free Week
 
 * Study DBSCAN
-
+* Study Stuff slacked out from Frank
 
 #### Resources Not Covered In Depth
 
