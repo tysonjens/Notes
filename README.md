@@ -434,7 +434,7 @@ write.csv(a, 'cars.csv')
 
  #### Theano [.](https://github.com/Theano/Theano)
 
- *Theano is a Python library that allows you to define, optimize, and evaluate mathematical expressions involving multi-dimensional arrays efficiently. It can use GPUs and perform efficient symbolic differentiation.*
+ *Theano is a Python library that allows you to define, optimize, and evaluate mathematical expressions involving multi-dimensional arrays efficiently. It can use GPUs and perform efficient symbolic d differentiation.*
 
 ___
 
