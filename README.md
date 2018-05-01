@@ -427,14 +427,108 @@ write.csv(a, 'cars.csv')
  !Rscript getmtcars.R
 ```
 
- RPy2
+RPy2
 
 
- #### Keras [.](https://keras.io/)
+#### Keras [.](https://keras.io/)
 
- #### Theano [.](https://github.com/Theano/Theano)
+#### Theano [.](https://github.com/Theano/Theano)
 
- *Theano is a Python library that allows you to define, optimize, and evaluate mathematical expressions involving multi-dimensional arrays efficiently. It can use GPUs and perform efficient symbolic d differentiation.*
+*Theano is a Python library that allows you to define, optimize, and evaluate mathematical expressions involving multi-dimensional arrays efficiently. It can use GPUs and perform efficient symbolic differentiation.*
+
+
+#### Cron
+
+[crontab.guru](crontab.guru)
+
+#### [Apache Airflow](https://airflow.apache.org/plugins.html)
+
+*cron on steroids*
+
+relies on directed acyclic graphs
+
+
+#### AWS
+
+* S3 bucket - storage - can access with a url
+* EC2 - elastic cloud computing
+
+#### AWS CLI
+
+
+`aws help`
+`less ~/.aws/config`
+`less ~/.aws/credentials`
+`aws s3 ls`
+`aws ec2 describe-instances --output table`
+
+
+When a process is running, need to ensure it doesn't stop if you close your screen. You can attach to a screen to keep an instance alive.
+
+
+#### Boto
+
+*python library that helps you communicate with aws*
+
+```python
+import boto
+
+# Connect to S3 - DO NOT JUST DIRECTLY REPLACE THE BELOW WITH YOUR ACCESS
+# AND SECRET ACCESS KEY!! This runs the risk of you pushing them
+# up to github. Store
+# them as environment variables in your .bashrc / .bash_profile and read
+# them in from there. See your lecture notes or read_aws_credentials.md for how to do this.
+
+conn = boto.connect_s3()
+
+### If the above fails to authenticate, either create a file in ~/.aws with your credentials as
+### described in read_aws_credentials.md, or use on of the other methods to load them from a file
+### and use the code below
+#access_key, access_secret_key = 'YOUR ACCESS KEY', 'YOUR SECRET ACCESS KEY'
+#conn = boto.connect_s3(access_key, access_secret_key)
+
+
+
+# List all the buckets
+all_buckets = [b.name for b in conn.get_all_buckets()]
+print all_buckets
+
+# Check if bucket exist. If exist get bucket, else create one
+bucket_name = 'tysonjens-chancho-is-my-first-name'
+
+if conn.lookup(bucket_name) is None:
+    b = conn.create_bucket(bucket_name)
+else:
+    b = conn.get_bucket(bucket_name)
+
+# Print all the files in the bucket
+filenames = [f.name for f in b.list()]
+print filenames
+
+# Add files to bucket:
+b = conn.get_bucket('garrett-dsi-ind')
+
+fnames = ['cancer_rate.png','cancer_rates.csv']
+files = ['/img/cancer_rate.png','cancer_rates.csv']
+for i in [0,1]:
+    file_object = b.new_key(fnames[i])
+    file_object.set_contents_from_filename(files[i])
+
+# Delete a file
+a = b.new_key('somefilename')
+a.delete()
+
+# Delete Bucket
+# Must delete all files in bucket
+# Before deleting bucket
+for key in b.get_all_keys():
+    key.delete()
+conn.delete_bucket(bucket_name)
+```
+
+#### EC2
+
+####
 
 ___
 
@@ -444,7 +538,6 @@ ___
 * [Elements of Statistical Learning](https://web.stanford.edu/~hastie/Papers/ESLII.pdf)
 * [SK Learn](http://scikit-learn.org/stable/)
 * [Model Smoothers](http://madrury.github.io/smoothers/)
-
 
 
 #### Data Cleaning & Feature Engineering
@@ -642,6 +735,8 @@ newirisx = new['a']
 
 #### Outlier Detection
 
+*The basic idea here is to summarize a data set with a large number of features in lower dimensional space. Then using that lower dimensional projection determine in a systematic way if there are outlier samples. See dimensionality_reduction repo.*
+
 #### Supervised Learning
 
 #### General Linear Models
@@ -808,6 +903,11 @@ Point weighting - consider points closer more important to determining
 * Remove redundant features
 * Interpretation & Visualization
 * Make computations easier
+* Identify Outliers
+
+**Scree Plot**
+
+*displays the eigenvalues associated with a component or factor in descending order versus the number of the component or factor. You can use scree plots in principal components analysis and factor analysis to visually assess which components or factors explain most of the variability in the data.*
 
 ```Python
 ## Scree Plot Code
@@ -878,6 +978,11 @@ def plot_embedding(X, y, title=None):
     if title is not None:
         plt.title(title, fontsize=16)
 ```
+
+
+#### TSNE - t-distributed Stochastic Neighbor Embedding.
+
+*t-SNE [1] is a tool to visualize high-dimensional data. It converts similarities between data points to joint probabilities and tries to minimize the Kullback-Leibler divergence between the joint probabilities of the low-dimensional embedding and the high-dimensional data. t-SNE has a cost function that is not convex, i.e. with different initializations we can get different results.*
 
 #### K-means Clustering
 
@@ -1043,6 +1148,8 @@ Methods to determine best k:
 * Silhouette Score - (b-a) / max(a,b) where:
     * a is inter cluster distance,
     * b is next-nearest cluster centroid
+
+**
 
 Watchouts:
 * if data are not spherical
@@ -1792,6 +1899,7 @@ Adding a math equations:
 * Dynamice Time Warp (Alex)
 * Study SMOTEENN & undersampling
 * PCA for medical referrals.
+* Study pyomo
 
 #### Todos Free Week
 
