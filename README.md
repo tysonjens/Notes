@@ -535,6 +535,8 @@ conn.delete_bucket(bucket_name)
 Works with Scala, Java, Python, R
 Datasources: hadoop, cassandra, hive, hbase, postgresql, csv, json, mysql
 
+main abstraction for spark is the RDD - *resilient distributed dataset*
+
 
 |             |                 Spark                |                           Hadoop                          |
 |:-----------:|:------------------------------------:|:---------------------------------------------------------:|
@@ -560,12 +562,75 @@ spark = ps.sql.SparkSession.builder.getOrCreate()
 
 Spark uses lazy evaluation, meaning transformations aren't performed until an action is taken. So long as syntax of a transformation looks ok, you won't see an error, but this doesn't mean it will work with data flowing through.
 
+Apache Spark has unique syntax - check out: /galvanize/3_coding_environs/dsi-spark/spark-intro/spark-intro.ipynb
+
 #### Scala
 
 from command line `spark-shell`
 
 
 #### Spark SQL
+
+* [Built in Functions](https://spark.apache.org/docs/latest/api/sql/)
+
+```python
+from pyspark.sql import SQLContext
+sqlContext = SQLContext(sc)
+```
+
+You can load a json file into a spark SQL dataframe, and it will automatically interpret key:value pairs as columns.  
+
+```python
+ssdf = sqlContext.read.json("customerData.json")
+ssdf.show()  ## shows the dataframe
+empDF.printSchema()
+```
+
+You perform SQL queries with a syntax similar to pandas.
+
+```python
+ssdf.select('columnname').show()
+ssdf.filter(ssdf['columnname'] == 40).show()
+ssdf.groupBy('columnname').count().show()
+## perform multiple aggregations on different columns
+ssdf.groupBy('columnname').agg({'salary': 'avg', 'age': 'max'}).show()
+
+## you can create a dataframe out of the sql context from a list
+mylist = [{'name': 'Sales', 'id': '100'}, {'name': 'Engineering', 'id': '200'}]
+deptdf = sqlContext.createDataFrame(mylist)
+deptdf.show()
+
+## joining
+df1.join(df2, df1.unique == df2.unique).show()
+
+## register a data frame as a sql table and run normal sql statements against it
+ssdf.registerTempTable('name_of_table')
+sqlContext.sql("select * from name_of_table where column > 4000").show()
+
+## convert it to pandas dataframe
+empPanda = empDf.toPandas()
+```
+
+Create data frames from RDD
+```python
+from pyspark.sql import Row
+lines = sc.textFile('mycsv.csv')
+## remove the first line
+datalines = lines.filter(lambda x: "FUELTYPE" not in x)
+datalines.count()
+
+## split the lines, then choose, for each row, the 3 fields we want and give them names.
+parts = datalines.map(lambda l: l.split(","))
+autoMap = parts.map(lambda p: Row(make=p[0].\
+                bod=p[4], hp=int(p[7])))
+autoMap.collect()
+
+## Infer the schema, and register the DAtaFrame as a table  
+autoDF = sqlContext.createDataFrame(autoMap)
+autoDF.registerTempTable("autos")
+sqlContext.sql("select * from autos where hp > 200").show()
+
+```
 
 
 
