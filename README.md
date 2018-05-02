@@ -528,7 +528,46 @@ conn.delete_bucket(bucket_name)
 
 #### EC2
 
-####
+*Elastic Cloud Compute* - an aws machine, called and instance, that is made for computing (not storage like S3). There are many different kinds, sizes, built for different purposes.  
+
+#### Apache Spark
+
+Works with Scala, Java, Python, R
+Datasources: hadoop, cassandra, hive, hbase, postgresql, csv, json, mysql
+
+
+|             |                 Spark                |                           Hadoop                          |
+|:-----------:|:------------------------------------:|:---------------------------------------------------------:|
+|  Filesystem |                  Any                 |                         HDFS only                         |
+|    Speed    | Much faster, but uses lots of memory | writes things to local after each step, slows things down |
+| Reliability |   Getting better, but a little bug   |                 Very reliable because OLD                 |
+
+
+Spark attaches to 0.0.0.0:4040/jobs/, but check 4041, 4042 etc. if not there.
+
+We use `pyspark`
+
+from command line `pyspark`
+
+*What is Big Data?* Data so large it cannot be stored on one machine, and cannot be processed on one machine.
+
+
+
+```python
+import pyspark as ps
+spark = ps.sql.SparkSession.builder.getOrCreate()
+```
+
+Spark uses lazy evaluation, meaning transformations aren't performed until an action is taken. So long as syntax of a transformation looks ok, you won't see an error, but this doesn't mean it will work with data flowing through.
+
+#### Scala
+
+from command line `spark-shell`
+
+
+#### Spark SQL
+
+
 
 ___
 
@@ -1900,6 +1939,7 @@ Adding a math equations:
 * Study SMOTEENN & undersampling
 * PCA for medical referrals.
 * Study pyomo
+* Spark Streaming
 
 #### Todos Free Week
 
