@@ -287,8 +287,13 @@ ___
 `psql db`
 ```
 
-Order of Execution
-`SELECT FROM JOIN WHERE GROUPBY HAVING ORDERBY LIMIT`
+Order
+`SELECT FROM JOIN ON WHERE GROUPBY HAVING ORDERBY LIMIT`
+
+Order of evaluation
+`FROM WHERE GROUPBY HAVING SELECT DISTINCE ORDERBY`
+
+
 
 
 #### Anaconda and Jupyter notebooks
@@ -455,16 +460,13 @@ relies on directed acyclic graphs
 
 #### AWS CLI
 
-
 `aws help`
 `less ~/.aws/config`
 `less ~/.aws/credentials`
 `aws s3 ls`
 `aws ec2 describe-instances --output table`
 
-
 When a process is running, need to ensure it doesn't stop if you close your screen. You can attach to a screen to keep an instance alive.
-
 
 #### Boto
 
@@ -528,9 +530,13 @@ conn.delete_bucket(bucket_name)
 
 #### EC2
 
-*Elastic Cloud Compute* - an aws machine, called and instance, that is made for computing (not storage like S3). There are many different kinds, sizes, built for different purposes.  
+*Elastic Cloud Compute* - an aws machine, called and instance, that is made for computing (not storage like S3). There are many different kinds, sizes, built for different purposes.
+
+[Create a Spark Cluster](https://github.com/tysonjens/dsi-spark-aws/blob/master/pair_part1.md)
 
 #### Apache Spark
+
+Elliot's guide to [frictionless cloud computing](https://github.com/gSchool/dsi-high-performance-python/blob/elliot/workflow_recommendation.md)  *How to add your credentials to an ec2 so you can do everything you need to from there*
 
 Works with Scala, Java, Python, R
 Datasources: hadoop, cassandra, hive, hbase, postgresql, csv, json, mysql
@@ -573,6 +579,10 @@ from command line `spark-shell`
 
 * [Built in Functions](https://spark.apache.org/docs/latest/api/sql/)
 
+RDD with a schema
+
+Schema = Table Names + Column Names + Column Types
+
 ```python
 from pyspark.sql import SQLContext
 sqlContext = SQLContext(sc)
@@ -583,7 +593,7 @@ You can load a json file into a spark SQL dataframe, and it will automatically i
 ```python
 ssdf = sqlContext.read.json("customerData.json")
 ssdf.show()  ## shows the dataframe
-empDF.printSchema()
+ssdf.printSchema()
 ```
 
 You perform SQL queries with a syntax similar to pandas.
@@ -613,17 +623,7 @@ empPanda = empDf.toPandas()
 
 Create data frames from RDD
 ```python
-from pyspark.sql import Row
-lines = sc.textFile('mycsv.csv')
-## remove the first line
-datalines = lines.filter(lambda x: "FUELTYPE" not in x)
-datalines.count()
 
-## split the lines, then choose, for each row, the 3 fields we want and give them names.
-parts = datalines.map(lambda l: l.split(","))
-autoMap = parts.map(lambda p: Row(make=p[0].\
-                bod=p[4], hp=int(p[7])))
-autoMap.collect()
 
 ## Infer the schema, and register the DAtaFrame as a table  
 autoDF = sqlContext.createDataFrame(autoMap)
@@ -632,6 +632,20 @@ sqlContext.sql("select * from autos where hp > 200").show()
 
 ```
 
+```python
+## how to explode a nested field with "LATERAL VIEW"
+result2 = spark.sql(
+            '''
+            SELECT name, city, state, stars, categories
+            FROM yelp_business LATERAL VIEW explode(categories) adTable AS cat
+            WHERE stars = 5
+            AND city = 'Phoenix'
+            AND attributes.`Accepts Credit Cards` = 'true'
+            AND cat = 'Restaurants'
+            ''')
+```
+
+Spark SQL Window Functions - rolling mean, exponentially weighted time series models
 
 
 ___
@@ -910,7 +924,7 @@ def bootstrap_ci_coefficients(X_train, y_train, num_bootstraps):
 ```
 #### Regularization - Lasso, Ridge & ElastiNet
 
-*Regularization is a way to decrease the variance of a model. The Lasso and Ridge techniques introduce a penalty to the cost function the restricts the size any coefficient can attain. Linear models with many features (esp. if polynomials are present) can easily overfit data because of their flexibility. The Ridge tends to keep all variable while pushing them toward zero.  The Lasso will push some variables' coefficients all the way to zero. ElastiNet is a blend between ridge and lasso.*
+*Regularization is a way to decrease the variance of a model. The Lasso and Ridge techniques introduce a penalty to the cost function the restricts the size any coefficient can attain. Linear models with many features (esp. if polynomials are present) can easily overfit data because of their flexibility. The Ridge tends to keep all variable while pushing them toward zero. The Lasso will push some variables' coefficients all the way to zero. ElastiNet is a blend between ridge and lasso.*
 
 Ridge Cost Function:
 
@@ -1440,6 +1454,25 @@ U,Sigma,VT = np.linalg.svd(pv.as_matrix())
 
 [Natural Language Toolkit NLTK](http://www.nltk.org/)
 
+```python
+## Tokenize words
+def tokenize(text):
+    regex = re.compile('<.+?>|[^a-zA-Z]')
+    clean_txt = regex.sub(' ', text)
+    tokens = clean_txt.split()
+    lowercased = [t.lower() for t in tokens]
+
+    no_punctuation = []
+    for word in lowercased:
+        punct_removed = ''.join([letter for letter in word if not letter in PUNCTUATION])
+        no_punctuation.append(punct_removed)
+    no_stopwords = [w for w in no_punctuation if not w in STOPWORDS]
+
+    STEMMER = PorterStemmer()
+    stemmed = [STEMMER.stem(w) for w in no_stopwords]
+    return [w for w in stemmed if w]
+```
+
 #### Latent Dirichlet Allocation LDA
 
 #### Term Frequency - Inverse Document Frequency (TD_IDF)
@@ -1656,7 +1689,7 @@ Different kinds of colors - RGB, HSV (hue saturation )
 
 *A way to process images, leaving the original image intact (not raveling into a vector). In general, the pattern is to do a convolutional layer, then an activation layer, then a pooling (or subsampling) filter.*
 
-#### Recurrent Neural Networkds (RNN)
+#### Recurrent Neural Networks (RNN)
 
 Good for time series, useful for carrying information forward through time.
 
