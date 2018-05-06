@@ -437,6 +437,8 @@ RPy2
 
 #### Keras [.](https://keras.io/)
 
+*Keras is a high-level neural networks API, written in Python and capable of running on top of TensorFlow, CNTK, or Theano. It was developed with a focus on enabling fast experimentation. Being able to go from idea to result with the least possible delay is key to doing good research.*
+
 #### Theano [.](https://github.com/Theano/Theano)
 
 *Theano is a Python library that allows you to define, optimize, and evaluate mathematical expressions involving multi-dimensional arrays efficiently. It can use GPUs and perform efficient symbolic differentiation.*
@@ -543,6 +545,8 @@ Datasources: hadoop, cassandra, hive, hbase, postgresql, csv, json, mysql
 
 main abstraction for spark is the RDD - *resilient distributed dataset*
 
+The Apache Spark platform works with Spark SQL, Spark Streaming, ML, and GraphX.  Good becasue it's hard to get things out of spark.
+
 
 |             |                 Spark                |                           Hadoop                          |
 |:-----------:|:------------------------------------:|:---------------------------------------------------------:|
@@ -646,6 +650,59 @@ result2 = spark.sql(
 ```
 
 Spark SQL Window Functions - rolling mean, exponentially weighted time series models
+
+#### Spark ML
+
+*replaced MLlib in 2015*
+*Basic stats, linear models, decision tree, ensembles, mlp classifier, clustering, dimension reduction etc.*
+*inspired by scikit-learn*
+
+```python
+## Spark ML Pipeline
+tokenizer = RegexTokenizer(inputCol='text', outputCol='tokens', pattern='\\W')
+tf = HashingTF(inputCol='tokens', outputCol='features')
+lr = LogisticRegression(maxIter=10, regParam=.001)
+
+pipeline = Pipeline(stages=[tokenizer, tf, lr])
+
+model = pipeline.fit(training_df)
+```
+
+#### Start a cluster
+
+1. Go to 3_coding_and_environs
+2. from Command Line `bash launch_cluster.sh tysonjens-referrals spark 4`. The first arg is the name of an s3 bucket, the second are .pem credentials, the third is the number of instances.
+3. Update `atom ~/.ssh/config` - with the instance name
+4. scp jupyspark-emr.sh to the master instance of your fucking cluster `scp -i spark jupyspark-emr.sh hadoop@ec2-54-212-242-23.us-west-2.compute.amazonaws.com:~/`
+6. From cluster home, go to master's security groups, select master, action--> edit inbound rules. Ensure there is one that has SSH, TCP, 22, Anywhere.  Although we use anywhere, our .pem ensures only we can access.
+7. From shell, do  `ssh <keypair>`
+8. From the instance's shell, `bash jupyspark-emr.sh`
+9. On local, run `ssh -NfL 48888:localhost:48888 <hostnamefrom.ssh/configfile>`
+10. The go to http://0.0.0.0:48888/?token=5aa6ebaf6d3b16b4ee734ef8ec098d383b240b798e42610c in your browser
+11. Read data from your s3 bucket with something like:
+
+```python
+import pyspark
+data_df = spark.read.csv('s3://tysonjens-referrals/2017_refs.csv', sep='|')
+```
+
+
+# ssh to running ec2 instance
+ssh -i /path/my-key-pair.pem ec2-user@ec2-198-51-100-1.compute-1.amazonaws.com
+
+# copy file from local machine to ec2
+scp -i <keypair> myfile.txt ubuntu@ec2-x-x-x.com/home/ubuntu/myfile.txt
+
+# launch ec2 instance from command line
+aws ec2 run-instances --image-id ami-xxxxxxxx --count 1 --instance-type t1.micro --key-name MyKeyPair --security-groups my-sg
+
+# Use the following command to copy an object from Amazon S3 to your instance.
+[ec2-user ~]$ aws s3 cp s3://my_bucket/my_folder/my_file.ext my_copied_file.ext
+
+# Use the following command to copy an object from your instance back into Amazon S3.
+[ec2-user ~]$ aws s3 cp my_copied_file.ext s3://my_bucket/my_folder/my_file.ext
+
+
 
 
 ___
@@ -1721,6 +1778,104 @@ Where:
 * N = number of data points
 * D = number of dimensions/features
 
+
+#### Model Stacking
+
+*Use the predictions from "level-one" estimators as input variables for a level-two estimator. The level-two estimator can learn where the level-one estimators were strong and thus improve predictions.*
+
+Steps
+
+1. Use the wrapper (below) to house sklearn alogirthm
+2. Save the parameters of level-one algorithms ahead of time (see below)
+3. Create the model instances
+4. Get leve-one predicitions and add to the data set with concatenate. Remember, you need both predictions for test and train.
+5. Fit the level-2 classifier with original AND new columns from the level one predictors. 
+
+
+
+
+```python
+# Some useful parameters which will come in handy later on
+ntrain = train.shape[0]
+ntest = test.shape[0]
+SEED = 0 # for reproducibility
+NFOLDS = 5 # set folds for out-of-fold prediction
+kf = KFold(ntrain, n_folds= NFOLDS, random_state=SEED)
+
+# Class to extend the Sklearn classifier
+class SklearnHelper(object):
+    def __init__(self, clf, seed=0, params=None):
+        params['random_state'] = seed
+        self.clf = clf(**params)
+
+    def train(self, x_train, y_train):
+        self.clf.fit(x_train, y_train)
+
+    def predict(self, x):
+        return self.clf.predict(x)
+
+    def fit(self,x,y):
+        return self.clf.fit(x,y)
+
+    def feature_importances(self,x,y):
+        print(self.clf.fit(x,y).feature_importances_)
+
+def get_oof(clf, x_train, y_train, x_test):
+    oof_train = np.zeros((ntrain,))
+    oof_test = np.zeros((ntest,))
+    oof_test_skf = np.empty((NFOLDS, ntest))
+
+    for i, (train_index, test_index) in enumerate(kf):
+        x_tr = x_train[train_index]
+        y_tr = y_train[train_index]
+        x_te = x_train[test_index]
+
+        clf.train(x_tr, y_tr)
+
+        oof_train[test_index] = clf.predict(x_te)
+        oof_test_skf[i, :] = clf.predict(x_test)
+
+    oof_test[:] = oof_test_skf.mean(axis=0)
+    return oof_train.reshape(-1, 1), oof_test.reshape(-1, 1)
+```
+```python
+# save parameters of models ahead of time (for example)
+rf_params = {
+    'n_jobs': -1,
+    'n_estimators': 500,
+     'warm_start': True,
+     #'max_features': 0.2,
+    'max_depth': 6,
+    'min_samples_leaf': 2,
+    'max_features' : 'sqrt',
+    'verbose': 0
+}
+```
+
+```python
+## Create the model instances
+rf = SklearnHelper(clf=RandomForestClassifier, seed=SEED, params=rf_params)
+et = SklearnHelper(clf=ExtraTreesClassifier, seed=SEED, params=et_params)
+ada = SklearnHelper(clf=AdaBoostClassifier, seed=SEED, params=ada_params)
+gb = SklearnHelper(clf=GradientBoostingClassifier, seed=SEED, params=gb_params)
+svc = SklearnHelper(clf=SVC, seed=SEED, params=svc_params)
+```
+
+```python
+# Create our OOF train and test predictions. These base results will be used as new features
+et_oof_train, et_oof_test = get_oof(et, x_train, y_train, x_test) # Extra Trees
+rf_oof_train, rf_oof_test = get_oof(rf,x_train, y_train, x_test) # Random Forest
+ada_oof_train, ada_oof_test = get_oof(ada, x_train, y_train, x_test) # AdaBoost
+gb_oof_train, gb_oof_test = get_oof(gb,x_train, y_train, x_test) # Gradient Boost
+svc_oof_train, svc_oof_test = get_oof(svc,x_train, y_train, x_test) # Support Vector Classifier
+
+print("Training is complete")
+
+x_train = np.concatenate(( et_oof_train, rf_oof_train, ada_oof_train, gb_oof_train, svc_oof_train), axis=1)
+x_test = np.concatenate(( et_oof_test, rf_oof_test, ada_oof_test, gb_oof_test, svc_oof_test), axis=1)
+```
+
+
 ___
 
 # Model Selection and Evaluation
@@ -2023,7 +2178,6 @@ Adding a math equations:
 * Networking for jobs
 * Jeffrey contact
 * Ruan & optum
-* Model Stacking - Kaggle Guide
 * Study maximum a posteriori (MAP)
 * Watch Andrew Ng Neural Nets
 * objects and classes practice
