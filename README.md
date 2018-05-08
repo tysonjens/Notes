@@ -1502,7 +1502,160 @@ Compared with the original matrix (the one to be decomposed), U has the same ord
 With U * sigma, you can use cosine similarity to learn how similar users are with each other.  Similarly, with sigma * V, you can see how similar books are each otherself.
 
 ```python
-U,Sigma,VT = np.linalg.svd(pv.as_matrix())
+# Use SVD to find topics
+from numpy.linalg import svd
+k = 5 # the number of topics we're looking for
+
+# Compute SVD
+U, S, VT = svd(X)
+
+# Save in dataframes
+U = pd.DataFrame(U, index=users)
+VT = pd.DataFrame(VT, columns=movies)
+
+# Keep top k topics
+U = U.iloc[:,:k]
+var_tot = np.sum(S**2) # total variance explained by singular values
+S = S[:k] # subset S to number of topics
+var_expl = [val**2/var_tot for val in S] # variance explained per topic
+var_expl_tot = np.sum(var_expl) # total variance explained by the topics
+S = np.diag(S)
+VT = VT.iloc[:k,:]
+
+# Reconstruct the original ratings matrix using just those topics
+X_r = np.dot(U, np.dot(S, VT))
+ratings_df_recon = pd.DataFrame(X_r, index=users, columns=movies)
+
+# Calculate the error
+error = X_r - X
+error_df = pd.DataFrame(error, index=users, columns=movies)
+
+# Quantify the error of the entire reconstuction using the Frobineus norm
+error_Fro = np.sqrt(np.sum(error**2))
+
+print("Using {0} topics that explain {1:0.1f}% of the variance".format(k, var_expl_tot*100))
+print("\nU - Relating users to topics")
+print(U.round(1))
+print("\nS - Singular values: ratio of squared values explains variance")
+print(S.round(1))
+print("\nVT - Relating topics to movies")
+print(VT.round(1))
+print("\nOriginal ratings matrix")
+print(ratings_df.round(1))
+print("\nReconstructed ratings matrix using {0} topics".format(k))
+print(ratings_df_recon.round(1))
+print("\nError")
+print(error_df.round(1))
+print("\nError quantified using Frobineus norm, {0} topics".format(k))
+print(round(error_Fro,2))
+```
+
+#### Non-negative matrix factorization
+
+X = W * H
+
+W [users x topics]
+H [topics x movies]
+
+As you add topics, look for the elbow in the reconstruction error.  Frobenious norm can be used for reconstruction error.
+
+in NMF, are not orthogonal like in PCA/SVD.
+
+```python
+from sklearn.decomposition import NMF
+k =  3 # number of topics
+
+nmf = NMF(n_components = k)
+nmf.fit(X)
+
+W = nmf.transform(X)
+H = nmf.components_
+
+W = pd.DataFrame(W, index = users)
+H = pd.DataFrame(H, columns = movies)
+
+# reconstruct the matrix
+X_r = np.dot(W,H)
+
+ratings_df_recon = pd.DataFrame(X_r, index=users, columns=movies)
+
+# Calculate the error
+error = X_r - X
+error_df = pd.DataFrame(error, index=users, columns=movies)
+
+# Quantify the error of the entire reconstuction using the Frobineus norm
+error_Fro = np.sqrt(np.sum(error**2))
+
+print("Using {0} topics".format(k))
+print("\nW - Relating users to topics")
+print(W.round(1))
+print("\nH - Relating topics to movies")
+print(H.round(1))
+print("\nOriginal ratings matrix")
+print(ratings_df.round(1))
+print("\nReconstructed ratings matrix using {0} topics".format(k))
+print(ratings_df_recon.round(1))
+print("\nError")
+print(error_df.round(1))
+print("\nError quantified using Frobineus norm, {0} topics".format(k))
+print(round(error_Fro,2))
+```
+#### Simple Content Based Recommendation
+
+*Use cosine similarity to determine how "close" one item is from another. Based on one item vectors, you can find the n closest vectors.*
+
+```Python
+import pandas as pd
+import numpy as np
+from nltk.corpus import stopwords
+from nltk.tokenize import RegexpTokenizer
+from nltk.stem.porter import PorterStemmer
+
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+df = pd.read_csv('data/skus_and_descriptions.csv')
+
+def build_text_vectorizer(contents, use_tfidf=True, use_stemmer=False, max_features=None):
+    '''
+    Build and return a **callable** for transforming text documents to vectors,
+    as well as a vocabulary to map document-vector indices to words from the
+    corpus. The vectorizer will be trained from the text documents in the
+    `contents` argument. If `use_tfidf` is True, then the vectorizer will use
+    the Tf-Idf algorithm, otherwise a Bag-of-Words vectorizer will be used.
+    The text will be tokenized by words, and each word will be stemmed iff
+    `use_stemmer` is True. If `max_features` is not None, then the vocabulary
+    will be limited to the `max_features` most common words in the corpus.
+    '''
+    Vectorizer = TfidfVectorizer if use_tfidf else CountVectorizer
+    tokenizer = RegexpTokenizer(r"[\w']+")
+    stem = PorterStemmer().stem if use_stemmer else (lambda x: x)
+    stop_set = set(stopwords.words('english'))
+    # Closure over the tokenizer et al.
+    def tokenize(text):
+        tokens = tokenizer.tokenize(text)
+        stems = [stem(token) for token in tokens if token not in stop_set]
+        return stems
+    vectorizer_model = Vectorizer(tokenizer=tokenize, max_features=max_features)
+    vectorizer_model.fit(contents)
+    vocabulary = np.array(vectorizer_model.get_feature_names())
+    # Closure over the vectorizer_model's transform method.
+    def vectorizer(X):
+        return vectorizer_model.transform(X).toarray()
+    return vectorizer, vocabulary
+
+vect_X = vect(df['description'])
+
+similar = cosine_similarity(vect_X)
+
+def recommender():
+    id = int(input('Choose an ID: '))
+    id = id-1
+    order = similar[id,:].argsort()
+    top_five = np.array(df)[order][-6:-1]
+    print('Your selection is: {} \n'.format(df['description'].iloc[id]))
+    for num in np.arange(5):
+        print('Recommendation: {} \n'.format(top_five[num,1]))
 ```
 
 #### Natural Language Processing (NLP)
@@ -1789,7 +1942,7 @@ Steps
 2. Save the parameters of level-one algorithms ahead of time (see below)
 3. Create the model instances
 4. Get leve-one predicitions and add to the data set with concatenate. Remember, you need both predictions for test and train.
-5. Fit the level-2 classifier with original AND new columns from the level one predictors. 
+5. Fit the level-2 classifier with original AND new columns from the level one predictors.
 
 
 
@@ -2169,6 +2322,17 @@ Adding a math equations:
 * [Math Symbols](https://reu.dimacs.rutgers.edu/Symbols.pdf)
 * [Markdown Table Generator](http://www.tablesgenerator.com/markdown_tables)
 
+#### Flask
+
+**
+
+#### Talking to Business People
+
+* Describe stuff they already know  
+* Add on easy to explain satistical analysis  
+* Demonstrate how the historical analysis can be cast to the future
+* Identify actions to take based on that forecast
+
 ---
 #### TODOS Project Week
 
@@ -2192,6 +2356,8 @@ Adding a math equations:
 * PCA for medical referrals.
 * Study pyomo
 * Spark Streaming
+* Study validation
+* Study Frobenious Norm - came up in SVD and NMF
 
 #### Todos Free Week
 
