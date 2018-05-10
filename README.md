@@ -356,6 +356,109 @@ from regression_tools.dftransformers import (
 from sklearn.model_selection import train_test_split, KFold, cross_val_score
 ```
 
+A Python Class
+
+```python
+class ItemItemRecommender(object):
+    """Item-item similarity recommender."""
+
+    def __init__(self, neighborhood_size=5):
+        """Initialize the parameters of the model."""
+        self.neighborhood_size = neighborhood_size
+        self.neighborhood = None
+        self.items_cos_sim = None
+        self.user_preds = None
+
+    def fit(self, ratings_mat):
+        """Fit the model to the data specified as an argument.
+
+        Store objects for describing model fit as class attributes.
+        """
+        self.items_cos_sim = cosine_similarity(ratings_mat.T)
+        least_to_most_sim_indexes = np.argsort(self.items_cos_sim, 1)
+        self._set_neighborhoods(least_to_most_sim_indexes)
+
+
+    def _set_neighborhoods(self, least_to_most_sim_indexes):
+        """Get the items most similar to each other item.
+
+        Should set a class attribute with a matrix with number of rows
+        equal to number of items, and number of columns equal to
+        neighborhood size. Entries in this matrix will be indices of other
+        items.
+
+        You will call this in your fit method.
+        """
+        self.neighborhood = least_to_most_sim_indexes[:, -(self.neighborhood_size+1):][:,0:self.neighborhood_size]
+
+
+    def pred_one_user(self, ratings_mat, user_id):
+        """Accept user id as arg. Return the predictions for a single user.
+
+        Optional argument to specify whether or not timing should be
+        provided on this operation.
+        """
+        n_items = ratings_mat.shape[1]
+        items_rated_by_this_user = ratings_mat[user_id].nonzero()[1]
+
+        output = np.zeros(n_items)
+        for item_to_rate in range(n_items):
+            relevant_items = np.intersect1d(self.neighborhood[item_to_rate],
+                                            items_rated_by_this_user,
+                                            assume_unique=True)
+                                        # assume_unique speeds up intersection op
+            # note: ratings_mat has data type `sparse_lil_matrix`, while
+            # items_cos_sim is a numpy array. Luckily for us, multiplication
+            # between these two classes is defined, and even more luckily,
+            # it is defined to as the dot product. So the numerator
+            # in the following expression is an array of a single float
+            # (not an array of elementwise products as you would expect
+            #  if both things were numpy arrays)
+            output[item_to_rate] = (ratings_mat[user_id, relevant_items]*
+            self.items_cos_sim[item_to_rate, relevant_items])/(self.items_cos_sim[item_to_rate, relevant_items]).sum()
+        output = np.nan_to_num(output)
+        return output
+
+    def pred_all_users(self, ratings_mat):
+        """Return a matrix of predictions for all users.
+
+        Repeated calls of pred_one_user, are combined into a single matrix.
+        Return value is matrix of users (rows) items (columns) and
+        predicted ratings (values).
+
+        Optional argument to specify whether or not timing should be
+        provided on this operation.
+        """
+        user_preds = np.zeros(ratings_mat.shape)
+        for user in np.arange(ratings_mat.shape[0]):
+            user_preds[user,:] = pred_one_user(user, ratings_mat)
+        self.user_preds = user_preds
+        return user_preds
+
+
+    def top_n_recs(self, user_id, ratings_mat, n=4):
+        pred_ratings = self.pred_one_user(ratings_mat, user_id)
+        item_index_sorted_by_pred_rating = list(np.argsort(pred_ratings))
+        items_rated_by_this_user = ratings_mat[user_id].nonzero()[1]
+        unrated_items_by_pred_rating = [item for item in item_index_sorted_by_pred_rating
+                                        if item not in items_rated_by_this_user]
+        return unrated_items_by_pred_rating[-n:]
+
+
+if __name__ == '__main__':
+    IIR = ItemItemRecommender(neighborhood_size=4)
+    ratings_mat = sparse.lil_matrix(np.array([[4, 0, 0, 5, 1, 0, 0],
+                                          [5, 5, 4, 0, 0, 0, 0],
+                                          [0, 0, 0, 2, 4, 5, 0],
+                                          [0, 3, 0, 0, 0, 0, 3]]))
+    IIR.fit(ratings_mat)
+    print(IIR.neighborhood)
+    print(IIR.items_cos_sim)
+    print(IIR.pred_one_user(ratings_mat, user_id=2))
+
+    print(IIR.top_n_recs(user_id=2, ratings_mat=ratings_mat, n=3))
+```
+
 
 #### psycopg (Python to PostgreSQL)
 
@@ -563,7 +666,21 @@ from command line `pyspark`
 
 *What is Big Data?* Data so large it cannot be stored on one machine, and cannot be processed on one machine.
 
+```python
+## Switch between python dataframe and spark dataframe
+from pyspark.sql import SparkSession
 
+# Setup a SparkSession
+spark = SparkSession.builder.getOrCreate()
+
+...
+
+# Convert a Pandas DF to a Spark DF
+spark_df = spark.createDataFrame(pandas_df)
+
+# Convert a Spark DF to a Pandas DF
+pandas_df = spark_df.toPandas()
+```
 
 ```python
 import pyspark as ps
@@ -2412,6 +2529,8 @@ Agenda for interview:
 * Advice
 * Resources
 * Assignments
+
+[Interview Guide from Galvanize](https://github.com/gSchool/dsi-interview-prep)
 
 ___
 #### Style Guide
