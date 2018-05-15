@@ -228,6 +228,53 @@ ___
 
 # Coding and Environment
 
+#### Docker[.](https://hub.docker.com/)
+
+*Containerize code to make it easier to share with others.  A docker container contains all code and packages needed to run it.*
+
+* Docker Client - build images, run images, stop containers
+* Docker Host -
+
+```shell
+# Use an official Python runtime as a parent image
+FROM python:2.7-slim
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+ADD . /app
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --trusted-host pypi.python.org -r requirements.txt
+
+# Make port 80 available to the world outside this container
+EXPOSE 80
+
+# Define environment variable
+ENV NAME World
+
+# Run app.py when the container launches
+CMD ["python", "app.py"]
+```
+
+#### Flask
+
+GET
+POST
+HTML
+CSS -
+
+Ports 1-1024 are reserved, but others are open for use. Tovio uses 4000-9000 typically.
+
+#### Bootstrap
+
+Standards CSS and applying it to content.  Must put on right folder so flask can find and serve it.
+
+#### Bokeh
+
+
+
 #### GitHub
 
 * [Interactive Tool](http://ndpsoftware.com/git-cheatsheet/previous/git-cheatsheet.html)
