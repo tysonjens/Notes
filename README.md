@@ -43,7 +43,7 @@ def plot_continuous(dist):
     fig, ax = plt.subplots(2, 1, sharex=True, figsize=(4, 5))
       # Plot hist
     rvs = dist.rvs(size=1000)
-    ax[0].hist(rvs, normed=True, alpha=0.2, histtype='stepfilled')
+    ax[0].hist(rvs, density=True, alpha=0.2, histtype='stepfilled')
     x=np.linspace(dist.ppf(0.01), dist.ppf(0.99), 50)
     ax[0].plot(x, dist.pdf(x), '-', lw=2)
     ax[0].set_title( dist.dist.name.title() + ' PDF')
@@ -116,6 +116,7 @@ def bootstrap_ci(lst, bootstraps=1000, ci=95):
 * [Power](http://my.ilstu.edu/~wjschne/138/Psychology138Lab14.html)
 * [Quick-R Power](https://www.statmethods.net/stats/power.html)
 * [ANOVA vs T-test](https://keydifferences.com/difference-between-t-test-and-anova.html)
+* [Scipy Stats hypothesis test, scroll to bottom](https://docs.scipy.org/doc/scipy/reference/stats.html)
 
 ```python
 # A/B Test of two sample proportions (e.g. sign up rate on website)
@@ -133,8 +134,38 @@ st.ks_2samp(randpois, my_dist)
 Hypothesis Tests
 * Breusch-Pagan - tests for Heteroscedasticity
 * Shaprio-Wilk - tests for normality of residuals
-
 ```
+
+#### One Sample T-test
+
+*Calculate the T-test for the mean of ONE group of scores*
+
+```python
+import scipy.stats as st
+rvs = st.norm.rvs(loc=5, scale=10, size=50)
+
+st.ttest_1samp(rvs,5.0)
+```
+
+#### Two sample, difference in Means
+
+*Calculates the T-test for the means of two independent samples of scores*
+
+```python
+import scipy.stats as st
+rvs1 = stats.norm.rvs(loc=6,scale=10,size=500)
+rvs2 = stats.norm.rvs(loc=5,scale=10,size=500)
+stats.ttest_ind(rvs1,rvs2)
+```
+
+#### Chi-squared hypothesis test
+
+*Used to determine whether there is a significant difference between the expected frequencies and the observed frequencies in one or more categories.*
+
+```python
+st.chisquare([16, 18, 16, 14, 12, 12], f_exp=[16, 16, 16, 16, 16, 8])
+```
+
 #### Bayesian Methods
 
 PyMC3 is a package for incorporating bayesian methods in python
@@ -217,6 +248,39 @@ with model:
 ```
 
 [MIT Bayesian Inference with Discrete Priors](https://ocw.mit.edu/courses/mathematics/18-05-introduction-to-probability-and-statistics-spring-2014/readings/MIT18_05S14_Reading11.pdf)
+
+
+#### Permutations
+
+*Count without replacement, order matters. "Arrangements"*
+
+A museum has 7 painting by Picasso and wants to arrange 3 of them on the same wall. How many ways?
+
+```python
+import math
+def get_permutations(total, choose):
+    return math.factorial(total)/math.factorial(total-choose)
+```
+
+How many ways can you arrange the letters in the word LOLLIPOP?
+
+N = 8
+L = 3
+O = 2
+I = 1
+P = 2
+
+8! / 3!2!2! = 8*7*6*5 = 1680
+
+#### Combinations
+
+*Counting without replacement, and order does NOT matter*
+
+A person playing poker is dealt 5 cards. How many different hands could the player have been dealt?
+
+
+
+
 
 
 #### Math_Stats Miscellaneous
@@ -619,6 +683,10 @@ relies on directed acyclic graphs
 `aws ec2 describe-instances --output table`
 
 When a process is running, need to ensure it doesn't stop if you close your screen. You can attach to a screen to keep an instance alive.
+
+Once you've launched ec2 instance, you need to configure it with the right packages to run your code. Best practice to get python 3 up first, the install pip.  Then you can run pip to get everything else set up.
+
+[Install Python Pip on EC2](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-install-linux.html)
 
 #### Boto
 
@@ -1168,6 +1236,12 @@ In Logistic Regression, 'l1' = lasso, 'l2' = ridge
 ```
 ## Information gain at any split
 IG(P,C) = H(P) - weightedsums(H(C))
+```
+
+```Python
+def get_information_node(yeses, nos):
+    total = yeses + nos
+    return - (yeses/total)*np.log2(yeses/total)- (nos/total)*np.log2(nos/total)
 ```
 
 [Visual Explanation](http://www.r2d3.us/visual-intro-to-machine-learning-part-1/)
@@ -2409,8 +2483,8 @@ def violin_plot_binary(categorical_var, continuous_var, df):
 figpois = plt.figure(figsize=(12,6))
 acax = figpois.add_subplot(111)
 acax.set_title('Histogram, Accidents in a Month')
-acax.hist(count_by_month, bins = 15, alpha = 0.5, normed=1, label='Actual')
-acax.hist(randpois, bins = 57, alpha = 0.5, color='g', normed=1, label='Poisson')
+acax.hist(count_by_month, bins = 15, alpha = 0.5, density=1, label='Actual')
+acax.hist(randpois, bins = 57, alpha = 0.5, color='g', density=1, label='Poisson')
 acax.set_ylabel('Frequency')
 acax.legend();
 ```
