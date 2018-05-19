@@ -264,11 +264,7 @@ def get_permutations(total, choose):
 
 How many ways can you arrange the letters in the word LOLLIPOP?
 
-N = 8
-L = 3
-O = 2
-I = 1
-P = 2
+N = 8, L = 3, O = 2, I = 1, P = 2
 
 8! / 3!2!2! = 8*7*6*5 = 1680
 
@@ -753,6 +749,8 @@ conn.delete_bucket(bucket_name)
 *Elastic Cloud Compute* - an aws machine, called and instance, that is made for computing (not storage like S3). There are many different kinds, sizes, built for different purposes.
 
 [Create a Spark Cluster](https://github.com/tysonjens/dsi-spark-aws/blob/master/pair_part1.md)
+
+[Chris Albon EC2 Toot](https://chrisalbon.com/software_engineering/cloud_computing/run_project_jupyter_on_amazon_ec2/)
 
 #### Apache Spark
 
