@@ -1712,7 +1712,8 @@ categorical_features_indices = np.where(x_train_train.dtypes != np.float)[0]
 modcb=CatBoostClassifier(depth=4, iterations=15000, learning_rate=0.0003, l2_leaf_reg=20, class_weights=class_weight,
                          use_best_model=True, one_hot_max_size=100, rsm=.5)
 
-modcb.fit(x_train_train, y_train_train,cat_features=categorical_features_indices,eval_set=(x_train_val, y_train_val),plot=True)
+modcb.fit(x_train_train, y_train_train,cat_features=categorical_features_indices,
+eval_set=(x_train_val, y_train_val),plot=True)
 ```
 
 
