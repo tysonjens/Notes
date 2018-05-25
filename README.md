@@ -32,9 +32,21 @@
 
 thing | Discrete | Continuous | R
 ------|----------|----------| ---
-x to density | pmf | pdf | d
-x -> area to left | cdf  | cdf | p
-area to left -> x | ppf | ppf | q
+Density at a point | pmf | pdf | d
+area to left of point | cdf  | cdf | p
+point where area to left equal prob | ppf | ppf | q
+
+Discrete, area to left (```st.binom.cdf(2, 6, .2)```)
+
+![pipes](images/discrete_left.png)
+
+Discrete, at a point (```st.binom.pmf(2, 6, .2)```)
+
+![pipes](images/discrete.png)
+
+Continuous, area to left (```st.norm.cdf(6, 5.7, .5)```)
+
+![pipes](images/continuous_left.png)
 
 
 ```python
@@ -62,6 +74,7 @@ exponential = st.expon(scale=1/lam)
 plot_continuous(exponential);
 ```
 
+![pipes](images/plot_continuous.png)
 
 ```python
 # Plot Discrete Distribution
@@ -85,9 +98,12 @@ def plot_discrete(dist):
 
 ## And then call it with
 ## import scipy.stats as st
-binomial=st.binom(n=10,p=0.6)
+binomial=st.binom(n=6,p=0.2)
 plot_discrete(binomial);
 ```
+
+![pipes](images/plot_discrete.png)
+
 #### Bootstrap
 
 *The bootstrap takes 200-2000 samples of length equal to sample, and calculates the statistic of interest. This process creates a distribution for the statistic and can be used to create confidence intervals for many statistics including means, standard deviations, and beta coefficients. It is computationally expensive, but is more versatile that MLE.*
@@ -113,10 +129,21 @@ def bootstrap_ci(lst, bootstraps=1000, ci=95):
 
 * [Sampling](https://en.wikipedia.org/wiki/Sampling_(statistics))
 * [Power](https://en.wikipedia.org/wiki/Statistical_power#Factors_influencing_power) - `Pr(Reject H0 | H1 is true)`
-* [Power](http://my.ilstu.edu/~wjschne/138/Psychology138Lab14.html)
-* [Quick-R Power](https://www.statmethods.net/stats/power.html)
 * [ANOVA vs T-test](https://keydifferences.com/difference-between-t-test-and-anova.html)
 * [Scipy Stats hypothesis test, scroll to bottom](https://docs.scipy.org/doc/scipy/reference/stats.html)
+
+#### Power
+
+*Power is the probability of rejecting the null hypothesis when a specific null hypothesis is true.*
+
+* [Power great visualization](http://my.ilstu.edu/~wjschne/138/Psychology138Lab14.html)
+* [Quick-R Power](https://www.statmethods.net/stats/power.html)
+* Breusch-Pagan - tests for Heteroscedasticity
+* Shaprio-Wilk - tests for normality of residuals
+
+
+![power](images/power.png)
+
 
 ```python
 # A/B Test of two sample proportions (e.g. sign up rate on website)
@@ -131,9 +158,6 @@ import scipy.stats as st
 randpois = st.poisson(6, 1).rvs(100)
 st.ks_2samp(randpois, my_dist)
 
-Hypothesis Tests
-* Breusch-Pagan - tests for Heteroscedasticity
-* Shaprio-Wilk - tests for normality of residuals
 ```
 
 #### One Sample T-test
@@ -426,7 +450,7 @@ conda update --all
 if __name__ == '__main__':
   ## stuff you want to run only if running the file directly
 ```
-[read](https://stackoverflow.com/questions/419163/what-does-if-name-main-do)
+[Article: What does ```if __name__ == '__main__':``` do? ](https://stackoverflow.com/questions/419163/what-does-if-name-main-do)
 
 ```python
 ## create Categorical Var from Continuous Var
@@ -656,9 +680,9 @@ RPy2
 
 #### Cron
 
-[crontab.guru](crontab.guru)
+[crontab.guru](https://crontab.guru/)
 
-#### [Apache Airflow](https://airflow.apache.org/plugins.html)
+#### Apache Airflow [.](https://airflow.apache.org/plugins.html)
 
 *cron on steroids*
 
@@ -704,7 +728,6 @@ conn = boto.connect_s3()
 ### and use the code below
 #access_key, access_secret_key = 'YOUR ACCESS KEY', 'YOUR SECRET ACCESS KEY'
 #conn = boto.connect_s3(access_key, access_secret_key)
-
 
 
 # List all the buckets
@@ -916,21 +939,22 @@ import pyspark
 data_df = spark.read.csv('s3://tysonjens-referrals/2017_refs.csv', sep='|')
 ```
 
+#### Elliot's useful AWS snippets
 
-# ssh to running ec2 instance
-ssh -i /path/my-key-pair.pem ec2-user@ec2-198-51-100-1.compute-1.amazonaws.com
+ssh to running ec2 instance
+```ssh -i /path/my-key-pair.pem ec2-user@ec2-198-51-100-1.compute-1.amazonaws.com```
 
-# copy file from local machine to ec2
-scp -i <keypair> myfile.txt ubuntu@ec2-x-x-x.com/home/ubuntu/myfile.txt
+copy file from local machine to ec2
+```scp -i <keypair> myfile.txt ubuntu@ec2-x-x-x.com/home/ubuntu/myfile.txt```
 
-# launch ec2 instance from command line
-aws ec2 run-instances --image-id ami-xxxxxxxx --count 1 --instance-type t1.micro --key-name MyKeyPair --security-groups my-sg
+launch ec2 instance from command line
+```aws ec2 run-instances --image-id ami-xxxxxxxx --count 1 --instance-type t1.micro --key-name MyKeyPair --security-groups my-sg```
 
-# Use the following command to copy an object from Amazon S3 to your instance.
-[ec2-user ~]$ aws s3 cp s3://my_bucket/my_folder/my_file.ext my_copied_file.ext
+Use the following command to copy an object from Amazon S3 to your instance.
+```[ec2-user ~]$ aws s3 cp s3://my_bucket/my_folder/my_file.ext my_copied_file.ext```
 
-# Use the following command to copy an object from your instance back into Amazon S3.
-[ec2-user ~]$ aws s3 cp my_copied_file.ext s3://my_bucket/my_folder/my_file.ext
+Use the following command to copy an object from your instance back into Amazon S3.
+```[ec2-user ~]$ aws s3 cp my_copied_file.ext s3://my_bucket/my_folder/my_file.ext```
 
 
 
@@ -1297,7 +1321,6 @@ Point weighting - consider points closer more important to determining
 
 *Support Vector Machines or "tricks" allow us to project data in n dimensions into higher dimension without having to compute variables in those dimensions. Simple decision boundaries in higher dimensions translate to complicated decision boundaries when translated to lower dimensions.*
 
-
 * [Patrick Winston Youtube lecture](https://www.youtube.com/watch?v=_PwhiWxHK8o)
 
 #### Unsupervised Learning
@@ -1512,8 +1535,6 @@ class KMeans(object):
             self._compute_centroids(X)
             self._assign_clusters(X)
 
-
-
     def predict(self, X_test):
         '''
         Optional method: predict the closest cluster each sample in X belongs to.
@@ -1569,7 +1590,11 @@ Watchouts:
 #### K-metoids Clustering
 *Like K-means, but constrained to choose a specific observation for a centroid at each step*
 
-*DBScan*
+
+#### DBSCAN
+
+*given a set of points in some space, it groups together points that are closely packed together (points with many nearby neighbors), marking as outliers points that lie alone in low-density regions (whose nearest neighbors are too far away)*
+
 Hyperparameter:
 * epsilon - max distance between points in cluster
 
@@ -2558,68 +2583,50 @@ Adding a math equations:
 
 ![pipes](images/Sigmoid.gif)
 
-
 * [Markdown Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet)
 * [Math Symbols](https://reu.dimacs.rutgers.edu/Symbols.pdf)
 * [Markdown Table Generator](http://www.tablesgenerator.com/markdown_tables)
 
 #### Flask
 
-**
-
 #### Talking to Business People
 
 * Describe stuff they already know  
-* Add on easy to explain satistical analysis  
+* Add on easy to explain statistical analysis  
 * Demonstrate how the historical analysis can be cast to the future
 * Identify actions to take based on that forecast
 
 ---
-#### TODOS Project Week
+#### Top Things To Study
 
-* Patrick Winston Stanford on AdaBoost
-* Add project to resume, add skills to resume - see Chris
-* SQL Study
-* Networking for jobs
-* Jeffrey contact
-* Ruan & optum
+* Docker
+* Spark
+  * Spark Streaming
+* NLP, TD-IDF
+* Neural Nets
+  * Watch Andrew Ng Neural Nets
+  * Understand softmax activation
+* Probabilistic Programming - other models
+* PCA, T-SNE
 * Study maximum a posteriori (MAP)
-* Watch Andrew Ng Neural Nets
-* objects and classes practice
+* Python
+  * Objects and classes
 * [Udemy recommendation from Chris](https://www.udemy.com/machine-learning-fun-and-easy-using-python-and-keras/)
-* Adam mentioned very specific ways to identify outliers - find that sklnear module
-* Add project to galvanize talent
-* update resume on galvanize talent
-* Add td-idf
-* Understand softmax activation
-* Dynamice Time Warp (Alex)
-* Study SMOTEENN & undersampling
-* PCA for medical referrals.
+* Study SMOTE & undersampling
 * Study pyomo
-* Spark Streaming
-* Study validation
-* Study Frobenious Norm - came up in SVD and NMF
-
-#### Todos Free Week
-
-* Study DBSCAN
-* Study Stuff slacked out from Frank
+* Collaborative Filtering
+  * Study Frobenious Norm - came up in SVD and NMF
+* Clustering algorithm - types of patients based on referrals data
+* Outlier detection -
+* Naive Bayes
+* Distributions and Conjugate Priors
 
 #### Resources Not Covered In Depth
 
-* [Bayesian Inference for Hackers](http://nbviewer.jupyter.org/github/CamDavidsonPilon/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers/tree/master/)
 * Model selection 4_machine_learning/glms - notebook
 * http://www.dataschool.io/15-hours-of-expert-machine-learning-videos/
-* Andrew Ng - Machine Learning Yearning
-* Book Deep Learning
 
-#### Projects in Progress
-* Referrals classifier
-  - random forest, gradient boost
-  - Pros - commercial, actionable, have the data
-* Diabetes among Pima women
-
-#### Future Project list
+#### Future Study List list
 * Referrals Utilization - changepoint analysis
   - can we detect when a doctor begins referring more or less?
   - compare PCPs vs PCPs, specialists vs specialists
@@ -2635,26 +2642,6 @@ Adding a math equations:
   - Pros - largely untouched, would be useful
   - Cons - not sure if data will be predictive
 * NLP - classify notes in electronic health record - "read notes and classify one of several. lacking a diagnosis. completeness of note."
-* Clustering algorithm - types of patients based on referrals data
-* Outlier detection -
-
-#### Interviews & Job Search
-
-Informational Interview:
-* Email Introduction
-* In person intro
-* Professional Story (SAR)
-* Questions to Ask
-* Follow up email
-
-Agenda for interview:
-* Trends
-* Insights
-* Advice
-* Resources
-* Assignments
-
-[Interview Guide from Galvanize](https://github.com/gSchool/dsi-interview-prep)
 
 ___
 #### Style Guide
