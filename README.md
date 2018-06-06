@@ -160,6 +160,31 @@ st.ks_2samp(randpois, my_dist)
 
 ```
 
+#### Covariance
+
+**Covariance** is a summary statistic that measures how much two variables vary together. For example,
+the covariance is positive when high values of X co-occur frequently with high values of Y.
+The covariance is negative when high values of X co-occur frequently with low values of Y.
+The covariance is zero when the values of X co-occur randomly with values of Y.
+Similar to correlation, covariance measures the strength of the linear relationship (though it is unscaled).
+
+
+#### Joint Probability Mass Functions (Discrete Vars)
+
+The **joint PMF** of two discrete random variables X and Y describes how much the probability mass is
+placed on each possible pair of values (x, y).
+
+![pipes](images/jointpmf.png)
+
+#### Joint Probability Density Functions (Continuous Vars)
+
+Similarly, the **joint PDF** of two continuous random variables X and Y describes the relatively likelihood
+placed on the pair of possible values (x, y). The idea is similar to the discrete case, but as the values are
+continuous, it makes more sense to think of the continuous rv's as falling into a two-dimensional set (such as a
+rectangle) obtained through integration.
+
+![pipes](images/jointpdf.png)
+
 #### One Sample T-test
 
 *Calculate the T-test for the mean of ONE group of scores*
@@ -181,6 +206,13 @@ rvs1 = stats.norm.rvs(loc=6,scale=10,size=500)
 rvs2 = stats.norm.rvs(loc=5,scale=10,size=500)
 stats.ttest_ind(rvs1,rvs2)
 ```
+
+#### Pearson and Spearman Correlations
+
+The Pearson correlation you have encountered in `Part 2` evaluates the linear relationship between two continuous
+variables. The Spearman correlation evaluates the monotonic relationship between two continuous or ordinal variables
+without assuming linearity of the variables. Spearman correlation is often more robust in capturing non-linear relationship
+between variables.
 
 #### Chi-squared hypothesis test
 
@@ -297,10 +329,6 @@ N = 8, L = 3, O = 2, I = 1, P = 2
 *Counting without replacement, and order does NOT matter*
 
 A person playing poker is dealt 5 cards. How many different hands could the player have been dealt?
-
-
-
-
 
 
 #### Math_Stats Miscellaneous
@@ -2599,6 +2627,7 @@ Adding a math equations:
 ---
 #### Top Things To Study
 
+* Clean project code
 * Docker
 * Spark
   * Spark Streaming
@@ -2620,13 +2649,14 @@ Adding a math equations:
 * Outlier detection -
 * Naive Bayes
 * Distributions and Conjugate Priors
+* Pipelines (Chris's Thing)
 
 #### Resources Not Covered In Depth
 
 * Model selection 4_machine_learning/glms - notebook
 * http://www.dataschool.io/15-hours-of-expert-machine-learning-videos/
 
-#### Future Study List list
+#### Future Project List list
 * Referrals Utilization - changepoint analysis
   - can we detect when a doctor begins referring more or less?
   - compare PCPs vs PCPs, specialists vs specialists
