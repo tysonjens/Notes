@@ -183,7 +183,7 @@ placed on the pair of possible values (x, y). The idea is similar to the discret
 continuous, it makes more sense to think of the continuous rv's as falling into a two-dimensional set (such as a
 rectangle) obtained through integration.
 
-![pipes](images/jointpdf.png)
+![pipes](images/jointpdf.jpg)
 
 #### One Sample T-test
 
