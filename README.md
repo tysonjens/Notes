@@ -131,10 +131,11 @@ def bootstrap_ci(lst, bootstraps=1000, ci=95):
 * [Power](https://en.wikipedia.org/wiki/Statistical_power#Factors_influencing_power) - `Pr(Reject H0 | H1 is true)`
 * [ANOVA vs T-test](https://keydifferences.com/difference-between-t-test-and-anova.html)
 * [Scipy Stats hypothesis test, scroll to bottom](https://docs.scipy.org/doc/scipy/reference/stats.html)
+* [Airbnb Post - experimental design](https://medium.com/airbnb-engineering/experiments-at-airbnb-e2db3abf39e7)
 
 #### Power
 
-*Power is the probability of rejecting the null hypothesis when a specific null hypothesis is true.*
+*Statistical power is the probability that a statistical test will correctly reject a false null hypothesis.*
 
 * [Power great visualization](http://my.ilstu.edu/~wjschne/138/Psychology138Lab14.html)
 * [Quick-R Power](https://www.statmethods.net/stats/power.html)
@@ -157,7 +158,13 @@ z_test.z_test(mean1, mean2, n1, n2, effect_size=.01,two_tailed=False)
 import scipy.stats as st
 randpois = st.poisson(6, 1).rvs(100)
 st.ks_2samp(randpois, my_dist)
+```
 
+```python
+## You randomly select 50 dogs and 80 cats from a large animal shelter, and want to know if dogs and cats have the same weight.
+dogs = st.norm.rvs(loc=28, scale=3, size=50)
+cats = st.norm.rvs(loc=27.5, scale=1 , size=80)
+st.ttest_ind(dogs, cats, equal_var=False)
 ```
 
 #### Covariance
@@ -221,6 +228,16 @@ between variables.
 ```python
 st.chisquare([16, 18, 16, 14, 12, 12], f_exp=[16, 16, 16, 16, 16, 8])
 ```
+
+#### Bonferonni
+
+*divides the p-value (level of evidence needed) over each test such. Thus, we require a higher level of evidence in each individual test. Very conservative.*
+
+#### False Discovery Rate (FDR)
+
+*The false discovery rate is a different type of correction than family-wise correction. Instead of controlling for the risk of any tests falsely being declared significant under the null hypothesis, FDR will control the number of tests falsely declared significant as a proportion of the number of all tests declared significant.*
+
+[FDR explanation](https://matthew-brett.github.io/teaching/fdr.html)
 
 #### Bayesian Methods
 
