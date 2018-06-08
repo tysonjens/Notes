@@ -2002,7 +2002,7 @@ def tokenize(text):
 
 Taught through Gaussian Mixture Models (GMM)
 
-[Andrew Ng's Paper on EM](http://cs229.stanford.edu/notes/cs229-notes8.pdf)
+[Andrew Ngs Paper on EM](http://cs229.stanford.edu/notes/cs229-notes8.pdf)
 
 
 ![pipes](images/gmm.png)
@@ -2183,9 +2183,9 @@ class TwoComponentGaussian():
 
 #### Neural Networks
 
-*A neural net has 2 or more layers, with the number of features in the first layer, and the number of classes to predict in the last layer.  A network is fit by randomly initializing weights that connect each neuron in one layer to each neuron in the next.  One by one, observations are passed through these weights, make a prediction, find an error, and then tune each weight (through back prop).  After doing this for each observations, we've completed one epoch.*
+*A neural net has 2 or more layers, with the number of features in the first layer, and the number of classes to predict in the last layer.  A network is fit by randomly initializing weights that connect each neuron in one layer to each neuron in the next.  One by one, observations are passed through these weights, make a prediction, find an error, and then tune each weight (through back prop).  After doing this for each observations, weve completed one epoch.*
 
-*[tensorflow playground](https://playground.tensorflow.org)
+[tensorflow playground](https://playground.tensorflow.org)
 
 #### Autoencoders
 
@@ -2489,6 +2489,8 @@ def profit_curve(cost_benefit_mat, y_pred_proba, y_true):
 ```
 
 #### AIC & BIC
+
+![pipes](images/AIC_web.png)
 
 *If two models have similar predictive power, we tend to prefer the one with fewer features. The simpler model focuses our attention to features that matter, is easier to replicate, is easier to put into production, and so on. Therefore, it would be nice to have model evaluators that account for the number of feature included.  This is the Akaike information criterion (AIC).*
 
