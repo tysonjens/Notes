@@ -175,6 +175,10 @@ The covariance is negative when high values of X co-occur frequently with low va
 The covariance is zero when the values of X co-occur randomly with values of Y.
 Similar to correlation, covariance measures the strength of the linear relationship (though it is unscaled).
 
+#### Conditional probability
+
+P(A and B) = P(A) * P(B|A)
+
 
 #### Joint Probability Mass Functions (Discrete Vars)
 
