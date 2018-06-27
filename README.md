@@ -232,6 +232,7 @@ between variables.
 ```python
 st.chisquare([16, 18, 16, 14, 12, 12], f_exp=[16, 16, 16, 16, 16, 8])
 ```
+[Chi-square pdf](http://onlinestatbook.com/2/chi_square/chi_square.pdf)
 
 #### Bonferonni
 
