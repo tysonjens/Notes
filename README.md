@@ -672,11 +672,33 @@ conn.close()
 
 #### Mongodb
 
+*An element of data is called a document, and documents are stored in collections. One collection may have any number of documents.*
+
 * [SQL to Mongodb translator](https://docs.mongodb.com/manual/reference/sql-aggregation-comparison/)
 
 #### Pymongo (Python to Mongodb)
 
 * [Cheat sheet](https://gist.github.com/stevemclaugh/530979cddbc458d25e37c9d4703c13f6)
+
+```python
+from pymongo import MongoClient
+from pprint import pprint
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+
+client = MongoClient()
+## Suppose we have a database called nyt_dump
+db = client.nyt_dump
+## find collections in nyt_dump
+db.collection_names()
+
+## create an object of the collection "articles"
+coll = db.articles
+coll.find_one()
+
+
+
+```
 
 #### Unit Testing
 
