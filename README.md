@@ -360,7 +360,7 @@ A person playing poker is dealt 5 cards. How many different hands could the play
 * Correlation is just scaled Covariance - scaled by the product of standard variations of each variable.
 ___
 
-# Coding and Environment
+# Coding and Environments
 
 #### Docker[.](https://hub.docker.com/)
 
