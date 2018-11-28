@@ -766,6 +766,8 @@ relies on directed acyclic graphs
 * S3 bucket - storage - can access with a url
 * EC2 - elastic cloud computing
 
+
+
 #### AWS CLI
 
 `aws help`
@@ -779,6 +781,9 @@ When a process is running, need to ensure it doesn't stop if you close your scre
 Once you've launched ec2 instance, you need to configure it with the right packages to run your code. Best practice to get python 3 up first, the install pip.  Then you can run pip to get everything else set up.
 
 [Install Python Pip on EC2](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-install-linux.html)
+
+create a s3 bucket
+`aws s3 mb s3://my-first-backup-bucket`
 
 #### Boto
 
