@@ -125,7 +125,7 @@ def bootstrap_ci(lst, bootstraps=1000, ci=95):
 * [Maximum Liklihood Estimation MIT](https://ocw.mit.edu/courses/mathematics/18-05-introduction-to-probability-and-statistics-spring-2014/readings/MIT18_05S14_Reading10b.pdf)
 * [Maximum Likelihood Estimation Stanford](http://statweb.stanford.edu/~susan/courses/s200/lectures/lect11.pdf)
 
-#### Experimental Design & Hypothesis Tests
+#### Experimental Design & Hypothesis Testing
 
 * [Sampling](https://en.wikipedia.org/wiki/Sampling_(statistics))
 * [Power](https://en.wikipedia.org/wiki/Statistical_power#Factors_influencing_power) - `Pr(Reject H0 | H1 is true)`
