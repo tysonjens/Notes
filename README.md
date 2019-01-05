@@ -415,8 +415,6 @@ Standards CSS and applying it to content.  Must put on right folder so flask can
 * [Adding a Github repo to house local project](https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/)
 * Check origin: `git remote -v`
 
-new
-
 #### Pair Workflow
 ```
 * A:
@@ -766,7 +764,11 @@ relies on directed acyclic graphs
 #### AWS
 
 * S3 bucket - storage - can access with a url
+  * Don't immediately have access to AML, that needs to be granted through a policy
 * EC2 - elastic cloud computing
+* IAM - Identity Access and Management User
+  * Admin - full access
+  * ML_User - s3, ml
 
 #### Benefits of Cloud Computing
 
