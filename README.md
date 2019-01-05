@@ -415,6 +415,8 @@ Standards CSS and applying it to content.  Must put on right folder so flask can
 * [Adding a Github repo to house local project](https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/)
 * Check origin: `git remote -v`
 
+new
+
 #### Pair Workflow
 ```
 * A:
@@ -766,7 +768,14 @@ relies on directed acyclic graphs
 * S3 bucket - storage - can access with a url
 * EC2 - elastic cloud computing
 
+#### Benefits of Cloud Computing
 
+1. Trade Capital Expense for Variable EXPENSE
+2. Benefits from Massive Economies of Scale
+3. Stop Guessing about Capacity
+4. Increase Speed and Agility
+5. Stop spending money running and maintaining centers
+6. Go Global in Minutes - can deploy in multiple regions
 
 #### AWS CLI
 
