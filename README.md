@@ -1285,6 +1285,17 @@ fig.tight_layout()
 ```
 
 
+**Squared Loss Function** is parabolic in nature. It has an important property of not only telling us the loss at a given weight, but also tells us which way to go to minimize.
+
+**Gradient Descent** optimization alogrithm uses loss function to move the weights of all the features and iteratively adjusts the weights until optimal value is reached.
+
+**Batch Gradient Descent** predicts y value for all training examples and then adjusts the value of weights based on loss. It can converge much slower when training set is very large. Training set order does not matter as every single example in the training set is considered before making adjustments.
+
+**Stochastic Gradient Descent** predicts y value for next training example and immediately adjusts the value of weights. It can converge faster when training set is very large. Training set should be random order otherwise model will not learn correctly.
+
+**AWS ML uses Stochastic Gradient Descent**
+
+
 #### Logistic Regression
 
 ```python
