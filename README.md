@@ -796,6 +796,8 @@ Once you've launched ec2 instance, you need to configure it with the right packa
 create a s3 bucket
 `aws s3 mb s3://my-first-backup-bucket`
 
+Amazon Machine Learning can create simple models with endpoints for applications. You can upload data to S3 buckets, then use the data to train model. AML can host that model and generate an endpoint for very cheap.
+
 #### Boto
 
 *python library that helps you communicate with aws*
