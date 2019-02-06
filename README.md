@@ -411,6 +411,7 @@ Standards CSS and applying it to content.  Must put on right folder so flask can
 
 #### GitHub
 
+* [Github Explained](https://www.ifi.uzh.ch/dam/jcr:ff780599-d5e2-4d05-b923-1c333cbf2842/A%20Tutorial%20for%20GitHub.pdf)
 * [Interactive Tool](http://ndpsoftware.com/git-cheatsheet/previous/git-cheatsheet.html)
 * [Adding a Github repo to house local project](https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/)
 * Check origin: `git remote -v`
