@@ -194,7 +194,7 @@ placed on the pair of possible values (x, y). The idea is similar to the discret
 continuous, it makes more sense to think of the continuous rv's as falling into a two-dimensional set (such as a
 rectangle) obtained through integration.
 
-![pipes](images/jointpdf.jpg)
+![pipes](images/jointpdf.jpg).
 
 #### One Sample T-test
 
@@ -647,6 +647,7 @@ Cursor operations typically goes like the following:
 * execute a query
 * fetch rows from query result if it is a SELECT query because it is iterative, previously fetched rows can only be fetched again by rerunning the query
 * close cursor through .close()
+* in a class with Emmy
 
 [Browse Psycopg documentation](http://initd.org/psycopg/docs/)
 
