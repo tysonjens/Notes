@@ -671,6 +671,16 @@ conn.commit()
 conn.close()
 ```
 
+```python
+## randomly select a portion of a dataset
+def randomly_select_observations(dataframe, pct_to_randomly_select):
+    random_indicies = np.random.permutation(len(dataframe))
+    number_to_select = int(len(dataframe) * pct_to_randomly_select)
+    indicies_to_select = random_indicies[number_to_select:]
+    return dataframe.iloc[indicies_to_select]
+```
+
+
 #### Mongodb
 
 *An element of data is called a document, and documents are stored in collections. One collection may have any number of documents.*
