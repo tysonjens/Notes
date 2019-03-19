@@ -1199,12 +1199,11 @@ def strfeat_to_intfeat(strfeat):
 
 ```python
 ## Pipelines
-from sklearn.pipeline impport Pipeline
+from sklearn.pipeline import Pipeline
 
-steps = [('feature_scaling', StandaardScaler()),
-        ('random_forest', RandomForestClassifier())]
-
-pipeline = Pipeline(steps)
+pipeline = Pipeline([('feature_scaling', StandaardScaler()),
+        ('random_forest', RandomForestClassifier())
+        ])
 
 pipeline.fit(X_train, y_train)
 
@@ -1213,23 +1212,39 @@ y_preds = pipeline.predict(X_test)
 
 ```python
 ## Pipeline General Form
-pipeline_fit_object = Pipeline([
-    ('name_first_pipeline_piece', ColumnSelector(args)),
-    ('name_secon_pipeline_piece', NaturalCubicSpline(args))
-])
+num_attribs = list(list_o_num_vars)
+cat_attribs = ["my_cat_var"]
 
-Pipeline([('name1', Thing1(args)), ('name2', Thing2(args))]
+old_num_pipeline = Pipeline([
+        ('selector', OldDataFrameSelector(num_attribs)),
+        ('imputer', SimpleImputer(strategy="median")),
+        ('attribs_adder', FunctionTransformer(add_extra_features, validate=False)),
+        ('std_scaler', StandardScaler()),
+    ])
+
+old_cat_pipeline = Pipeline([
+        ('selector', OldDataFrameSelector(cat_attribs)),
+        ('cat_encoder', OneHotEncoder(sparse=False)),
+    ])
 ```
-
 
 ```python
-## Pipeline of pipelines
-feature_pipeline = FeatureUnion([
-    ('pipeline_name_fit', pipeline_name_fit),
-    ('pipeline2_name_fit', cement_fit)
-])
+## FeatureUnion when you have a data frame that has a mix of categorical and
+## numercial features. You can pass them through separate pipelines.
+from sklearn.pipeline import FeatureUnion
+old_full_pipeline = FeatureUnion(transformer_list=[
+        ("num_pipeline", old_num_pipeline),
+        ("cat_pipeline", old_cat_pipeline),
+    ])
 ```
 
+```python
+## ColumnTransformer is better than FeatureUnion
+full_pipeline = ColumnTransformer([
+	("num", num_pipeline, num_attribs),
+	("cat", OneHotEncoder(), cat_attribs)
+	])
+```
 
 ```python
 ## Using Pipelines
