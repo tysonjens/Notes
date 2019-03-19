@@ -1106,7 +1106,35 @@ print(lb.transform((1,4)))
 print(lb.classes_)
 ```
 
-```Python
+```python
+# Ordinal Encoder transforms categorical features into int features
+from sklearn.preprocessing import OrdinalEncoder
+my_cat_feature = np.array(['Alpha', 'Boone', 'Kelli', 'Kelli', 'Boone', 'Tyson', 'Boone']).reshape(-1, 1)
+encoder = OrdinalEncoder()
+my_cat_feat_encoded = encoder.fit_transform(my_cat_feature)
+my_cat_feat_encoded
+
+## Outputs
+
+array([[0.],
+       [1.],
+       [2.],
+       [2.],
+       [1.],
+       [3.],
+       [1.]])
+
+```
+
+```python
+## One Hot Encoding takes a single categorical feature and converts it 
+## into several dummy columns
+from sklearn.preprocessing import OneHotEncoder
+cat_encoder = OneHotEncoder()
+my_hot_encoded_dummy_cols = OneHotEncoder.fit_transform(my_cat_feature)
+```
+
+```python
 ## Imputation
 ## See number of nulls
 test_scores.isnull().sum(0)
@@ -1140,7 +1168,8 @@ def strfeat_to_intfeat(strfeat):
 ```
 
 ```Python
-## Standard Scaler
+## Standard Scaler - you should always fit your scaler on training data, 
+## then apply it to the test data
 scaler = StandardScaler().fit(X_train)
 X_train_1 = scaler.transform(X_train)
 X_test_1 = scaler.transform(X_test)
@@ -1170,17 +1199,14 @@ def strfeat_to_intfeat(strfeat):
 
 ```python
 ## Pipelines
-from sklear.pipeline import Pipeline
+from sklearn.pipeline impport Pipeline
 
-scale = sklearn.preprocessing.StandardScaler()
-clf = RandomForestClassifier()
-
-steps = [('feature_scaling', scale),
-        ('random_forest', clf)]
+steps = [('feature_scaling', StandaardScaler()),
+        ('random_forest', RandomForestClassifier())]
 
 pipeline = Pipeline(steps)
 
-pipeline.fit( X_train, y_train)
+pipeline.fit(X_train, y_train)
 
 y_preds = pipeline.predict(X_test)
 ```
