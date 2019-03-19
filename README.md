@@ -344,7 +344,9 @@ How many ways can you arrange the letters in the word LOLLIPOP?
 
 N = 8, L = 3, O = 2, I = 1, P = 2
 
+```python
 8! / 3!2!2! = 8*7*6*5 = 1680
+```
 
 #### Combinations
 
@@ -2643,6 +2645,15 @@ ax1.set_xlabel('Weight (lb)',fontsize=font_size)
 ax1.set_ylabel('Height (in)',fontsize=font_size)
 ax1.set_title('Horse or dog?',fontsize=font_size)
 plt.show()
+```
+
+```python
+from pandas.plotting import scatter_matrix
+
+attributes = ["median_house_value", "median_income", "total_rooms",
+              "housing_median_age"]
+scatter_matrix(df[attributes], figsize=(12, 8))
+save_fig("scatter_matrix_plot")
 ```
 
 ```python
