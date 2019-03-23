@@ -1127,7 +1127,7 @@ array([[0.],
 ```
 
 ```python
-## One Hot Encoding takes a single categorical feature and converts it 
+## One Hot Encoding takes a single categorical feature and converts it
 ## into several dummy columns
 from sklearn.preprocessing import OneHotEncoder
 cat_encoder = OneHotEncoder()
@@ -1168,7 +1168,7 @@ def strfeat_to_intfeat(strfeat):
 ```
 
 ```Python
-## Standard Scaler - you should always fit your scaler on training data, 
+## Standard Scaler - you should always fit your scaler on training data,
 ## then apply it to the test data
 scaler = StandardScaler().fit(X_train)
 X_train_1 = scaler.transform(X_train)
@@ -2044,7 +2044,7 @@ def build_text_vectorizer(contents, use_tfidf=True, use_stemmer=False, max_featu
     corpus. The vectorizer will be trained from the text documents in the
     `contents` argument. If `use_tfidf` is True, then the vectorizer will use
     the Tf-Idf algorithm, otherwise a Bag-of-Words vectorizer will be used.
-    The text will be tokenized by words, and each word will be stemmed iff
+    The text will be tokenized by words, and each word will be stemmed if
     `use_stemmer` is True. If `max_features` is not None, then the vocabulary
     will be limited to the `max_features` most common words in the corpus.
     '''
@@ -2084,6 +2084,49 @@ def recommender():
 *In class we used Naive Bayes to determine whether a document belonged to one of many classes. P(type|words) = P(words|type) x P(type)/P(words).  All of the values on the right hand side of the equation can be trained using historical data.*
 
 [Natural Language Toolkit NLTK](http://www.nltk.org/)
+
+General process
+1. tokenize your words - breaks sentences into lists of Words
+2. remove stop words
+3. remove punctuation
+4. lemmatize or stem words
+
+   Stemming words is milder, Lemmatization is more severe.
+   Stemming will change automobiles to automobile.
+   Lemmatization will change automobiles to car. and better to good.
+
+5. Vectorize the documents in the corpus
+
+  CountVectorizer's fit method takes a list of strings where each string is a sentence. For example:
+
+  corpus = ['This is the first document.','This document is the second document.','And this is the third one.','Is this the first document?']
+
+```python
+from sklearn.feature_extraction.text import CountVectorizer
+c = CountVectorizer(stop_words='english')
+bag_of_words = c.fit(corpus)
+
+feature_dict = bag_of_words.vocabulary_ # with numerical indices
+print(feature_dict)
+
+feature_list = bag_of_words.get_feature_names() # just the names, alphabetically
+print(feature_list)
+```
+
+
+
+
+
+Stemming and Lemmatization
+
+```python
+from nltk.stem.porter   import PorterStemmer
+## Porters algorithm for stripping suffixes
+from nltk.stem.snowball import SnowballStemmer
+## Also based on Porter's algorithms for stripping suffixes
+from nltk.stem.wordnet  import WordNetLemmatizer
+## lemmatizes using Wordnet's morphy function
+```
 
 ```python
 ## Tokenize words
