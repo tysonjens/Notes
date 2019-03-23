@@ -2609,6 +2609,14 @@ for m, ax in zip(col_names, axes.flatten()):
     ax.set_title(m)
 ```
 
+```python
+from pandas.plotting import scatter_matrix
+attributes = ["median_house_value", "median_income", "total_rooms",
+          "housing_median_age"]
+scatter_matrix(dataframe[attributes], figsize=(12, 8))
+save_fig("scatter_matrix_plot")
+```
+
 
 ```python
 ## Violin Plot -
