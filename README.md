@@ -344,7 +344,9 @@ How many ways can you arrange the letters in the word LOLLIPOP?
 
 N = 8, L = 3, O = 2, I = 1, P = 2
 
+```python
 8! / 3!2!2! = 8*7*6*5 = 1680
+```
 
 #### Combinations
 
@@ -1104,7 +1106,35 @@ print(lb.transform((1,4)))
 print(lb.classes_)
 ```
 
-```Python
+```python
+# Ordinal Encoder transforms categorical features into int features
+from sklearn.preprocessing import OrdinalEncoder
+my_cat_feature = np.array(['Alpha', 'Boone', 'Kelli', 'Kelli', 'Boone', 'Tyson', 'Boone']).reshape(-1, 1)
+encoder = OrdinalEncoder()
+my_cat_feat_encoded = encoder.fit_transform(my_cat_feature)
+my_cat_feat_encoded
+
+## Outputs
+
+array([[0.],
+       [1.],
+       [2.],
+       [2.],
+       [1.],
+       [3.],
+       [1.]])
+
+```
+
+```python
+## One Hot Encoding takes a single categorical feature and converts it 
+## into several dummy columns
+from sklearn.preprocessing import OneHotEncoder
+cat_encoder = OneHotEncoder()
+my_hot_encoded_dummy_cols = OneHotEncoder.fit_transform(my_cat_feature)
+```
+
+```python
 ## Imputation
 ## See number of nulls
 test_scores.isnull().sum(0)
@@ -1138,7 +1168,8 @@ def strfeat_to_intfeat(strfeat):
 ```
 
 ```Python
-## Standard Scaler
+## Standard Scaler - you should always fit your scaler on training data, 
+## then apply it to the test data
 scaler = StandardScaler().fit(X_train)
 X_train_1 = scaler.transform(X_train)
 X_test_1 = scaler.transform(X_test)
@@ -1168,40 +1199,52 @@ def strfeat_to_intfeat(strfeat):
 
 ```python
 ## Pipelines
-from sklear.pipeline import Pipeline
+from sklearn.pipeline import Pipeline
 
-scale = sklearn.preprocessing.StandardScaler()
-clf = RandomForestClassifier()
+pipeline = Pipeline([('feature_scaling', StandaardScaler()),
+        ('random_forest', RandomForestClassifier())
+        ])
 
-steps = [('feature_scaling', scale),
-        ('random_forest', clf)]
-
-pipeline = Pipeline(steps)
-
-pipeline.fit( X_train, y_train)
+pipeline.fit(X_train, y_train)
 
 y_preds = pipeline.predict(X_test)
 ```
 
 ```python
 ## Pipeline General Form
-pipeline_fit_object = Pipeline([
-    ('name_first_pipeline_piece', ColumnSelector(args)),
-    ('name_secon_pipeline_piece', NaturalCubicSpline(args))
-])
+num_attribs = list(list_o_num_vars)
+cat_attribs = ["my_cat_var"]
 
-Pipeline([('name1', Thing1(args)), ('name2', Thing2(args))]
+old_num_pipeline = Pipeline([
+        ('selector', OldDataFrameSelector(num_attribs)),
+        ('imputer', SimpleImputer(strategy="median")),
+        ('attribs_adder', FunctionTransformer(add_extra_features, validate=False)),
+        ('std_scaler', StandardScaler()),
+    ])
+
+old_cat_pipeline = Pipeline([
+        ('selector', OldDataFrameSelector(cat_attribs)),
+        ('cat_encoder', OneHotEncoder(sparse=False)),
+    ])
 ```
-
 
 ```python
-## Pipeline of pipelines
-feature_pipeline = FeatureUnion([
-    ('pipeline_name_fit', pipeline_name_fit),
-    ('pipeline2_name_fit', cement_fit)
-])
+## FeatureUnion when you have a data frame that has a mix of categorical and
+## numercial features. You can pass them through separate pipelines.
+from sklearn.pipeline import FeatureUnion
+old_full_pipeline = FeatureUnion(transformer_list=[
+        ("num_pipeline", old_num_pipeline),
+        ("cat_pipeline", old_cat_pipeline),
+    ])
 ```
 
+```python
+## ColumnTransformer is better than FeatureUnion
+full_pipeline = ColumnTransformer([
+	("num", num_pipeline, num_attribs),
+	("cat", OneHotEncoder(), cat_attribs)
+	])
+```
 
 ```python
 ## Using Pipelines
@@ -2651,6 +2694,15 @@ ax1.set_xlabel('Weight (lb)',fontsize=font_size)
 ax1.set_ylabel('Height (in)',fontsize=font_size)
 ax1.set_title('Horse or dog?',fontsize=font_size)
 plt.show()
+```
+
+```python
+from pandas.plotting import scatter_matrix
+
+attributes = ["median_house_value", "median_income", "total_rooms",
+              "housing_median_age"]
+scatter_matrix(df[attributes], figsize=(12, 8))
+save_fig("scatter_matrix_plot")
 ```
 
 ```python
