@@ -2140,53 +2140,8 @@ print(corpus)
 ['bear eat fish hair eye leg claw teeth dangerous', 'human eat fish hair eye leg arm fingernail teeth dangerous', 'bird eat insect feather eye wing talon beak usually harmless', 'fish eat fish scale eye fin teeth gils might dangerous', 'human drive car dangerous']
 ```
 
-```python
-from sklearn.feature_extraction.text import CountVectorizer
-c = CountVectorizer(stop_words='english')
-bag_of_words = c.fit(corpus)
-
-feature_dict = bag_of_words.vocabulary_ # with numerical indices
-print(feature_dict)
-
-feature_list = bag_of_words.get_feature_names() # just the names, alphabetically
-print(feature_list)
-```
-
-
-
-
-
-Stemming and Lemmatization
-
-```python
-from nltk.stem.porter   import PorterStemmer
-## Porters algorithm for stripping suffixes
-from nltk.stem.snowball import SnowballStemmer
-## Also based on Porter's algorithms for stripping suffixes
-from nltk.stem.wordnet  import WordNetLemmatizer
-## lemmatizes using Wordnet's morphy function
-```
-
-```python
-## Tokenize words
-def tokenize(text):
-    regex = re.compile('<.+?>|[^a-zA-Z]')
-    clean_txt = regex.sub(' ', text)
-    tokens = clean_txt.split()
-    lowercased = [t.lower() for t in tokens]
-
-    no_punctuation = []
-    for word in lowercased:
-        punct_removed = ''.join([letter for letter in word if not letter in PUNCTUATION])
-        no_punctuation.append(punct_removed)
-    no_stopwords = [w for w in no_punctuation if not w in STOPWORDS]
-
-    STEMMER = PorterStemmer()
-    stemmed = [STEMMER.stem(w) for w in no_stopwords]
-    return [w for w in stemmed if w]
-```
-
 #### Latent Dirichlet Allocation LDA
+
 
 #### Term Frequency - Inverse Document Frequency (TD_IDF)
 
@@ -2215,7 +2170,14 @@ tdfvectorizer = TfidfVectorizer()
 X = tdfvectorizer.fit_transform(corpus)
 ```
 
+```python
+## accepts X matrix from TDFVectorizer and returns cosine similarities
+from sklearn.metrics.pairwise import cosine_similarity
+cosinesims = cosine_similarity(X)
+cosinesims[0,1]
 
+0.57639520500480335
+```
 
 #### Expectation-Maximization Algorithm (EM algorithm)
 
