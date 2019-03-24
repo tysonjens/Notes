@@ -2085,21 +2085,60 @@ def recommender():
 
 [Natural Language Toolkit NLTK](http://www.nltk.org/)
 
-General process
-1. tokenize your words - breaks sentences into lists of Words
-2. remove stop words
-3. remove punctuation
-4. lemmatize or stem words
+My process
+1. Acquire the data via api etc.
+2. package documents into a list of strings:
+
+    ['This is the first document.','This document is the second document.','And this is the third one.','Is this the first document?']
+
+3. tokenize your words - breaks sentences into lists of Words
+4. remove stop words
+5. remove punctuation
+6. lemmatize or stem words
 
    Stemming words is milder, Lemmatization is more severe.
    Stemming will change automobiles to automobile.
    Lemmatization will change automobiles to car. and better to good.
 
-5. Vectorize the documents in the corpus
+7. Vectorize the documents in the corpus
 
-  CountVectorizer's fit method takes a list of strings where each string is a sentence. For example:
+```python
+import pandas as pd
+import numpy as np
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+import string
+from nltk.stem.wordnet  import WordNetLemmatizer
 
-  corpus = ['This is the first document.','This document is the second document.','And this is the third one.','Is this the first document?']
+document1 = 'Bears eat fish, have hair, eyes, legs, claws and teeth. They can be dangerous.'
+document2 = 'Humans eat fish, have hair, eyes, legs, arms, fingernails, and teeth. They can be dangerous.'
+document3 = 'Birds eat insects, have feathers, eyes, wings, talons, and beaks. They are usually harmless.'
+document4 = 'Fish eat other fish, have scales, eyes, fins, teeth, and gils. They might be dangerous.'
+document5 = 'When humans drive cars they can be very dangerous.'
+
+documents = [document1, document2, document3, document4, document5]
+
+corpus = [word_tokenize(content.lower()) for content in documents]
+
+stopwords = stopwords.words("English")
+corpus = [[token for token in document if token not in stopwords] for document in corpus]
+
+punctuation = set(string.punctuation)
+punc_to_add = ['”', '’', '“', '—']
+for punc in punc_to_add:
+    punctuation.add(punc)
+
+corpus = [[token for token in document if token not in punctuation] for document in corpus]
+
+wordnet = WordNetLemmatizer()
+corpus = [[wordnet.lemmatize(token) for token in document] for document in corpus]
+
+corpus = [' '.join(tokens) for tokens in corpus]
+
+print(corpus)
+
+['bear eat fish hair eye leg claw teeth dangerous', 'human eat fish hair eye leg arm fingernail teeth dangerous', 'bird eat insect feather eye wing talon beak usually harmless', 'fish eat fish scale eye fin teeth gils might dangerous', 'human drive car dangerous']
+```
 
 ```python
 from sklearn.feature_extraction.text import CountVectorizer
@@ -2150,6 +2189,33 @@ def tokenize(text):
 #### Latent Dirichlet Allocation LDA
 
 #### Term Frequency - Inverse Document Frequency (TD_IDF)
+
+```python
+## Count vectorizer takes clean corpus and returns counts of words
+from sklearn.feature_extraction.text import CountVectorizer
+countvectorizer = CountVectorizer()
+X = countvectorizer.fit_transform(corpus)
+print(countvectorizer.get_feature_names())
+
+['arm', 'beak', 'bear', 'bird', 'car', 'claw', 'dangerous', 'drive', 'eat', 'eye', 'feather', 'fin', 'fingernail', 'fish', 'gils', 'hair', 'harmless', 'human', 'insect', 'leg', 'might', 'scale', 'talon', 'teeth', 'usually', 'wing']
+
+print(X.toarray())
+
+[[0 0 1 0 0 1 1 0 1 1 0 0 0 1 0 1 0 0 0 1 0 0 0 1 0 0]
+ [1 0 0 0 0 0 1 0 1 1 0 0 1 1 0 1 0 1 0 1 0 0 0 1 0 0]
+ [0 1 0 1 0 0 0 0 1 1 1 0 0 0 0 0 1 0 1 0 0 0 1 0 1 1]
+ [0 0 0 0 0 0 1 0 1 1 0 1 0 2 1 0 0 0 0 0 1 1 0 1 0 0]
+ [0 0 0 0 1 0 1 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0]]
+```
+
+```python
+## TDFVectorizer takes a clean corpus and returns term document matrix
+from sklearn.feature_extraction.text import TfidfVectorizer
+tdfvectorizer = TfidfVectorizer()
+X = tdfvectorizer.fit_transform(corpus)
+```
+
+
 
 #### Expectation-Maximization Algorithm (EM algorithm)
 
