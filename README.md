@@ -682,6 +682,7 @@ def randomly_select_observations(dataframe, pct_to_randomly_select):
     return dataframe.iloc[indicies_to_select]
 ```
 
+* [Python String Format Cookbook](https://mkaz.blog/code/python-string-format-cookbook/)
 
 #### Mongodb
 
