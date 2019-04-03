@@ -2845,7 +2845,6 @@ Adding a math equations:
 ---
 #### Top Things To Study
 
-* Clean project code
 * Docker
 * Spark
   * Spark Streaming
@@ -2858,8 +2857,8 @@ Adding a math equations:
 * Study maximum a posteriori (MAP)
 * Python
   * Objects and classes
-* [Udemy recommendation from Chris](https://www.udemy.com/machine-learning-fun-and-easy-using-python-and-keras/)
 * Study SMOTE & undersampling
+* Regular expressions
 * Study pyomo
 * Collaborative Filtering
   * Study Frobenious Norm - came up in SVD and NMF
@@ -2877,12 +2876,8 @@ Adding a math equations:
 #### Future Project List list
 * Referrals Utilization - changepoint analysis
   - can we detect when a doctor begins referring more or less?
-  - compare PCPs vs PCPs, specialists vs specialists
-  - Pros - different from bayes
-  - Cons - need to age sex adjust Referrals
 * Admissions forecasting
-  - somewhat boring, I'm sure I can do this, but not sure what we'll changes
-  - could "prove" efficacy of incumbent model
+  - somewhat boring, I'm sure I can do this, but not sure what will change
 * Medical Expense forecaster
   - Pros - high profile
   - Cons - Finance and actuaries already working on this
@@ -2898,8 +2893,6 @@ ___
 # <span style="color:grey">Major Header</span>
 #### Any other header
 *Explanation of what that header is in your own words*
-
-![pipes](images/my_pic.jpg)
 
 ![pipes](images/Sigmoid.gif)
 
