@@ -2877,10 +2877,8 @@ Adding a math equations:
 * Referrals Utilization - changepoint analysis
   - can we detect when a doctor begins referring more or less?
 * Admissions forecasting
-  - somewhat boring, I'm sure I can do this, but not sure what will change
+  - [article](https://academic.oup.com/bioinformatics/article/31/24/3970/198158)
 * Medical Expense forecaster
-  - Pros - high profile
-  - Cons - Finance and actuaries already working on this
 * Predict Member Churn
   - Pros - largely untouched, would be useful
   - Cons - not sure if data will be predictive
