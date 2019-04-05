@@ -2110,6 +2110,7 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 import string
 from nltk.stem.wordnet  import WordNetLemmatizer
+import re
 
 document1 = 'Bears eat fish, have hair, eyes, legs, claws and teeth. They can be dangerous.'
 document2 = 'Humans eat fish, have hair, eyes, legs, arms, fingernails, and teeth. They can be dangerous.'
@@ -2118,6 +2119,8 @@ document4 = 'Fish eat other fish, have scales, eyes, fins, teeth, and gils. They
 document5 = 'When humans drive cars they can be very dangerous.'
 
 documents = [document1, document2, document3, document4, document5]
+
+documents = [re.sub(r'\d+', '', document) for document in documents]
 
 corpus = [word_tokenize(content.lower()) for content in documents]
 
