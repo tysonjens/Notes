@@ -682,6 +682,7 @@ def randomly_select_observations(dataframe, pct_to_randomly_select):
     return dataframe.iloc[indicies_to_select]
 ```
 
+* [Python String Format Cookbook](https://mkaz.blog/code/python-string-format-cookbook/)
 
 #### Mongodb
 
@@ -2111,6 +2112,7 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 import string
 from nltk.stem.wordnet  import WordNetLemmatizer
+import re
 
 document1 = 'Bears eat fish, have hair, eyes, legs, claws and teeth. They can be dangerous.'
 document2 = 'Humans eat fish, have hair, eyes, legs, arms, fingernails, and teeth. They can be dangerous.'
@@ -2119,6 +2121,8 @@ document4 = 'Fish eat other fish, have scales, eyes, fins, teeth, and gils. They
 document5 = 'When humans drive cars they can be very dangerous.'
 
 documents = [document1, document2, document3, document4, document5]
+
+documents = [re.sub(r'\d+', '', document) for document in documents]
 
 corpus = [word_tokenize(content.lower()) for content in documents]
 
@@ -2846,7 +2850,6 @@ Adding a math equations:
 ---
 #### Top Things To Study
 
-* Clean project code
 * Docker
 * Spark
   * Spark Streaming
@@ -2859,8 +2862,8 @@ Adding a math equations:
 * Study maximum a posteriori (MAP)
 * Python
   * Objects and classes
-* [Udemy recommendation from Chris](https://www.udemy.com/machine-learning-fun-and-easy-using-python-and-keras/)
 * Study SMOTE & undersampling
+* Regular expressions
 * Study pyomo
 * Collaborative Filtering
   * Study Frobenious Norm - came up in SVD and NMF
@@ -2878,15 +2881,9 @@ Adding a math equations:
 #### Future Project List list
 * Referrals Utilization - changepoint analysis
   - can we detect when a doctor begins referring more or less?
-  - compare PCPs vs PCPs, specialists vs specialists
-  - Pros - different from bayes
-  - Cons - need to age sex adjust Referrals
 * Admissions forecasting
-  - somewhat boring, I'm sure I can do this, but not sure what we'll changes
-  - could "prove" efficacy of incumbent model
+  - [article](https://academic.oup.com/bioinformatics/article/31/24/3970/198158)
 * Medical Expense forecaster
-  - Pros - high profile
-  - Cons - Finance and actuaries already working on this
 * Predict Member Churn
   - Pros - largely untouched, would be useful
   - Cons - not sure if data will be predictive
@@ -2899,8 +2896,6 @@ ___
 # <span style="color:grey">Major Header</span>
 #### Any other header
 *Explanation of what that header is in your own words*
-
-![pipes](images/my_pic.jpg)
 
 ![pipes](images/Sigmoid.gif)
 
